@@ -1,0 +1,613 @@
+{
+  "run_id": "2d45b1b895d147b0822e01800df792a4",
+  "started_at": "2026-01-07T16:50:34.663858+00:00",
+  "user_text": "create a beignner level lesson on what is machine learning. the lesson should be around 20 min long.generate me a pptx file for slides, and a python file with explainations and example codes as well.",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "request": {
+        "model": "gpt-5.2",
+        "messages": [
+          {
+            "role": "system",
+            "content": "\nYou are an expert autonomous Task Orchestrator.\nYour goal is to analyze user requests and educational materials, then create a structured execution plan.\n\nAvailable Agents:\n- 'coder': Generates runnable Python code. Best for demonstrations, data analysis, and coding tutorials.\n- 'video': Creates video content. Best for visual explanations.\n- 'presentation': Generates PowerPoint slides (.pptx). Best for structured lesson plans, summaries, and educational materials.\n- 'quizzer': Creates quizzes. Best for assessments and review.\n\nInstructions:\n1. Analyze the user's input and provided files.\n2. Break down the goal into logical subtasks.\n3. Assign each subtask to the most appropriate agent.\n4. Provide specific, actionable instructions for each agent.\n5. For every subtask, include a non-empty 'acceptance_criteria' list.\n   - Each criterion must include: criterion_id, criterion_type, target, operator, expected, severity.\n   - Use criterion_type values: mcp_tool | output_shape | file_exists | semantic.\n   - Use operator values: equals | contains | exists | gte | lte.\n   - Use target paths that start with 'result.' or 'tools.'.\n   - For mcp_tool criteria, include tool: { name, args }.\n   - Use placeholders like $artifacts[0] or $output.validation.path inside tool args.\n6. Use the provided tool 'create_task_plan' to submit your plan.\n\nResponse Format Example:\n{\n  \"user_intent\": \"Create a lesson on Python lists with a video intro and a quiz.\",\n  \"subtasks\": [\n    {\n      \"task_id\": \"step1_code\",\n      \"agent\": \"coder\",\n      \"instruction\": \"Generate a Python script demonstrating list operations.\",\n      \"inputs\": {},\n      \"dependencies\": [],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"code_executes\",\n          \"criterion_type\": \"mcp_tool\",\n          \"tool\": {\"name\": \"python_check\", \"args\": {\"filepath\": \"$artifacts[0]\"}},\n          \"target\": \"tools.python_check.success\",\n          \"operator\": \"equals\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"tools.python_check.run.stderr\"\n        }\n      ]\n    },\n    {\n      \"task_id\": \"step2_video\",\n      \"agent\": \"video\",\n      \"instruction\": \"Create a video explaining the code.\",\n      \"inputs\": {},\n      \"dependencies\": [\"step1_code\"],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"video_semantic_ok\",\n          \"criterion_type\": \"semantic\",\n          \"target\": \"result.output\",\n          \"operator\": \"exists\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"result.output\"\n        }\n      ]\n    }\n  ]\n}\n"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "create a beignner level lesson on what is machine learning. the lesson should be around 20 min long.generate me a pptx file for slides, and a python file with explainations and example codes as well."
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_task_plan",
+              "description": "Create a structured execution plan for multiple agents.",
+              "parameters": {
+                "$defs": {
+                  "AcceptanceCriterion": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this criterion",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Criterion type: mcp_tool | output_shape | file_exists | semantic",
+                        "enum": [
+                          "mcp_tool",
+                          "output_shape",
+                          "file_exists",
+                          "semantic"
+                        ],
+                        "title": "Type",
+                        "type": "string"
+                      },
+                      "target": {
+                        "description": "Evaluation target path (e.g., result.output.text or tools.python_check.success)",
+                        "title": "Target",
+                        "type": "string"
+                      },
+                      "operator": {
+                        "description": "Operator: equals | contains | exists | gte | lte",
+                        "enum": [
+                          "equals",
+                          "contains",
+                          "exists",
+                          "gte",
+                          "lte"
+                        ],
+                        "title": "Operator",
+                        "type": "string"
+                      },
+                      "expected": {
+                        "default": null,
+                        "description": "Expected value to compare against",
+                        "title": "Expected"
+                      },
+                      "severity": {
+                        "default": "required",
+                        "description": "Severity: required | optional",
+                        "enum": [
+                          "required",
+                          "optional"
+                        ],
+                        "title": "Severity",
+                        "type": "string"
+                      },
+                      "tool": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": true,
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Tool call definition for mcp_tool criteria",
+                        "title": "Tool"
+                      },
+                      "evidence": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Evidence path to include in judger output",
+                        "title": "Evidence"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "target",
+                      "operator"
+                    ],
+                    "title": "AcceptanceCriterion",
+                    "type": "object"
+                  },
+                  "SubTask": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this subtask",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "agent": {
+                        "description": "The agent responsible (coder, video, text, quizzer)",
+                        "title": "Agent",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Detailed instruction for the agent",
+                        "title": "Title",
+                        "type": "string"
+                      },
+                      "inputs": {
+                        "additionalProperties": true,
+                        "description": "Specific inputs for the agent",
+                        "title": "Inputs",
+                        "type": "object"
+                      },
+                      "dependencies": {
+                        "description": "IDs of tasks that must complete first",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Dependencies",
+                        "type": "array"
+                      },
+                      "acceptance_criteria": {
+                        "description": "Structured criteria the judger will use",
+                        "items": {
+                          "$ref": "#/$defs/AcceptanceCriterion"
+                        },
+                        "title": "Acceptance Criteria",
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "agent",
+                      "title",
+                      "acceptance_criteria"
+                    ],
+                    "title": "SubTask",
+                    "type": "object"
+                  }
+                },
+                "properties": {
+                  "user_intent": {
+                    "description": "Summary of what the user wants to achieve",
+                    "title": "User Intent",
+                    "type": "string"
+                  },
+                  "subtasks": {
+                    "description": "List of executable steps",
+                    "items": {
+                      "$ref": "#/$defs/SubTask"
+                    },
+                    "title": "Subtasks",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "user_intent",
+                  "subtasks"
+                ],
+                "title": "TaskPlan",
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "create_task_plan"
+          }
+        }
+      },
+      "response": {
+        "tool_calls": [
+          {
+            "name": "create_task_plan",
+            "arguments": "{\"user_intent\":\"Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a downloadable PPTX slide deck and a Python file containing explanations and example code.\",\"subtasks\":[{\"id\":\"outline_lesson\",\"agent\":\"presentation\",\"title\":\"Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.\",\"dependencies\":[],\"acceptance_criteria\":[{\"id\":\"outline_has_pacing\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"20\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"outline_has_core_topics\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"supervised\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"outline_has_slide_list\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Slide\",\"severity\":\"required\",\"evidence\":\"result.output\"}]},{\"id\":\"build_pptx\",\"agent\":\"presentation\",\"title\":\"Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.\",\"dependencies\":[\"outline_lesson\"],\"acceptance_criteria\":[{\"id\":\"pptx_file_exists\",\"type\":\"file_exists\",\"target\":\"result.artifacts[0].path\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.artifacts[0].path\"},{\"id\":\"pptx_named_correctly\",\"type\":\"semantic\",\"target\":\"result.artifacts[0].path\",\"operator\":\"contains\",\"expected\":\"machine_learning_beginner_lesson.pptx\",\"severity\":\"required\",\"evidence\":\"result.artifacts[0].path\"},{\"id\":\"pptx_has_min_slides\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"slides\",\"severity\":\"optional\",\"evidence\":\"result.output\"}]},{\"id\":\"write_python_lesson\",\"agent\":\"coder\",\"title\":\"Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.\",\"dependencies\":[\"outline_lesson\"],\"acceptance_criteria\":[{\"id\":\"py_file_exists\",\"type\":\"file_exists\",\"target\":\"result.artifacts[0].path\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.artifacts[0].path\"},{\"id\":\"py_named_correctly\",\"type\":\"semantic\",\"target\":\"result.artifacts[0].path\",\"operator\":\"contains\",\"expected\":\"ml_beginner_lesson.py\",\"severity\":\"required\",\"evidence\":\"result.artifacts[0].path\"},{\"id\":\"py_contains_train_test_split\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"train_test_split\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"py_contains_evaluation\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"accuracy\",\"severity\":\"optional\",\"evidence\":\"result.output\"}]},{\"id\":\"package_delivery\",\"agent\":\"coder\",\"title\":\"Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.\",\"dependencies\":[\"build_pptx\",\"write_python_lesson\"],\"acceptance_criteria\":[{\"id\":\"mentions_pptx\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"machine_learning_beginner_lesson.pptx\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"mentions_python_file\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"ml_beginner_lesson.py\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"has_run_command\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"python\",\"severity\":\"required\",\"evidence\":\"result.output\"}]}]}"
+          }
+        ]
+      },
+      "parsed_plan": {
+        "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a downloadable PPTX slide deck and a Python file containing explanations and example code.",
+        "subtasks": [
+          {
+            "task_id": "outline_lesson",
+            "agent": "presentation",
+            "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "outline_has_pacing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "20",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_slide_list",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Slide",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "build_pptx",
+            "agent": "presentation",
+            "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+            "inputs": {},
+            "dependencies": [
+              "outline_lesson"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_min_slides",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "slides",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "write_python_lesson",
+            "agent": "coder",
+            "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+            "inputs": {},
+            "dependencies": [
+              "outline_lesson"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "py_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_contains_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_contains_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "package_delivery",
+            "agent": "coder",
+            "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+            "inputs": {},
+            "dependencies": [
+              "build_pptx",
+              "write_python_lesson"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "mentions_pptx",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_python_file",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "has_run_command",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a downloadable PPTX slide deck and a Python file containing explanations and example code.",
+    "subtasks": [
+      {
+        "task_id": "outline_lesson",
+        "agent": "presentation",
+        "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+        "inputs": {},
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "outline_has_pacing",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "20",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "outline_has_core_topics",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "supervised",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "outline_has_slide_list",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Slide",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "build_pptx",
+        "agent": "presentation",
+        "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+        "inputs": {},
+        "dependencies": [
+          "outline_lesson"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "pptx_file_exists",
+            "criterion_type": "file_exists",
+            "target": "result.artifacts[0].path",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.artifacts[0].path"
+          },
+          {
+            "criterion_id": "pptx_named_correctly",
+            "criterion_type": "semantic",
+            "target": "result.artifacts[0].path",
+            "operator": "contains",
+            "expected": "machine_learning_beginner_lesson.pptx",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.artifacts[0].path"
+          },
+          {
+            "criterion_id": "pptx_has_min_slides",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "slides",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "write_python_lesson",
+        "agent": "coder",
+        "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+        "inputs": {
+          "output_filename": "write_python_lesson_20260107_1650.py",
+          "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+        },
+        "dependencies": [
+          "outline_lesson"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "py_file_exists",
+            "criterion_type": "file_exists",
+            "target": "result.artifacts[0].path",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.artifacts[0].path"
+          },
+          {
+            "criterion_id": "py_named_correctly",
+            "criterion_type": "semantic",
+            "target": "result.artifacts[0].path",
+            "operator": "contains",
+            "expected": "ml_beginner_lesson.py",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.artifacts[0].path"
+          },
+          {
+            "criterion_id": "py_contains_train_test_split",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "train_test_split",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "py_contains_evaluation",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "accuracy",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "package_delivery",
+        "agent": "coder",
+        "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+        "inputs": {
+          "output_filename": "package_delivery_20260107_1650.py",
+          "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+        },
+        "dependencies": [
+          "build_pptx",
+          "write_python_lesson"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "mentions_pptx",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "machine_learning_beginner_lesson.pptx",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "mentions_python_file",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "ml_beginner_lesson.py",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "has_run_command",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "python",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "fail",
+  "agent_results": {
+    "outline_lesson": {
+      "agent": "presentation",
+      "success": false,
+      "output": null,
+      "artifacts": [],
+      "instruction": "The task output is null/empty, so none of the required semantic criteria can be satisfied. Provide a complete slide-by-slide lesson outline (~20 minutes) that explicitly includes: (1) minute-by-minute pacing totaling ~20 minutes (include the number '20' or a 0\u201320 min breakdown), (2) core topics including the word 'supervised' (also cover unsupervised, reinforcement, train/test split, features/labels, overfitting, evaluation), and (3) a slide list labeled with 'Slide' for each slide plus speaker notes and a simple real-world anchoring example.",
+      "attempts": 3,
+      "metadata": {},
+      "error": "Max retries exceeded."
+    },
+    "write_python_lesson": {
+      "agent": "coder",
+      "success": false,
+      "error": "Max retries exceeded.",
+      "instruction": "Deterministic failure: required Python file artifact is missing (ml_beginner_lesson.py not found), so output cannot be evaluated. To fix: create and include an artifact at path exactly 'ml_beginner_lesson.py'. Ensure the script contains a main() guard and runnable sklearn example using a built-in dataset. Include explicit use of train_test_split, model training, predictions, and evaluation (e.g., accuracy_score). Add a short overfitting demo comparing train vs test performance (e.g., high-degree polynomial features or different model complexities).",
+      "attempts": 3
+    },
+    "build_pptx": {
+      "agent": "presentation",
+      "success": false,
+      "output": null,
+      "artifacts": [],
+      "instruction": "Deterministic failure: the required PPTX artifact does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx file named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Include required sections: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, common pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Ensure the result references the artifact path and indicates slide count.",
+      "attempts": 3,
+      "metadata": {},
+      "error": "Max retries exceeded."
+    },
+    "package_delivery": {
+      "agent": "coder",
+      "success": false,
+      "error": "Max retries exceeded.",
+      "instruction": "Provide a README-style text that explicitly references the PPTX file name \"machine_learning_beginner_lesson.pptx\" and the Python script \"ml_beginner_lesson.py\", and include a clear run command that contains \"python\" (e.g., `python ml_beginner_lesson.py`). Mention any requirements (e.g., Python version, pip install commands) and indicate both artifacts are ready for download.",
+      "attempts": 3
+    }
+  }
+}

@@ -1,0 +1,2677 @@
+{
+  "run_id": "9aac72c5e2274e9f892e5502b4b547ed",
+  "started_at": "2026-01-07T16:59:22.572824+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a PPTX slide deck and a Python file with explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "step1_outline",
+              "agent": "presentation",
+              "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.outline",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                },
+                {
+                  "criterion_id": "outline_has_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.outline",
+                  "operator": "contains",
+                  "expected": "min",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                },
+                {
+                  "criterion_id": "outline_beginner_friendly",
+                  "criterion_type": "semantic",
+                  "target": "result.outline",
+                  "operator": "contains",
+                  "expected": "learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                }
+              ]
+            },
+            {
+              "task_id": "step2_pptx",
+              "agent": "presentation",
+              "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+              "inputs": {},
+              "dependencies": [
+                "step1_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.pptx_path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.pptx_path"
+                },
+                {
+                  "criterion_id": "pptx_slide_count_min",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.slide_count",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                },
+                {
+                  "criterion_id": "pptx_slide_count_max",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.slide_count",
+                  "operator": "lte",
+                  "expected": 14,
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                },
+                {
+                  "criterion_id": "pptx_has_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.has_speaker_notes",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                }
+              ]
+            },
+            {
+              "task_id": "step3_python_lesson",
+              "agent": "coder",
+              "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+              "inputs": {
+                "output_filename": "step3_python_lesson_20260107_1659.py",
+                "output_subdir": "run_9aac72c5e2274e9f892e5502b4b547ed"
+              },
+              "dependencies": [
+                "step1_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.python_path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_path"
+                },
+                {
+                  "criterion_id": "py_has_explanations",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "#",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                },
+                {
+                  "criterion_id": "py_includes_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                },
+                {
+                  "criterion_id": "py_includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "mean_absolute_error",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                }
+              ]
+            },
+            {
+              "task_id": "step4_package_delivery",
+              "agent": "presentation",
+              "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+              "inputs": {},
+              "dependencies": [
+                "step2_pptx",
+                "step3_python_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "delivery_has_paths",
+                  "criterion_type": "semantic",
+                  "target": "result.delivery_notes",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.delivery_notes"
+                },
+                {
+                  "criterion_id": "delivery_has_run_instructions",
+                  "criterion_type": "semantic",
+                  "target": "result.delivery_notes",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.delivery_notes"
+                },
+                {
+                  "criterion_id": "both_artifacts_exist",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_outline": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "Provide a non-null lesson outline. Include explicit timing per section (e.g., minute-by-minute or per segment totaling ~20 minutes) and clearly labeled learning objectives for a beginner audience. Also incorporate and define the required key terms (dataset, features, labels, model, training, inference, overfitting) and add a simple real-world example, using the outline to drive a slide narrative.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step3_python_lesson": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: no .py file was created (py_file_created=false), so the task must fail. Create a self-contained beginner-friendly Python script file (e.g., ml_intro_lesson.py) and provide its contents in output. Include installation notes at the top, extensive inline comments (#) explaining ML concepts, generate a toy dataset, perform train_test_split, train a simple scikit-learn model (LinearRegression or DecisionTree), evaluate with MAE and/or R^2, and demonstrate overfitting by comparing train vs test error. Guard optional plotting code under if __name__ == '__main__':.",
+            "attempts": 3
+          },
+          "step2_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No PPTX file was created (deterministic failure). Create and export the slide deck as a .pptx file (e.g., result.pptx). Ensure it contains 10\u201314 slides and includes speaker notes on slides. Then provide metadata/evidence: slide_count and has_speaker_notes=true.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step4_package_delivery": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No delivery_notes/output were provided. Provide a README-style delivery note that includes: (1) the exact filenames/paths to the final .pptx and the Python script, (2) how to run the script (e.g., `python script.py` plus any dependencies), (3) expected outputs/artifacts produced by the script, and (4) a ~20-minute slide presentation plan.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_outline",
+            "agent": "presentation",
+            "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.outline",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              },
+              {
+                "criterion_id": "outline_has_timing",
+                "criterion_type": "semantic",
+                "target": "result.outline",
+                "operator": "contains",
+                "expected": "min",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              },
+              {
+                "criterion_id": "outline_beginner_friendly",
+                "criterion_type": "semantic",
+                "target": "result.outline",
+                "operator": "contains",
+                "expected": "learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              }
+            ],
+            "deterministic": {
+              "outline_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_outline",
+                  "agent": "presentation",
+                  "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.outline",
+                      "operator": "contains",
+                      "expected": "min",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.outline"
+                    },
+                    {
+                      "criterion_id": "outline_beginner_friendly",
+                      "criterion_type": "semantic",
+                      "target": "result.outline",
+                      "operator": "contains",
+                      "expected": "learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.outline"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "outline_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "outline_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_has_timing\",\"outline_beginner_friendly\"],\"fix_instructions\":\"Deterministic failure: no outline output was provided (output is null; outline_exists not satisfied). Provide a complete 20-minute beginner lesson outline for 'What is Machine Learning?' that includes: (1) explicit timing per section totaling ~20 minutes, (2) clear learning objectives, (3) the required key terms (dataset, features, labels, model, training, inference, overfitting) defined/introduced in the outline, and (4) one simple real-world example, and structure it as a slide narrative plan.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_pptx",
+            "agent": "presentation",
+            "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.pptx_path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.pptx_path"
+              },
+              {
+                "criterion_id": "pptx_slide_count_min",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.slide_count",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              },
+              {
+                "criterion_id": "pptx_slide_count_max",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.slide_count",
+                "operator": "lte",
+                "expected": 14,
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              },
+              {
+                "criterion_id": "pptx_has_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.has_speaker_notes",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_created": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_pptx",
+                  "agent": "presentation",
+                  "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_slide_count_min",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.slide_count",
+                      "operator": "gte",
+                      "expected": 10,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    },
+                    {
+                      "criterion_id": "pptx_slide_count_max",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.slide_count",
+                      "operator": "lte",
+                      "expected": 14,
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    },
+                    {
+                      "criterion_id": "pptx_has_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.has_speaker_notes",
+                      "operator": "equals",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_created"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_created": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.pptx_file_created\",\"pptx_slide_count_min\",\"pptx_has_speaker_notes\"],\"fix_instructions\":\"No PPTX file was created (deterministic failure). Generate and export a .pptx file and provide it as output. Ensure the deck contains 10\u201314 slides and includes speaker notes on each slide. After exporting, report metadata confirming slide_count and has_speaker_notes=true.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step3_python_lesson",
+            "agent": "coder",
+            "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.python_path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_path"
+              },
+              {
+                "criterion_id": "py_has_explanations",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "#",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.python_preview"
+              },
+              {
+                "criterion_id": "py_includes_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.python_preview"
+              },
+              {
+                "criterion_id": "py_includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "mean_absolute_error",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.python_preview"
+              }
+            ],
+            "deterministic": {
+              "py_file_created": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_python_lesson",
+                  "agent": "coder",
+                  "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_has_explanations",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "#",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    },
+                    {
+                      "criterion_id": "py_includes_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    },
+                    {
+                      "criterion_id": "py_includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "mean_absolute_error",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_created"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_created": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.py_file_created\",\"py_has_explanations\",\"py_includes_train_test_split\",\"py_includes_evaluation\"],\"fix_instructions\":\"A required deterministic check indicates no .py file was created (py_file_created exists=false). Create a self-contained beginner-friendly Python script file (e.g., ml_basics_demo.py) that includes: installation notes at the top, extensive explanatory comments (#), code to generate a synthetic dataset (house prices), a train/test split using train_test_split, training a simple scikit-learn model (LinearRegression or DecisionTreeRegressor), evaluation metrics including MAE and R^2 (use mean_absolute_error and r2_score), and an overfitting demo comparing train vs test error. Add optional plotting code guarded by if __name__ == '__main__': so the script runs as a module too. Ensure the output includes the script contents (python_preview) and the file is actually present with the expected name.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_package_delivery",
+            "agent": "presentation",
+            "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+            "criteria": [
+              {
+                "criterion_id": "delivery_has_paths",
+                "criterion_type": "semantic",
+                "target": "result.delivery_notes",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.delivery_notes"
+              },
+              {
+                "criterion_id": "delivery_has_run_instructions",
+                "criterion_type": "semantic",
+                "target": "result.delivery_notes",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.delivery_notes"
+              },
+              {
+                "criterion_id": "both_artifacts_exist",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts"
+              }
+            ],
+            "deterministic": {
+              "both_artifacts_exist": {
+                "value": [],
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_package_delivery",
+                  "agent": "presentation",
+                  "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "delivery_has_paths",
+                      "criterion_type": "semantic",
+                      "target": "result.delivery_notes",
+                      "operator": "contains",
+                      "expected": ".pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.delivery_notes"
+                    },
+                    {
+                      "criterion_id": "delivery_has_run_instructions",
+                      "criterion_type": "semantic",
+                      "target": "result.delivery_notes",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.delivery_notes"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "both_artifacts_exist": {
+                      "value": [],
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"delivery_has_paths\",\"delivery_has_run_instructions\"],\"fix_instructions\":\"Provide delivery_notes that include: (1) the final .pptx filename/path and the final .py filename/path; (2) README-style run instructions that explicitly include a `python ...` command; (3) a brief description of expected outputs (e.g., generated charts/figures and/or exported PPTX) and a 20-minute presentation flow (timeboxed slide-by-slide or section-by-section). Also confirm both artifacts exist and are accessible at the stated paths.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "step1_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_beginner_friendly",
+              "outline_exists",
+              "outline_has_timing"
+            ],
+            "evidence": {
+              "deterministic": {
+                "outline_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no outline output was provided (output is null; outline_exists not satisfied). Provide a complete 20-minute beginner lesson outline for 'What is Machine Learning?' that includes: (1) explicit timing per section totaling ~20 minutes, (2) clear learning objectives, (3) the required key terms (dataset, features, labels, model, training, inference, overfitting) defined/introduced in the outline, and (4) one simple real-world example, and structure it as a slide narrative plan."
+          },
+          {
+            "task_id": "step2_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_file_created",
+              "pptx_has_speaker_notes",
+              "pptx_slide_count_min"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_created": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No PPTX file was created (deterministic failure). Generate and export a .pptx file and provide it as output. Ensure the deck contains 10\u201314 slides and includes speaker notes on each slide. After exporting, report metadata confirming slide_count and has_speaker_notes=true."
+          },
+          {
+            "task_id": "step3_python_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_file_created",
+              "py_has_explanations",
+              "py_includes_train_test_split"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_created": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "A required deterministic check indicates no .py file was created (py_file_created exists=false). Create a self-contained beginner-friendly Python script file (e.g., ml_basics_demo.py) that includes: installation notes at the top, extensive explanatory comments (#), code to generate a synthetic dataset (house prices), a train/test split using train_test_split, training a simple scikit-learn model (LinearRegression or DecisionTreeRegressor), evaluation metrics including MAE and R^2 (use mean_absolute_error and r2_score), and an overfitting demo comparing train vs test error. Add optional plotting code guarded by if __name__ == '__main__': so the script runs as a module too. Ensure the output includes the script contents (python_preview) and the file is actually present with the expected name."
+          },
+          {
+            "task_id": "step4_package_delivery",
+            "verdict": "fail",
+            "failed_criteria": [
+              "delivery_has_paths",
+              "delivery_has_run_instructions"
+            ],
+            "evidence": {
+              "deterministic": {
+                "both_artifacts_exist": {
+                  "value": [],
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Provide delivery_notes that include: (1) the final .pptx filename/path and the final .py filename/path; (2) README-style run instructions that explicitly include a `python ...` command; (3) a brief description of expected outputs (e.g., generated charts/figures and/or exported PPTX) and a 20-minute presentation flow (timeboxed slide-by-slide or section-by-section). Also confirm both artifacts exist and are accessible at the stated paths."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a PPTX slide deck and a Python file with explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "step1_outline",
+              "agent": "presentation",
+              "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.outline",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                },
+                {
+                  "criterion_id": "outline_has_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.outline",
+                  "operator": "contains",
+                  "expected": "min",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                },
+                {
+                  "criterion_id": "outline_beginner_friendly",
+                  "criterion_type": "semantic",
+                  "target": "result.outline",
+                  "operator": "contains",
+                  "expected": "learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                }
+              ]
+            },
+            {
+              "task_id": "step2_pptx",
+              "agent": "presentation",
+              "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+              "inputs": {},
+              "dependencies": [
+                "step1_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.pptx_path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.pptx_path"
+                },
+                {
+                  "criterion_id": "pptx_slide_count_min",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.slide_count",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                },
+                {
+                  "criterion_id": "pptx_slide_count_max",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.slide_count",
+                  "operator": "lte",
+                  "expected": 14,
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                },
+                {
+                  "criterion_id": "pptx_has_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.has_speaker_notes",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                }
+              ]
+            },
+            {
+              "task_id": "step3_python_lesson",
+              "agent": "coder",
+              "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+              "inputs": {
+                "output_filename": "step3_python_lesson_20260107_1659.py",
+                "output_subdir": "run_9aac72c5e2274e9f892e5502b4b547ed"
+              },
+              "dependencies": [
+                "step1_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.python_path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_path"
+                },
+                {
+                  "criterion_id": "py_has_explanations",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "#",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                },
+                {
+                  "criterion_id": "py_includes_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                },
+                {
+                  "criterion_id": "py_includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "mean_absolute_error",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                }
+              ]
+            },
+            {
+              "task_id": "step4_package_delivery",
+              "agent": "presentation",
+              "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+              "inputs": {},
+              "dependencies": [
+                "step2_pptx",
+                "step3_python_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "delivery_has_paths",
+                  "criterion_type": "semantic",
+                  "target": "result.delivery_notes",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.delivery_notes"
+                },
+                {
+                  "criterion_id": "delivery_has_run_instructions",
+                  "criterion_type": "semantic",
+                  "target": "result.delivery_notes",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.delivery_notes"
+                },
+                {
+                  "criterion_id": "both_artifacts_exist",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_outline": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "Provide a non-null lesson outline. Include explicit timing per section (e.g., minute-by-minute or per segment totaling ~20 minutes) and clearly labeled learning objectives for a beginner audience. Also incorporate and define the required key terms (dataset, features, labels, model, training, inference, overfitting) and add a simple real-world example, using the outline to drive a slide narrative.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step3_python_lesson": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: no .py file was created (py_file_created=false), so the task must fail. Create a self-contained beginner-friendly Python script file (e.g., ml_intro_lesson.py) and provide its contents in output. Include installation notes at the top, extensive inline comments (#) explaining ML concepts, generate a toy dataset, perform train_test_split, train a simple scikit-learn model (LinearRegression or DecisionTree), evaluate with MAE and/or R^2, and demonstrate overfitting by comparing train vs test error. Guard optional plotting code under if __name__ == '__main__':.",
+            "attempts": 3
+          },
+          "step2_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No PPTX file was created (deterministic failure). Create and export the slide deck as a .pptx file (e.g., result.pptx). Ensure it contains 10\u201314 slides and includes speaker notes on slides. Then provide metadata/evidence: slide_count and has_speaker_notes=true.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step4_package_delivery": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No delivery_notes/output were provided. Provide a README-style delivery note that includes: (1) the exact filenames/paths to the final .pptx and the Python script, (2) how to run the script (e.g., `python script.py` plus any dependencies), (3) expected outputs/artifacts produced by the script, and (4) a ~20-minute slide presentation plan.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_outline",
+            "agent": "presentation",
+            "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.outline",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              },
+              {
+                "criterion_id": "outline_has_timing",
+                "criterion_type": "semantic",
+                "target": "result.outline",
+                "operator": "contains",
+                "expected": "min",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              },
+              {
+                "criterion_id": "outline_beginner_friendly",
+                "criterion_type": "semantic",
+                "target": "result.outline",
+                "operator": "contains",
+                "expected": "learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              }
+            ],
+            "deterministic": {
+              "outline_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_outline",
+                  "agent": "presentation",
+                  "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.outline",
+                      "operator": "contains",
+                      "expected": "min",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.outline"
+                    },
+                    {
+                      "criterion_id": "outline_beginner_friendly",
+                      "criterion_type": "semantic",
+                      "target": "result.outline",
+                      "operator": "contains",
+                      "expected": "learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.outline"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "outline_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "outline_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures:outline_exists\",\"outline_has_timing\",\"outline_beginner_friendly\"],\"fix_instructions\":\"Provide a non-null lesson outline. Include explicit timing per section (e.g., minute-by-minute or per segment totaling ~20 minutes) and clearly labeled learning objectives for a beginner audience. Also incorporate and define the required key terms (dataset, features, labels, model, training, inference, overfitting) and add a simple real-world example, using the outline to drive a slide narrative.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_pptx",
+            "agent": "presentation",
+            "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.pptx_path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.pptx_path"
+              },
+              {
+                "criterion_id": "pptx_slide_count_min",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.slide_count",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              },
+              {
+                "criterion_id": "pptx_slide_count_max",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.slide_count",
+                "operator": "lte",
+                "expected": 14,
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              },
+              {
+                "criterion_id": "pptx_has_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.has_speaker_notes",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_created": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_pptx",
+                  "agent": "presentation",
+                  "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_slide_count_min",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.slide_count",
+                      "operator": "gte",
+                      "expected": 10,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    },
+                    {
+                      "criterion_id": "pptx_slide_count_max",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.slide_count",
+                      "operator": "lte",
+                      "expected": 14,
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    },
+                    {
+                      "criterion_id": "pptx_has_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.has_speaker_notes",
+                      "operator": "equals",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_created"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_created": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_created\",\"pptx_slide_count_min\",\"pptx_has_speaker_notes\"],\"fix_instructions\":\"No PPTX file was created (deterministic failure). Create and export the slide deck as a .pptx file (e.g., result.pptx). Ensure it contains 10\u201314 slides and includes speaker notes on slides. Then provide metadata/evidence: slide_count and has_speaker_notes=true.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step3_python_lesson",
+            "agent": "coder",
+            "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.python_path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_path"
+              },
+              {
+                "criterion_id": "py_has_explanations",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "#",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.python_preview"
+              },
+              {
+                "criterion_id": "py_includes_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.python_preview"
+              },
+              {
+                "criterion_id": "py_includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "mean_absolute_error",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.python_preview"
+              }
+            ],
+            "deterministic": {
+              "py_file_created": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_python_lesson",
+                  "agent": "coder",
+                  "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_has_explanations",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "#",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    },
+                    {
+                      "criterion_id": "py_includes_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    },
+                    {
+                      "criterion_id": "py_includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "mean_absolute_error",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_created"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_created": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"py_file_created\",\"py_has_explanations\",\"py_includes_train_test_split\"],\"fix_instructions\":\"Deterministic failure: no .py file was created (py_file_created=false), so the task must fail. Create a self-contained beginner-friendly Python script file (e.g., ml_intro_lesson.py) and provide its contents in output. Include installation notes at the top, extensive inline comments (#) explaining ML concepts, generate a toy dataset, perform train_test_split, train a simple scikit-learn model (LinearRegression or DecisionTree), evaluate with MAE and/or R^2, and demonstrate overfitting by comparing train vs test error. Guard optional plotting code under if __name__ == '__main__':.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_package_delivery",
+            "agent": "presentation",
+            "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+            "criteria": [
+              {
+                "criterion_id": "delivery_has_paths",
+                "criterion_type": "semantic",
+                "target": "result.delivery_notes",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.delivery_notes"
+              },
+              {
+                "criterion_id": "delivery_has_run_instructions",
+                "criterion_type": "semantic",
+                "target": "result.delivery_notes",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.delivery_notes"
+              },
+              {
+                "criterion_id": "both_artifacts_exist",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts"
+              }
+            ],
+            "deterministic": {
+              "both_artifacts_exist": {
+                "value": [],
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_package_delivery",
+                  "agent": "presentation",
+                  "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "delivery_has_paths",
+                      "criterion_type": "semantic",
+                      "target": "result.delivery_notes",
+                      "operator": "contains",
+                      "expected": ".pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.delivery_notes"
+                    },
+                    {
+                      "criterion_id": "delivery_has_run_instructions",
+                      "criterion_type": "semantic",
+                      "target": "result.delivery_notes",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.delivery_notes"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "both_artifacts_exist": {
+                      "value": [],
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"delivery_has_paths\",\"delivery_has_run_instructions\"],\"fix_instructions\":\"No delivery_notes/output were provided. Provide a README-style delivery note that includes: (1) the exact filenames/paths to the final .pptx and the Python script, (2) how to run the script (e.g., `python script.py` plus any dependencies), (3) expected outputs/artifacts produced by the script, and (4) a ~20-minute slide presentation plan.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "step1_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_beginner_friendly",
+              "outline_exists",
+              "outline_has_timing"
+            ],
+            "evidence": {
+              "deterministic": {
+                "outline_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a non-null lesson outline. Include explicit timing per section (e.g., minute-by-minute or per segment totaling ~20 minutes) and clearly labeled learning objectives for a beginner audience. Also incorporate and define the required key terms (dataset, features, labels, model, training, inference, overfitting) and add a simple real-world example, using the outline to drive a slide narrative."
+          },
+          {
+            "task_id": "step2_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_file_created",
+              "pptx_has_speaker_notes",
+              "pptx_slide_count_min"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_created": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No PPTX file was created (deterministic failure). Create and export the slide deck as a .pptx file (e.g., result.pptx). Ensure it contains 10\u201314 slides and includes speaker notes on slides. Then provide metadata/evidence: slide_count and has_speaker_notes=true."
+          },
+          {
+            "task_id": "step3_python_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_file_created",
+              "py_has_explanations",
+              "py_includes_train_test_split"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_created": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no .py file was created (py_file_created=false), so the task must fail. Create a self-contained beginner-friendly Python script file (e.g., ml_intro_lesson.py) and provide its contents in output. Include installation notes at the top, extensive inline comments (#) explaining ML concepts, generate a toy dataset, perform train_test_split, train a simple scikit-learn model (LinearRegression or DecisionTree), evaluate with MAE and/or R^2, and demonstrate overfitting by comparing train vs test error. Guard optional plotting code under if __name__ == '__main__':."
+          },
+          {
+            "task_id": "step4_package_delivery",
+            "verdict": "fail",
+            "failed_criteria": [
+              "delivery_has_paths",
+              "delivery_has_run_instructions"
+            ],
+            "evidence": {
+              "deterministic": {
+                "both_artifacts_exist": {
+                  "value": [],
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No delivery_notes/output were provided. Provide a README-style delivery note that includes: (1) the exact filenames/paths to the final .pptx and the Python script, (2) how to run the script (e.g., `python script.py` plus any dependencies), (3) expected outputs/artifacts produced by the script, and (4) a ~20-minute slide presentation plan."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a PPTX slide deck and a Python file with explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "step1_outline",
+              "agent": "presentation",
+              "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.outline",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                },
+                {
+                  "criterion_id": "outline_has_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.outline",
+                  "operator": "contains",
+                  "expected": "min",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                },
+                {
+                  "criterion_id": "outline_beginner_friendly",
+                  "criterion_type": "semantic",
+                  "target": "result.outline",
+                  "operator": "contains",
+                  "expected": "learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.outline"
+                }
+              ]
+            },
+            {
+              "task_id": "step2_pptx",
+              "agent": "presentation",
+              "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+              "inputs": {},
+              "dependencies": [
+                "step1_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.pptx_path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.pptx_path"
+                },
+                {
+                  "criterion_id": "pptx_slide_count_min",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.slide_count",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                },
+                {
+                  "criterion_id": "pptx_slide_count_max",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.slide_count",
+                  "operator": "lte",
+                  "expected": 14,
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                },
+                {
+                  "criterion_id": "pptx_has_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.pptx_metadata.has_speaker_notes",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.pptx_metadata"
+                }
+              ]
+            },
+            {
+              "task_id": "step3_python_lesson",
+              "agent": "coder",
+              "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+              "inputs": {
+                "output_filename": "step3_python_lesson_20260107_1659.py",
+                "output_subdir": "run_9aac72c5e2274e9f892e5502b4b547ed"
+              },
+              "dependencies": [
+                "step1_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.python_path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_path"
+                },
+                {
+                  "criterion_id": "py_has_explanations",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "#",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                },
+                {
+                  "criterion_id": "py_includes_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                },
+                {
+                  "criterion_id": "py_includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.python_preview",
+                  "operator": "contains",
+                  "expected": "mean_absolute_error",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.python_preview"
+                }
+              ]
+            },
+            {
+              "task_id": "step4_package_delivery",
+              "agent": "presentation",
+              "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+              "inputs": {},
+              "dependencies": [
+                "step2_pptx",
+                "step3_python_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "delivery_has_paths",
+                  "criterion_type": "semantic",
+                  "target": "result.delivery_notes",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.delivery_notes"
+                },
+                {
+                  "criterion_id": "delivery_has_run_instructions",
+                  "criterion_type": "semantic",
+                  "target": "result.delivery_notes",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.delivery_notes"
+                },
+                {
+                  "criterion_id": "both_artifacts_exist",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_outline": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "Provide a non-null lesson outline. Include explicit timing per section (e.g., minute-by-minute or per segment totaling ~20 minutes) and clearly labeled learning objectives for a beginner audience. Also incorporate and define the required key terms (dataset, features, labels, model, training, inference, overfitting) and add a simple real-world example, using the outline to drive a slide narrative.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step3_python_lesson": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: no .py file was created (py_file_created=false), so the task must fail. Create a self-contained beginner-friendly Python script file (e.g., ml_intro_lesson.py) and provide its contents in output. Include installation notes at the top, extensive inline comments (#) explaining ML concepts, generate a toy dataset, perform train_test_split, train a simple scikit-learn model (LinearRegression or DecisionTree), evaluate with MAE and/or R^2, and demonstrate overfitting by comparing train vs test error. Guard optional plotting code under if __name__ == '__main__':.",
+            "attempts": 3
+          },
+          "step2_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No PPTX file was created (deterministic failure). Create and export the slide deck as a .pptx file (e.g., result.pptx). Ensure it contains 10\u201314 slides and includes speaker notes on slides. Then provide metadata/evidence: slide_count and has_speaker_notes=true.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step4_package_delivery": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No delivery_notes/output were provided. Provide a README-style delivery note that includes: (1) the exact filenames/paths to the final .pptx and the Python script, (2) how to run the script (e.g., `python script.py` plus any dependencies), (3) expected outputs/artifacts produced by the script, and (4) a ~20-minute slide presentation plan.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_outline",
+            "agent": "presentation",
+            "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.outline",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              },
+              {
+                "criterion_id": "outline_has_timing",
+                "criterion_type": "semantic",
+                "target": "result.outline",
+                "operator": "contains",
+                "expected": "min",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              },
+              {
+                "criterion_id": "outline_beginner_friendly",
+                "criterion_type": "semantic",
+                "target": "result.outline",
+                "operator": "contains",
+                "expected": "learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.outline"
+              }
+            ],
+            "deterministic": {
+              "outline_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_outline",
+                  "agent": "presentation",
+                  "instruction": "Draft a 20-minute beginner lesson outline for 'What is Machine Learning?' including learning objectives, timing per section, key terms (dataset, features, labels, model, training, inference, overfitting), and a simple real-world example. Use this outline to plan the slide narrative.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.outline",
+                      "operator": "contains",
+                      "expected": "min",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.outline"
+                    },
+                    {
+                      "criterion_id": "outline_beginner_friendly",
+                      "criterion_type": "semantic",
+                      "target": "result.outline",
+                      "operator": "contains",
+                      "expected": "learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.outline"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "outline_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "outline_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_exists\",\"outline_has_timing\",\"outline_beginner_friendly\"],\"fix_instructions\":\"No outline was provided (output is null), so required content cannot be evaluated. Provide a 20-minute beginner lesson outline for 'What is Machine Learning?' that includes: (1) explicit learning objectives, (2) timing per section totaling ~20 minutes, (3) definitions or introductions of the key terms: dataset, features, labels, model, training, inference, overfitting, and (4) a simple real-world example. Present it in a slide-narrative-friendly structure (e.g., slide titles with talking points).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_pptx",
+            "agent": "presentation",
+            "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.pptx_path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.pptx_path"
+              },
+              {
+                "criterion_id": "pptx_slide_count_min",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.slide_count",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              },
+              {
+                "criterion_id": "pptx_slide_count_max",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.slide_count",
+                "operator": "lte",
+                "expected": 14,
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              },
+              {
+                "criterion_id": "pptx_has_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.pptx_metadata.has_speaker_notes",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.pptx_metadata"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_created": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_pptx",
+                  "agent": "presentation",
+                  "instruction": "Generate a PPTX slide deck (beginner level, ~20 minutes) titled 'What is Machine Learning?'. Include ~10\u201314 slides: agenda, definition, types (supervised/unsupervised/reinforcement) at high level, examples, basic workflow, evaluation concept (train/test split, accuracy), overfitting intuition, ethical considerations, and a recap + Q&A. Add simple diagrams using shapes (pipeline, scatterplot concept) and speaker notes with what to say per slide. Export as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_slide_count_min",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.slide_count",
+                      "operator": "gte",
+                      "expected": 10,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    },
+                    {
+                      "criterion_id": "pptx_slide_count_max",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.slide_count",
+                      "operator": "lte",
+                      "expected": 14,
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    },
+                    {
+                      "criterion_id": "pptx_has_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.pptx_metadata.has_speaker_notes",
+                      "operator": "equals",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.pptx_metadata"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_created"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_created": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_created\",\"pptx_slide_count_min\",\"pptx_has_speaker_notes\"],\"fix_instructions\":\"No PPTX file was created (deterministic failure). Create and export the slide deck as a .pptx file. Ensure it contains 10\u201314 slides and includes speaker notes on each slide (or at least metadata indicates speaker notes present). Include required content: agenda, definition, ML types, examples, workflow, evaluation (train/test split, accuracy), overfitting intuition, ethics, recap + Q&A, plus simple shape-based diagrams (pipeline, scatterplot concept). Provide result.pptx.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step3_python_lesson",
+            "agent": "coder",
+            "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.python_path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_path"
+              },
+              {
+                "criterion_id": "py_has_explanations",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "#",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.python_preview"
+              },
+              {
+                "criterion_id": "py_includes_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.python_preview"
+              },
+              {
+                "criterion_id": "py_includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.python_preview",
+                "operator": "contains",
+                "expected": "mean_absolute_error",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.python_preview"
+              }
+            ],
+            "deterministic": {
+              "py_file_created": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_python_lesson",
+                  "agent": "coder",
+                  "instruction": "Create a beginner-friendly Python script (.py) that explains ML concepts with comments and runnable examples. Include: (1) generating a toy dataset (e.g., synthetic house prices), (2) training a simple scikit-learn model (LinearRegression or DecisionTree), (3) train/test split, (4) evaluation (MAE/R^2), (5) short overfitting demo (train vs test error), (6) optional plot code guarded by if __name__ == '__main__'. Ensure the file is self-contained and includes installation notes at top.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_has_explanations",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "#",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    },
+                    {
+                      "criterion_id": "py_includes_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    },
+                    {
+                      "criterion_id": "py_includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.python_preview",
+                      "operator": "contains",
+                      "expected": "mean_absolute_error",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.python_preview"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_created"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_created": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures:py_file_created\"],\"fix_instructions\":\"Create the required self-contained .py file and ensure it exists at the expected location/name. Include commented explanations, toy dataset generation, train/test split via train_test_split, model training (LinearRegression or DecisionTree), evaluation (MAE and/or R^2), an overfitting demo comparing train vs test error, and optional plotting guarded by if __name__ == '__main__'. Add installation notes at the top.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_package_delivery",
+            "agent": "presentation",
+            "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+            "criteria": [
+              {
+                "criterion_id": "delivery_has_paths",
+                "criterion_type": "semantic",
+                "target": "result.delivery_notes",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.delivery_notes"
+              },
+              {
+                "criterion_id": "delivery_has_run_instructions",
+                "criterion_type": "semantic",
+                "target": "result.delivery_notes",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.delivery_notes"
+              },
+              {
+                "criterion_id": "both_artifacts_exist",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts"
+              }
+            ],
+            "deterministic": {
+              "both_artifacts_exist": {
+                "value": [],
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_package_delivery",
+                  "agent": "presentation",
+                  "instruction": "Package outputs for delivery: provide final PPTX and Python file paths/names, and include a short README-style summary (how to run the Python script, expected output, and how to present the slides in ~20 minutes).",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "delivery_has_paths",
+                      "criterion_type": "semantic",
+                      "target": "result.delivery_notes",
+                      "operator": "contains",
+                      "expected": ".pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.delivery_notes"
+                    },
+                    {
+                      "criterion_id": "delivery_has_run_instructions",
+                      "criterion_type": "semantic",
+                      "target": "result.delivery_notes",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.delivery_notes"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "both_artifacts_exist": {
+                      "value": [],
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"delivery_has_paths\",\"delivery_has_run_instructions\"],\"fix_instructions\":\"Provide a delivery_notes/README-style section that (1) explicitly lists the final artifact filenames/paths including a .pptx and the Python script, and (2) includes clear run instructions using python (e.g., `python script.py`), expected outputs, and brief 20-minute presentation guidance. Also ensure the artifacts actually exist and note their locations.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "step1_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_beginner_friendly",
+              "outline_exists",
+              "outline_has_timing"
+            ],
+            "evidence": {
+              "deterministic": {
+                "outline_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No outline was provided (output is null), so required content cannot be evaluated. Provide a 20-minute beginner lesson outline for 'What is Machine Learning?' that includes: (1) explicit learning objectives, (2) timing per section totaling ~20 minutes, (3) definitions or introductions of the key terms: dataset, features, labels, model, training, inference, overfitting, and (4) a simple real-world example. Present it in a slide-narrative-friendly structure (e.g., slide titles with talking points)."
+          },
+          {
+            "task_id": "step2_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_file_created",
+              "pptx_has_speaker_notes",
+              "pptx_slide_count_min"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_created": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No PPTX file was created (deterministic failure). Create and export the slide deck as a .pptx file. Ensure it contains 10\u201314 slides and includes speaker notes on each slide (or at least metadata indicates speaker notes present). Include required content: agenda, definition, ML types, examples, workflow, evaluation (train/test split, accuracy), overfitting intuition, ethics, recap + Q&A, plus simple shape-based diagrams (pipeline, scatterplot concept). Provide result.pptx."
+          },
+          {
+            "task_id": "step3_python_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_file_created"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_created": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Create the required self-contained .py file and ensure it exists at the expected location/name. Include commented explanations, toy dataset generation, train/test split via train_test_split, model training (LinearRegression or DecisionTree), evaluation (MAE and/or R^2), an overfitting demo comparing train vs test error, and optional plotting guarded by if __name__ == '__main__'. Add installation notes at the top."
+          },
+          {
+            "task_id": "step4_package_delivery",
+            "verdict": "fail",
+            "failed_criteria": [
+              "delivery_has_paths",
+              "delivery_has_run_instructions"
+            ],
+            "evidence": {
+              "deterministic": {
+                "both_artifacts_exist": {
+                  "value": [],
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a delivery_notes/README-style section that (1) explicitly lists the final artifact filenames/paths including a .pptx and the Python script, and (2) includes clear run instructions using python (e.g., `python script.py`), expected outputs, and brief 20-minute presentation guidance. Also ensure the artifacts actually exist and note their locations."
+          }
+        ]
+      }
+    }
+  ]
+}

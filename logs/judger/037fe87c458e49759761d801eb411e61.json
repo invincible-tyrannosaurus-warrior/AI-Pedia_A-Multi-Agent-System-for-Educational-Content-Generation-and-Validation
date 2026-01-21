@@ -1,0 +1,2100 @@
+{
+  "run_id": "037fe87c458e49759761d801eb411e61",
+  "started_at": "2026-01-07T14:31:00.223794+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-friendly lesson introducing Machine Learning, including a slide deck, a runnable Python example file, and quiz questions for assessment.",
+          "subtasks": [
+            {
+              "task_id": "slides_ml_intro",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.slides_ml_intro.path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.path"
+                },
+                {
+                  "criterion_id": "slides_title_contains",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.slides_ml_intro.title",
+                  "operator": "contains",
+                  "expected": "What is Machine Learning",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.title"
+                },
+                {
+                  "criterion_id": "slides_min_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts.slides_ml_intro.slide_count",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.slide_count"
+                }
+              ]
+            },
+            {
+              "task_id": "python_demo_ml",
+              "agent": "coder",
+              "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+              "inputs": {
+                "output_filename": "python_demo_ml_20260107_1431.py",
+                "output_subdir": "run_037fe87c458e49759761d801eb411e61"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "python_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.python_demo_ml.path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "python_has_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.python_demo_ml.content",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "python_uses_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.python_demo_ml.content",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz_ml_basics",
+              "agent": "quizzer",
+              "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+              "inputs": {},
+              "dependencies": [
+                "slides_ml_intro"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.quiz.total_questions",
+                  "operator": "equals",
+                  "expected": 12,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz"
+                },
+                {
+                  "criterion_id": "quiz_mcq_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.quiz.mcq_count",
+                  "operator": "equals",
+                  "expected": 8,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz"
+                },
+                {
+                  "criterion_id": "quiz_has_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output.quiz.answer_key",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz.answer_key"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "python_demo_ml": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Create a single runnable file named `ml_demo.py` and ensure it exists in the artifacts/output. The script must include a main guard (`if __name__ == \"__main__\":`) and demonstrate `train_test_split` from scikit-learn. Implement an end-to-end workflow: load a built-in dataset (e.g., iris), split into train/test, train a model (e.g., LogisticRegression or DecisionTreeClassifier), evaluate with accuracy and confusion matrix, and make a prediction for a new sample. Add a top comment listing requirements (e.g., scikit-learn, numpy) and print a brief explanation when run with `python ml_demo.py`.",
+            "attempts": 3
+          },
+          "slides_ml_intro": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No .pptx artifact was produced (file missing), so minimum slide count and title checks cannot be verified. Generate and attach the PowerPoint (.pptx) file for the deck titled exactly/including \u201cWhat is Machine Learning?\u201d. Ensure it contains at least 10 slides and covers all requested sections (definition, why ML, types, key concepts, workflow, algorithms, evaluation, pitfalls, examples, recap) with speaker notes and visual/diagram suggestions.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "quiz_ml_basics": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output is incomplete: provide exactly 12 questions total: 8 multiple-choice (each with 4 options and clearly marked correct option), 2 true/false, and 2 short-answer. Ensure coverage of required topics (definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, real-world applications). Include a structured answer key that exists at result.output.quiz.answer_key (or equivalent field) and add 1\u20132 sentence explanations for every question.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "slides_ml_intro",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.slides_ml_intro.path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.path"
+              },
+              {
+                "criterion_id": "slides_title_contains",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.slides_ml_intro.title",
+                "operator": "contains",
+                "expected": "What is Machine Learning",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.title"
+              },
+              {
+                "criterion_id": "slides_min_count",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts.slides_ml_intro.slide_count",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.slide_count"
+              }
+            ],
+            "deterministic": {
+              "slides_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "slides_min_count": {
+                "value": null,
+                "expected": 10,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "slides_ml_intro",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_title_contains",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.slides_ml_intro.title",
+                      "operator": "contains",
+                      "expected": "What is Machine Learning",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.slides_ml_intro.title"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_file_exists",
+                    "slides_min_count"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "slides_min_count": {
+                      "value": null,
+                      "expected": 10,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_file_exists\",\"slides_min_count\",\"slides_title_contains\"],\"fix_instructions\":\"No .pptx artifact was produced (file missing), so the slide deck cannot be evaluated. Create and attach/export a .pptx file for 'What is Machine Learning?' with at least 10 slides. Ensure the deck title contains the exact phrase 'What is Machine Learning'. Include speaker notes on each slide and add simple visual/diagram suggestions (e.g., workflow arrows, train/test split diagram). Re-run validation to confirm the file exists and slide count >= 10.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "python_demo_ml",
+            "agent": "coder",
+            "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+            "criteria": [
+              {
+                "criterion_id": "python_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.python_demo_ml.path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "python_has_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.python_demo_ml.content",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "python_uses_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.python_demo_ml.content",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "python_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "script_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "python_demo_ml",
+                  "agent": "coder",
+                  "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "python_has_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.python_demo_ml.content",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.python_demo_ml.path"
+                    },
+                    {
+                      "criterion_id": "python_uses_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.python_demo_ml.content",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.python_demo_ml.path"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "python_file_exists",
+                    "script_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "python_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "script_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"python_file_exists\",\"script_file_exists\",\"python_has_main_guard\",\"python_uses_train_test_split\"],\"fix_instructions\":\"Deterministic failures indicate no runnable .py artifact was provided (ml_demo.py missing). Create a single Python file named ml_demo.py containing an end-to-end scikit-learn workflow: load a built-in dataset (e.g., iris), use train_test_split, train a model (LogisticRegression or DecisionTreeClassifier), evaluate with accuracy_score and confusion_matrix, and demonstrate predicting on a new sample. Include a requirements note at the top as a comment, clear comments throughout, a short printed explanation, and wrap execution in a main guard: if __name__ == \\\"__main__\\\": main(). Ensure it runs via `python ml_demo.py`.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz_ml_basics",
+            "agent": "quizzer",
+            "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.quiz.total_questions",
+                "operator": "equals",
+                "expected": 12,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz"
+              },
+              {
+                "criterion_id": "quiz_mcq_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.quiz.mcq_count",
+                "operator": "equals",
+                "expected": 8,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz"
+              },
+              {
+                "criterion_id": "quiz_has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output.quiz.answer_key",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz.answer_key"
+              }
+            ],
+            "deterministic": {
+              "quiz_question_count": {
+                "value": null,
+                "expected": 12,
+                "operator": "equals"
+              },
+              "quiz_mcq_count": {
+                "value": null,
+                "expected": 8,
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz_ml_basics",
+                  "agent": "quizzer",
+                  "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output.quiz.answer_key",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.quiz.answer_key"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "quiz_question_count",
+                    "quiz_mcq_count"
+                  ],
+                  "deterministic_evidence": {
+                    "quiz_question_count": {
+                      "value": null,
+                      "expected": 12,
+                      "operator": "equals"
+                    },
+                    "quiz_mcq_count": {
+                      "value": null,
+                      "expected": 8,
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\",\"quiz_mcq_count\",\"quiz_has_answer_key\"],\"fix_instructions\":\"Output is incomplete and does not meet required quiz structure.\\n\\nFix by:\\n1) Provide exactly 12 questions total.\\n2) Include exactly 8 multiple-choice questions, each with 4 options (A\u2013D) and clearly mark the correct option.\\n3) Include 2 true/false questions.\\n4) Include 2 short-answer questions.\\n5) Cover all required topics: definition of ML, supervised vs unsupervised learning, features vs labels, training vs inference, overfitting, evaluation metrics, and real-world applications.\\n6) Add a complete answer key for all 12 questions with 1\u20132 sentence explanations per question.\\n7) Ensure the output schema includes an explicit answer_key field/object that exists and is populated.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "slides_ml_intro",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_file_exists",
+              "slides_min_count",
+              "slides_title_contains"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "slides_min_count": {
+                  "value": null,
+                  "expected": 10,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx artifact was produced (file missing), so the slide deck cannot be evaluated. Create and attach/export a .pptx file for 'What is Machine Learning?' with at least 10 slides. Ensure the deck title contains the exact phrase 'What is Machine Learning'. Include speaker notes on each slide and add simple visual/diagram suggestions (e.g., workflow arrows, train/test split diagram). Re-run validation to confirm the file exists and slide count >= 10."
+          },
+          {
+            "task_id": "python_demo_ml",
+            "verdict": "fail",
+            "failed_criteria": [
+              "python_file_exists",
+              "python_has_main_guard",
+              "python_uses_train_test_split",
+              "script_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "python_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "script_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failures indicate no runnable .py artifact was provided (ml_demo.py missing). Create a single Python file named ml_demo.py containing an end-to-end scikit-learn workflow: load a built-in dataset (e.g., iris), use train_test_split, train a model (LogisticRegression or DecisionTreeClassifier), evaluate with accuracy_score and confusion_matrix, and demonstrate predicting on a new sample. Include a requirements note at the top as a comment, clear comments throughout, a short printed explanation, and wrap execution in a main guard: if __name__ == \"__main__\": main(). Ensure it runs via `python ml_demo.py`."
+          },
+          {
+            "task_id": "quiz_ml_basics",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_answer_key",
+              "quiz_mcq_count",
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {
+                "quiz_question_count": {
+                  "value": null,
+                  "expected": 12,
+                  "operator": "equals"
+                },
+                "quiz_mcq_count": {
+                  "value": null,
+                  "expected": 8,
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Output is incomplete and does not meet required quiz structure.\n\nFix by:\n1) Provide exactly 12 questions total.\n2) Include exactly 8 multiple-choice questions, each with 4 options (A\u2013D) and clearly mark the correct option.\n3) Include 2 true/false questions.\n4) Include 2 short-answer questions.\n5) Cover all required topics: definition of ML, supervised vs unsupervised learning, features vs labels, training vs inference, overfitting, evaluation metrics, and real-world applications.\n6) Add a complete answer key for all 12 questions with 1\u20132 sentence explanations per question.\n7) Ensure the output schema includes an explicit answer_key field/object that exists and is populated."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-friendly lesson introducing Machine Learning, including a slide deck, a runnable Python example file, and quiz questions for assessment.",
+          "subtasks": [
+            {
+              "task_id": "slides_ml_intro",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.slides_ml_intro.path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.path"
+                },
+                {
+                  "criterion_id": "slides_title_contains",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.slides_ml_intro.title",
+                  "operator": "contains",
+                  "expected": "What is Machine Learning",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.title"
+                },
+                {
+                  "criterion_id": "slides_min_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts.slides_ml_intro.slide_count",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.slide_count"
+                }
+              ]
+            },
+            {
+              "task_id": "python_demo_ml",
+              "agent": "coder",
+              "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+              "inputs": {
+                "output_filename": "python_demo_ml_20260107_1431.py",
+                "output_subdir": "run_037fe87c458e49759761d801eb411e61"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "python_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.python_demo_ml.path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "python_has_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.python_demo_ml.content",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "python_uses_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.python_demo_ml.content",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz_ml_basics",
+              "agent": "quizzer",
+              "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+              "inputs": {},
+              "dependencies": [
+                "slides_ml_intro"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.quiz.total_questions",
+                  "operator": "equals",
+                  "expected": 12,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz"
+                },
+                {
+                  "criterion_id": "quiz_mcq_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.quiz.mcq_count",
+                  "operator": "equals",
+                  "expected": 8,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz"
+                },
+                {
+                  "criterion_id": "quiz_has_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output.quiz.answer_key",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz.answer_key"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "python_demo_ml": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Create a single runnable file named `ml_demo.py` and ensure it exists in the artifacts/output. The script must include a main guard (`if __name__ == \"__main__\":`) and demonstrate `train_test_split` from scikit-learn. Implement an end-to-end workflow: load a built-in dataset (e.g., iris), split into train/test, train a model (e.g., LogisticRegression or DecisionTreeClassifier), evaluate with accuracy and confusion matrix, and make a prediction for a new sample. Add a top comment listing requirements (e.g., scikit-learn, numpy) and print a brief explanation when run with `python ml_demo.py`.",
+            "attempts": 3
+          },
+          "slides_ml_intro": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No .pptx artifact was produced (file missing), so minimum slide count and title checks cannot be verified. Generate and attach the PowerPoint (.pptx) file for the deck titled exactly/including \u201cWhat is Machine Learning?\u201d. Ensure it contains at least 10 slides and covers all requested sections (definition, why ML, types, key concepts, workflow, algorithms, evaluation, pitfalls, examples, recap) with speaker notes and visual/diagram suggestions.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "quiz_ml_basics": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output is incomplete: provide exactly 12 questions total: 8 multiple-choice (each with 4 options and clearly marked correct option), 2 true/false, and 2 short-answer. Ensure coverage of required topics (definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, real-world applications). Include a structured answer key that exists at result.output.quiz.answer_key (or equivalent field) and add 1\u20132 sentence explanations for every question.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "slides_ml_intro",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.slides_ml_intro.path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.path"
+              },
+              {
+                "criterion_id": "slides_title_contains",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.slides_ml_intro.title",
+                "operator": "contains",
+                "expected": "What is Machine Learning",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.title"
+              },
+              {
+                "criterion_id": "slides_min_count",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts.slides_ml_intro.slide_count",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.slide_count"
+              }
+            ],
+            "deterministic": {
+              "slides_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "slides_min_count": {
+                "value": null,
+                "expected": 10,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "slides_ml_intro",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_title_contains",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.slides_ml_intro.title",
+                      "operator": "contains",
+                      "expected": "What is Machine Learning",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.slides_ml_intro.title"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_file_exists",
+                    "slides_min_count"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "slides_min_count": {
+                      "value": null,
+                      "expected": 10,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_file_exists\",\"slides_min_count\",\"slides_title_contains\"],\"fix_instructions\":\"No .pptx artifact was produced (file missing), so minimum slide count and title checks cannot be verified. Generate and attach the PowerPoint (.pptx) file for the deck titled exactly/including \u201cWhat is Machine Learning?\u201d. Ensure it contains at least 10 slides and covers all requested sections (definition, why ML, types, key concepts, workflow, algorithms, evaluation, pitfalls, examples, recap) with speaker notes and visual/diagram suggestions.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "python_demo_ml",
+            "agent": "coder",
+            "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+            "criteria": [
+              {
+                "criterion_id": "python_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.python_demo_ml.path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "python_has_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.python_demo_ml.content",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "python_uses_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.python_demo_ml.content",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "python_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "script_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "python_demo_ml",
+                  "agent": "coder",
+                  "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "python_has_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.python_demo_ml.content",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.python_demo_ml.path"
+                    },
+                    {
+                      "criterion_id": "python_uses_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.python_demo_ml.content",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.python_demo_ml.path"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "python_file_exists",
+                    "script_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "python_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "script_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"python_file_exists\",\"script_file_exists\",\"python_has_main_guard\",\"python_uses_train_test_split\"],\"fix_instructions\":\"Create a single runnable file named `ml_demo.py` and ensure it exists in the artifacts/output. The script must include a main guard (`if __name__ == \\\"__main__\\\":`) and demonstrate `train_test_split` from scikit-learn. Implement an end-to-end workflow: load a built-in dataset (e.g., iris), split into train/test, train a model (e.g., LogisticRegression or DecisionTreeClassifier), evaluate with accuracy and confusion matrix, and make a prediction for a new sample. Add a top comment listing requirements (e.g., scikit-learn, numpy) and print a brief explanation when run with `python ml_demo.py`.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz_ml_basics",
+            "agent": "quizzer",
+            "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.quiz.total_questions",
+                "operator": "equals",
+                "expected": 12,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz"
+              },
+              {
+                "criterion_id": "quiz_mcq_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.quiz.mcq_count",
+                "operator": "equals",
+                "expected": 8,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz"
+              },
+              {
+                "criterion_id": "quiz_has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output.quiz.answer_key",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz.answer_key"
+              }
+            ],
+            "deterministic": {
+              "quiz_question_count": {
+                "value": null,
+                "expected": 12,
+                "operator": "equals"
+              },
+              "quiz_mcq_count": {
+                "value": null,
+                "expected": 8,
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz_ml_basics",
+                  "agent": "quizzer",
+                  "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output.quiz.answer_key",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.quiz.answer_key"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "quiz_question_count",
+                    "quiz_mcq_count"
+                  ],
+                  "deterministic_evidence": {
+                    "quiz_question_count": {
+                      "value": null,
+                      "expected": 12,
+                      "operator": "equals"
+                    },
+                    "quiz_mcq_count": {
+                      "value": null,
+                      "expected": 8,
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\",\"quiz_mcq_count\",\"quiz_has_answer_key\"],\"fix_instructions\":\"Output is incomplete: provide exactly 12 questions total: 8 multiple-choice (each with 4 options and clearly marked correct option), 2 true/false, and 2 short-answer. Ensure coverage of required topics (definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, real-world applications). Include a structured answer key that exists at result.output.quiz.answer_key (or equivalent field) and add 1\u20132 sentence explanations for every question.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "slides_ml_intro",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_file_exists",
+              "slides_min_count",
+              "slides_title_contains"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "slides_min_count": {
+                  "value": null,
+                  "expected": 10,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx artifact was produced (file missing), so minimum slide count and title checks cannot be verified. Generate and attach the PowerPoint (.pptx) file for the deck titled exactly/including \u201cWhat is Machine Learning?\u201d. Ensure it contains at least 10 slides and covers all requested sections (definition, why ML, types, key concepts, workflow, algorithms, evaluation, pitfalls, examples, recap) with speaker notes and visual/diagram suggestions."
+          },
+          {
+            "task_id": "python_demo_ml",
+            "verdict": "fail",
+            "failed_criteria": [
+              "python_file_exists",
+              "python_has_main_guard",
+              "python_uses_train_test_split",
+              "script_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "python_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "script_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Create a single runnable file named `ml_demo.py` and ensure it exists in the artifacts/output. The script must include a main guard (`if __name__ == \"__main__\":`) and demonstrate `train_test_split` from scikit-learn. Implement an end-to-end workflow: load a built-in dataset (e.g., iris), split into train/test, train a model (e.g., LogisticRegression or DecisionTreeClassifier), evaluate with accuracy and confusion matrix, and make a prediction for a new sample. Add a top comment listing requirements (e.g., scikit-learn, numpy) and print a brief explanation when run with `python ml_demo.py`."
+          },
+          {
+            "task_id": "quiz_ml_basics",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_answer_key",
+              "quiz_mcq_count",
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {
+                "quiz_question_count": {
+                  "value": null,
+                  "expected": 12,
+                  "operator": "equals"
+                },
+                "quiz_mcq_count": {
+                  "value": null,
+                  "expected": 8,
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Output is incomplete: provide exactly 12 questions total: 8 multiple-choice (each with 4 options and clearly marked correct option), 2 true/false, and 2 short-answer. Ensure coverage of required topics (definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, real-world applications). Include a structured answer key that exists at result.output.quiz.answer_key (or equivalent field) and add 1\u20132 sentence explanations for every question."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-friendly lesson introducing Machine Learning, including a slide deck, a runnable Python example file, and quiz questions for assessment.",
+          "subtasks": [
+            {
+              "task_id": "slides_ml_intro",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.slides_ml_intro.path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.path"
+                },
+                {
+                  "criterion_id": "slides_title_contains",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.slides_ml_intro.title",
+                  "operator": "contains",
+                  "expected": "What is Machine Learning",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.title"
+                },
+                {
+                  "criterion_id": "slides_min_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts.slides_ml_intro.slide_count",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.slides_ml_intro.slide_count"
+                }
+              ]
+            },
+            {
+              "task_id": "python_demo_ml",
+              "agent": "coder",
+              "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+              "inputs": {
+                "output_filename": "python_demo_ml_20260107_1431.py",
+                "output_subdir": "run_037fe87c458e49759761d801eb411e61"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "python_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts.python_demo_ml.path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "python_has_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.python_demo_ml.content",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "python_uses_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts.python_demo_ml.content",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts.python_demo_ml.path"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz_ml_basics",
+              "agent": "quizzer",
+              "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+              "inputs": {},
+              "dependencies": [
+                "slides_ml_intro"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.quiz.total_questions",
+                  "operator": "equals",
+                  "expected": 12,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz"
+                },
+                {
+                  "criterion_id": "quiz_mcq_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.quiz.mcq_count",
+                  "operator": "equals",
+                  "expected": 8,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz"
+                },
+                {
+                  "criterion_id": "quiz_has_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output.quiz.answer_key",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.quiz.answer_key"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "python_demo_ml": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Create a single runnable file named `ml_demo.py` and ensure it exists in the artifacts/output. The script must include a main guard (`if __name__ == \"__main__\":`) and demonstrate `train_test_split` from scikit-learn. Implement an end-to-end workflow: load a built-in dataset (e.g., iris), split into train/test, train a model (e.g., LogisticRegression or DecisionTreeClassifier), evaluate with accuracy and confusion matrix, and make a prediction for a new sample. Add a top comment listing requirements (e.g., scikit-learn, numpy) and print a brief explanation when run with `python ml_demo.py`.",
+            "attempts": 3
+          },
+          "slides_ml_intro": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No .pptx artifact was produced (file missing), so minimum slide count and title checks cannot be verified. Generate and attach the PowerPoint (.pptx) file for the deck titled exactly/including \u201cWhat is Machine Learning?\u201d. Ensure it contains at least 10 slides and covers all requested sections (definition, why ML, types, key concepts, workflow, algorithms, evaluation, pitfalls, examples, recap) with speaker notes and visual/diagram suggestions.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "quiz_ml_basics": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output is incomplete: provide exactly 12 questions total: 8 multiple-choice (each with 4 options and clearly marked correct option), 2 true/false, and 2 short-answer. Ensure coverage of required topics (definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, real-world applications). Include a structured answer key that exists at result.output.quiz.answer_key (or equivalent field) and add 1\u20132 sentence explanations for every question.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "slides_ml_intro",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.slides_ml_intro.path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.path"
+              },
+              {
+                "criterion_id": "slides_title_contains",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.slides_ml_intro.title",
+                "operator": "contains",
+                "expected": "What is Machine Learning",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.title"
+              },
+              {
+                "criterion_id": "slides_min_count",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts.slides_ml_intro.slide_count",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.slides_ml_intro.slide_count"
+              }
+            ],
+            "deterministic": {
+              "slides_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "slides_min_count": {
+                "value": null,
+                "expected": 10,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "slides_ml_intro",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck titled 'What is Machine Learning?' covering: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), basic workflow, common algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, and a short recap. Include speaker notes and simple visuals/diagrams suggestions. Output as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_title_contains",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.slides_ml_intro.title",
+                      "operator": "contains",
+                      "expected": "What is Machine Learning",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.slides_ml_intro.title"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_file_exists",
+                    "slides_min_count"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "slides_min_count": {
+                      "value": null,
+                      "expected": 10,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_file_exists\",\"slides_min_count\",\"slides_title_contains\"],\"fix_instructions\":\"No .pptx artifact was provided (file missing) and slide count could not be verified (expected >=10). Also, the title evidence is missing, so we cannot confirm it contains 'What is Machine Learning?'.\\n\\nTo fix:\\n1) Generate and attach the .pptx file as the output artifact.\\n2) Ensure the deck has at least 10 slides.\\n3) Set the deck title (and first slide title) to include the exact phrase 'What is Machine Learning?'.\\n4) Include speaker notes for each slide and add simple visual/diagram suggestions (e.g., workflow diagram, supervised vs unsupervised table, train/test split graphic).\\n5) Cover all requested topics: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), workflow, algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, recap.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "python_demo_ml",
+            "agent": "coder",
+            "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+            "criteria": [
+              {
+                "criterion_id": "python_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts.python_demo_ml.path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "python_has_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.python_demo_ml.content",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "python_uses_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.artifacts.python_demo_ml.content",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts.python_demo_ml.path"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "python_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "script_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "python_demo_ml",
+                  "agent": "coder",
+                  "instruction": "Write a runnable Python script (single .py file) demonstrating a simple end-to-end ML workflow for beginners using scikit-learn: load a small built-in dataset (e.g., iris), split train/test, train a model (e.g., logistic regression or decision tree), evaluate with accuracy and confusion matrix, and show how to make a prediction on a new sample. Include clear comments and a short printed explanation. Add a requirements note at top as comment. Ensure it runs as `python ml_demo.py`.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "python_has_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.python_demo_ml.content",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.python_demo_ml.path"
+                    },
+                    {
+                      "criterion_id": "python_uses_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts.python_demo_ml.content",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts.python_demo_ml.path"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "python_file_exists",
+                    "script_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "python_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "script_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"python_file_exists\",\"script_file_exists\",\"python_has_main_guard\",\"python_uses_train_test_split\"],\"fix_instructions\":\"No Python script artifact was provided (missing file). Create a single runnable file named ml_demo.py and ensure it exists in the output artifacts. The script must include an `if __name__ == \\\"__main__\\\":` main guard and use `train_test_split` from scikit-learn. It should load a built-in dataset (e.g., iris), split into train/test, train a classifier (e.g., LogisticRegression), print accuracy and confusion matrix, and demonstrate predicting a new sample. Add a top comment listing requirements (e.g., scikit-learn, numpy) and include clear comments plus a short printed explanation. Ensure it runs via `python ml_demo.py`.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz_ml_basics",
+            "agent": "quizzer",
+            "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.quiz.total_questions",
+                "operator": "equals",
+                "expected": 12,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz"
+              },
+              {
+                "criterion_id": "quiz_mcq_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.quiz.mcq_count",
+                "operator": "equals",
+                "expected": 8,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz"
+              },
+              {
+                "criterion_id": "quiz_has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output.quiz.answer_key",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.quiz.answer_key"
+              }
+            ],
+            "deterministic": {
+              "quiz_question_count": {
+                "value": null,
+                "expected": 12,
+                "operator": "equals"
+              },
+              "quiz_mcq_count": {
+                "value": null,
+                "expected": 8,
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz_ml_basics",
+                  "agent": "quizzer",
+                  "instruction": "Create a beginner quiz on Machine Learning aligned to the slides. Provide 12 questions: 8 multiple-choice (4 options each, mark correct answer), 2 true/false, and 2 short-answer. Cover: definition of ML, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation metrics, and real-world applications. Include an answer key and brief explanations (1-2 sentences) for each.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output.quiz.answer_key",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.quiz.answer_key"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "quiz_question_count",
+                    "quiz_mcq_count"
+                  ],
+                  "deterministic_evidence": {
+                    "quiz_question_count": {
+                      "value": null,
+                      "expected": 12,
+                      "operator": "equals"
+                    },
+                    "quiz_mcq_count": {
+                      "value": null,
+                      "expected": 8,
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\",\"quiz_mcq_count\",\"quiz_has_answer_key\"],\"fix_instructions\":\"Output is incomplete and does not meet the required quiz structure.\\n\\nFix by:\\n1) Provide exactly 12 questions total.\\n2) Include exactly 8 multiple-choice questions with 4 options each and clearly mark the correct option.\\n3) Include 2 true/false questions.\\n4) Include 2 short-answer questions.\\n5) Cover all required topics: definition of ML, supervised vs. unsupervised, features/labels, training vs. inference, overfitting, evaluation metrics, and real-world applications.\\n6) Add a complete answer key that includes the correct answer for each question plus a 1\u20132 sentence explanation.\\n7) Ensure the output schema includes an explicit answer_key field (e.g., result.output.quiz.answer_key) as required by the criteria.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "slides_ml_intro",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_file_exists",
+              "slides_min_count",
+              "slides_title_contains"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "slides_min_count": {
+                  "value": null,
+                  "expected": 10,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx artifact was provided (file missing) and slide count could not be verified (expected >=10). Also, the title evidence is missing, so we cannot confirm it contains 'What is Machine Learning?'.\n\nTo fix:\n1) Generate and attach the .pptx file as the output artifact.\n2) Ensure the deck has at least 10 slides.\n3) Set the deck title (and first slide title) to include the exact phrase 'What is Machine Learning?'.\n4) Include speaker notes for each slide and add simple visual/diagram suggestions (e.g., workflow diagram, supervised vs unsupervised table, train/test split graphic).\n5) Cover all requested topics: definition, why ML, types (supervised/unsupervised/reinforcement), key concepts (features/labels/model/training/inference), workflow, algorithms (linear regression, decision trees, k-means), evaluation (train/test split, accuracy/MSE), pitfalls (overfitting, bias), real-world examples, recap."
+          },
+          {
+            "task_id": "python_demo_ml",
+            "verdict": "fail",
+            "failed_criteria": [
+              "python_file_exists",
+              "python_has_main_guard",
+              "python_uses_train_test_split",
+              "script_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "python_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "script_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No Python script artifact was provided (missing file). Create a single runnable file named ml_demo.py and ensure it exists in the output artifacts. The script must include an `if __name__ == \"__main__\":` main guard and use `train_test_split` from scikit-learn. It should load a built-in dataset (e.g., iris), split into train/test, train a classifier (e.g., LogisticRegression), print accuracy and confusion matrix, and demonstrate predicting a new sample. Add a top comment listing requirements (e.g., scikit-learn, numpy) and include clear comments plus a short printed explanation. Ensure it runs via `python ml_demo.py`."
+          },
+          {
+            "task_id": "quiz_ml_basics",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_answer_key",
+              "quiz_mcq_count",
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {
+                "quiz_question_count": {
+                  "value": null,
+                  "expected": 12,
+                  "operator": "equals"
+                },
+                "quiz_mcq_count": {
+                  "value": null,
+                  "expected": 8,
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Output is incomplete and does not meet the required quiz structure.\n\nFix by:\n1) Provide exactly 12 questions total.\n2) Include exactly 8 multiple-choice questions with 4 options each and clearly mark the correct option.\n3) Include 2 true/false questions.\n4) Include 2 short-answer questions.\n5) Cover all required topics: definition of ML, supervised vs. unsupervised, features/labels, training vs. inference, overfitting, evaluation metrics, and real-world applications.\n6) Add a complete answer key that includes the correct answer for each question plus a 1\u20132 sentence explanation.\n7) Ensure the output schema includes an explicit answer_key field (e.g., result.output.quiz.answer_key) as required by the criteria."
+          }
+        ]
+      }
+    }
+  ]
+}

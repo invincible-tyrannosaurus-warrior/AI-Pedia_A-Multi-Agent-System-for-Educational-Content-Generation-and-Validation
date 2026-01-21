@@ -1,0 +1,785 @@
+{
+  "run_id": "12e25e5763d340618826aeae06357b80",
+  "started_at": "2026-01-07T14:46:02.465500+00:00",
+  "user_text": "create a lesson for beginners on MachineLearning ",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "request": {
+        "model": "gpt-5.2",
+        "messages": [
+          {
+            "role": "system",
+            "content": "\nYou are an expert autonomous Task Orchestrator.\nYour goal is to analyze user requests and educational materials, then create a structured execution plan.\n\nAvailable Agents:\n- 'coder': Generates runnable Python code. Best for demonstrations, data analysis, and coding tutorials.\n- 'video': Creates video content. Best for visual explanations.\n- 'presentation': Generates PowerPoint slides (.pptx). Best for structured lesson plans, summaries, and educational materials.\n- 'quizzer': Creates quizzes. Best for assessments and review.\n\nInstructions:\n1. Analyze the user's input and provided files.\n2. Break down the goal into logical subtasks.\n3. Assign each subtask to the most appropriate agent.\n4. Provide specific, actionable instructions for each agent.\n5. For every subtask, include a non-empty 'acceptance_criteria' list.\n   - Each criterion must include: criterion_id, criterion_type, target, operator, expected, severity.\n   - Use criterion_type values: mcp_tool | output_shape | file_exists | semantic.\n   - Use operator values: equals | contains | exists | gte | lte.\n   - Use target paths that start with 'result.' or 'tools.'.\n   - For mcp_tool criteria, include tool: { name, args }.\n   - Use placeholders like $artifacts[0] or $output.validation.path inside tool args.\n6. Use the provided tool 'create_task_plan' to submit your plan.\n\nResponse Format Example:\n{\n  \"user_intent\": \"Create a lesson on Python lists with a video intro and a quiz.\",\n  \"subtasks\": [\n    {\n      \"task_id\": \"step1_code\",\n      \"agent\": \"coder\",\n      \"instruction\": \"Generate a Python script demonstrating list operations.\",\n      \"inputs\": {},\n      \"dependencies\": [],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"code_executes\",\n          \"criterion_type\": \"mcp_tool\",\n          \"tool\": {\"name\": \"python_check\", \"args\": {\"filepath\": \"$artifacts[0]\"}},\n          \"target\": \"tools.python_check.success\",\n          \"operator\": \"equals\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"tools.python_check.run.stderr\"\n        }\n      ]\n    },\n    {\n      \"task_id\": \"step2_video\",\n      \"agent\": \"video\",\n      \"instruction\": \"Create a video explaining the code.\",\n      \"inputs\": {},\n      \"dependencies\": [\"step1_code\"],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"video_semantic_ok\",\n          \"criterion_type\": \"semantic\",\n          \"target\": \"result.output\",\n          \"operator\": \"exists\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"result.output\"\n        }\n      ]\n    }\n  ]\n}\n"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "create a lesson for beginners on MachineLearning"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_task_plan",
+              "description": "Create a structured execution plan for multiple agents.",
+              "parameters": {
+                "$defs": {
+                  "AcceptanceCriterion": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this criterion",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Criterion type: mcp_tool | output_shape | file_exists | semantic",
+                        "enum": [
+                          "mcp_tool",
+                          "output_shape",
+                          "file_exists",
+                          "semantic"
+                        ],
+                        "title": "Type",
+                        "type": "string"
+                      },
+                      "target": {
+                        "description": "Evaluation target path (e.g., result.output.text or tools.python_check.success)",
+                        "title": "Target",
+                        "type": "string"
+                      },
+                      "operator": {
+                        "description": "Operator: equals | contains | exists | gte | lte",
+                        "enum": [
+                          "equals",
+                          "contains",
+                          "exists",
+                          "gte",
+                          "lte"
+                        ],
+                        "title": "Operator",
+                        "type": "string"
+                      },
+                      "expected": {
+                        "default": null,
+                        "description": "Expected value to compare against",
+                        "title": "Expected"
+                      },
+                      "severity": {
+                        "default": "required",
+                        "description": "Severity: required | optional",
+                        "enum": [
+                          "required",
+                          "optional"
+                        ],
+                        "title": "Severity",
+                        "type": "string"
+                      },
+                      "tool": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": true,
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Tool call definition for mcp_tool criteria",
+                        "title": "Tool"
+                      },
+                      "evidence": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Evidence path to include in judger output",
+                        "title": "Evidence"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "target",
+                      "operator"
+                    ],
+                    "title": "AcceptanceCriterion",
+                    "type": "object"
+                  },
+                  "SubTask": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this subtask",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "agent": {
+                        "description": "The agent responsible (coder, video, text, quizzer)",
+                        "title": "Agent",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Detailed instruction for the agent",
+                        "title": "Title",
+                        "type": "string"
+                      },
+                      "inputs": {
+                        "additionalProperties": true,
+                        "description": "Specific inputs for the agent",
+                        "title": "Inputs",
+                        "type": "object"
+                      },
+                      "dependencies": {
+                        "description": "IDs of tasks that must complete first",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Dependencies",
+                        "type": "array"
+                      },
+                      "acceptance_criteria": {
+                        "description": "Structured criteria the judger will use",
+                        "items": {
+                          "$ref": "#/$defs/AcceptanceCriterion"
+                        },
+                        "title": "Acceptance Criteria",
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "agent",
+                      "title",
+                      "acceptance_criteria"
+                    ],
+                    "title": "SubTask",
+                    "type": "object"
+                  }
+                },
+                "properties": {
+                  "user_intent": {
+                    "description": "Summary of what the user wants to achieve",
+                    "title": "User Intent",
+                    "type": "string"
+                  },
+                  "subtasks": {
+                    "description": "List of executable steps",
+                    "items": {
+                      "$ref": "#/$defs/SubTask"
+                    },
+                    "title": "Subtasks",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "user_intent",
+                  "subtasks"
+                ],
+                "title": "TaskPlan",
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "create_task_plan"
+          }
+        }
+      },
+      "response": {
+        "tool_calls": [
+          {
+            "name": "create_task_plan",
+            "arguments": "{\"user_intent\":\"Create a beginner-friendly lesson on Machine Learning with clear structure, examples, practice, and an assessment.\",\"subtasks\":[{\"id\":\"lesson_outline\",\"agent\":\"presentation\",\"title\":\"Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.\",\"dependencies\":[],\"acceptance_criteria\":[{\"id\":\"outline_exists\",\"type\":\"output_shape\",\"target\":\"result.output\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"outline_includes_objectives\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Learning objectives\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"outline_includes_vocab\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Vocabulary\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"outline_includes_timing\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"minutes\",\"severity\":\"optional\",\"evidence\":\"result.output\"}]},{\"id\":\"hands_on_demo_code\",\"agent\":\"coder\",\"title\":\"Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.\",\"dependencies\":[\"lesson_outline\"],\"acceptance_criteria\":[{\"id\":\"code_present\",\"type\":\"output_shape\",\"target\":\"result.output.code\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"uses_train_test_split\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"train_test_split\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_evaluation\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"accuracy\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"mentions_confusion_matrix\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"confusion_matrix\",\"severity\":\"optional\",\"evidence\":\"result.output\"}]},{\"id\":\"lesson_script\",\"agent\":\"presentation\",\"title\":\"Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.\",\"dependencies\":[\"lesson_outline\",\"hands_on_demo_code\"],\"acceptance_criteria\":[{\"id\":\"script_exists\",\"type\":\"output_shape\",\"target\":\"result.output\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"covers_supervised_unsupervised\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"supervised\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"covers_overfitting\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"overfitting\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_activities\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Activity\",\"severity\":\"required\",\"evidence\":\"result.output\"}]},{\"id\":\"quiz\",\"agent\":\"quizzer\",\"title\":\"Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.\",\"dependencies\":[\"lesson_script\"],\"acceptance_criteria\":[{\"id\":\"quiz_has_10_questions\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"10\",\"severity\":\"optional\",\"evidence\":\"result.output\"},{\"id\":\"includes_answer_key\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Answer key\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_mcq\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"A)\", \"severity\":\"optional\",\"evidence\":\"result.output\"}]},{\"id\":\"final_packaging\",\"agent\":\"presentation\",\"title\":\"Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.\",\"dependencies\":[\"lesson_outline\",\"hands_on_demo_code\",\"lesson_script\",\"quiz\"],\"acceptance_criteria\":[{\"id\":\"markdown_structure\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"## Learning objectives\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_code_block\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"```python\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_quiz_section\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"## Quiz\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_resources\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"## Further resources\",\"severity\":\"optional\",\"evidence\":\"result.output\"}]}]}"
+          }
+        ]
+      },
+      "parsed_plan": {
+        "user_intent": "Create a beginner-friendly lesson on Machine Learning with clear structure, examples, practice, and an assessment.",
+        "subtasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_vocab",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Vocabulary",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_timing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "minutes",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "hands_on_demo_code",
+            "agent": "coder",
+            "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_outline"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "code_present",
+                "criterion_type": "output_shape",
+                "target": "result.output.code",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "uses_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_confusion_matrix",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "confusion_matrix",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "lesson_script",
+            "agent": "presentation",
+            "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_outline",
+              "hands_on_demo_code"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "script_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_supervised_unsupervised",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_overfitting",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "overfitting",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_activities",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Activity",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_script"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "quiz_has_10_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "10",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_mcq",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "A)",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "final_packaging",
+            "agent": "presentation",
+            "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_outline",
+              "hands_on_demo_code",
+              "lesson_script",
+              "quiz"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "markdown_structure",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_code_block",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_quiz_section",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_resources",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Further resources",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "Create a beginner-friendly lesson on Machine Learning with clear structure, examples, practice, and an assessment.",
+    "subtasks": [
+      {
+        "task_id": "lesson_outline",
+        "agent": "presentation",
+        "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+        "inputs": {},
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "outline_exists",
+            "criterion_type": "output_shape",
+            "target": "result.output",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "outline_includes_objectives",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Learning objectives",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "outline_includes_vocab",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Vocabulary",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "outline_includes_timing",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "minutes",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "hands_on_demo_code",
+        "agent": "coder",
+        "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+        "inputs": {
+          "output_filename": "hands_on_demo_code_20260107_1446.py",
+          "output_subdir": "run_12e25e5763d340618826aeae06357b80"
+        },
+        "dependencies": [
+          "lesson_outline"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "code_present",
+            "criterion_type": "output_shape",
+            "target": "result.output.code",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "uses_train_test_split",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "train_test_split",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_evaluation",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "accuracy",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "mentions_confusion_matrix",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "confusion_matrix",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "lesson_script",
+        "agent": "presentation",
+        "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+        "inputs": {},
+        "dependencies": [
+          "lesson_outline",
+          "hands_on_demo_code"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "script_exists",
+            "criterion_type": "output_shape",
+            "target": "result.output",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "covers_supervised_unsupervised",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "supervised",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "covers_overfitting",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "overfitting",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_activities",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Activity",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "quiz",
+        "agent": "quizzer",
+        "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+        "inputs": {},
+        "dependencies": [
+          "lesson_script"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "quiz_has_10_questions",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "10",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_answer_key",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Answer key",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_mcq",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "A)",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "final_packaging",
+        "agent": "presentation",
+        "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+        "inputs": {},
+        "dependencies": [
+          "lesson_outline",
+          "hands_on_demo_code",
+          "lesson_script",
+          "quiz"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "markdown_structure",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "## Learning objectives",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_code_block",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "```python",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_quiz_section",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "## Quiz",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_resources",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "## Further resources",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "fail",
+  "agent_results": {
+    "lesson_outline": {
+      "agent": "presentation",
+      "success": false,
+      "output": null,
+      "artifacts": [],
+      "instruction": "No lesson outline output was provided (output is null), so required sections cannot be verified. Provide a non-empty lesson outline that explicitly includes headings/sections labeled \"Learning objectives\" and \"Vocabulary\", plus a 45\u201360 minute lesson flow with suggested timing per section (include the word \"minutes\" in timing lines to satisfy the optional criterion).",
+      "attempts": 3,
+      "metadata": {},
+      "error": "Max retries exceeded."
+    },
+    "hands_on_demo_code": {
+      "agent": "coder",
+      "success": false,
+      "error": "Max retries exceeded.",
+      "instruction": "No code was provided in result.output (code_present is null). Provide a single runnable Python script that includes: loading Iris, using train_test_split, training a classifier, computing accuracy, and (optionally) confusion_matrix. Ensure the output text contains the literal strings 'train_test_split', 'accuracy', and ideally 'confusion_matrix'.",
+      "attempts": 3
+    },
+    "lesson_script": {
+      "agent": "presentation",
+      "success": false,
+      "output": null,
+      "artifacts": [],
+      "instruction": "No lesson script output was provided and the required script file/output does not exist. Provide the full lesson text/script in result.output (or create the expected script file), ensuring it explicitly includes: the terms \"supervised\" and \"unsupervised\", an explanation of \"overfitting\", and at least two in-lesson sections labeled \"Activity\" with expected answers. Also integrate the demo from the prior code step by describing what it does and how learners run/interpret it.",
+      "attempts": 3,
+      "metadata": {},
+      "error": "Max retries exceeded."
+    },
+    "quiz": {
+      "agent": "quizzer",
+      "success": true,
+      "output": {
+        "questions": [
+          {
+            "q": "Example Question 1?",
+            "a": "Answer A"
+          },
+          {
+            "q": "Example Question 2?",
+            "a": "Answer B"
+          }
+        ],
+        "total_questions": 2
+      },
+      "artifacts": [],
+      "instruction": "Revise the output to include exactly 10 beginner ML quiz questions with a clear mix of formats: multiple-choice (include options labeled A) B) C) etc.), true/false, and exactly 2 short-answer questions. Add a clearly labeled \"Answer key\" section listing answers for all 10 questions, and provide a brief explanation for each answer. Ensure the final output explicitly indicates there are 10 total questions (e.g., total_questions: 10).",
+      "attempts": 3,
+      "metadata": {
+        "model": "gpt-4-turbo"
+      },
+      "error": "Max retries exceeded."
+    },
+    "final_packaging": {
+      "agent": "presentation",
+      "success": false,
+      "output": null,
+      "artifacts": [],
+      "instruction": "No packaged Markdown lesson was provided because result.output is null. Provide the full beginner lesson deliverable in Markdown and ensure it contains: (1) a '## Learning objectives' section, (2) at least one Python code block fenced with ```python, and (3) a '## Quiz' section with an answer key. Include '## Further resources' if possible.",
+      "attempts": 3,
+      "metadata": {},
+      "error": "Max retries exceeded."
+    }
+  }
+}

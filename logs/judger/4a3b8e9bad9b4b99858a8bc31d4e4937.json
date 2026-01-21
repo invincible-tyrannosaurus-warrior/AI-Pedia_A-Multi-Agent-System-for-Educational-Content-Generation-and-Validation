@@ -1,0 +1,2540 @@
+{
+  "run_id": "4a3b8e9bad9b4b99858a8bc31d4e4937",
+  "started_at": "2026-01-09T00:43:27.676001+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson on Convolutional Neural Networks (CNN) including slides, runnable code, and a video.",
+          "subtasks": [
+            {
+              "task_id": "t1_slides_cnn",
+              "agent": "presentation",
+              "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_count_ok",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_code_snippets_ok",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_semantic_cnn_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t2_code_cnn_demo",
+              "agent": "coder",
+              "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+              "inputs": {
+                "output_filename": "t2_code_cnn_demo_20260109_0043.py",
+                "output_subdir": "run_4a3b8e9bad9b4b99858a8bc31d4e4937"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_run_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_training",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t3_video_cnn_lesson",
+              "agent": "video",
+              "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+              "inputs": {},
+              "dependencies": [
+                "t1_slides_cnn",
+                "t2_code_cnn_demo"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mp4_artifact",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mentions_concepts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "t2_code_cnn_demo": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torch.utils.data import DataLoader\nimport torchvision\nimport torchvision.transforms as transforms\n\n# Set random seed for reproducibility\ntorch.manual_seed(42)\n\n# Check if CUDA is available\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nprint(f\"Using device: {device}\")\n\n# Hyperparameters\nbatch_size = 64\nnum_epochs = 2\nlearning_rate = 0.001\n\n# Data transforms\ntransform = transforms.Compose([\n    transforms.ToTensor(),\n])\n\n# Load MNIST dataset\ntrain_dataset = torchvision.datasets.MNIST(root='./data', train=True, \n                                          download=True, transform=transform)\ntest_dataset = torchvision.datasets.MNIST(root='./data', train=False, \n                                         download=True, transform=transform)\n\n# Create data loaders\ntrain_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, \n                         num_workers=0, pin_memory=(device.type == 'cuda'))\ntest_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, \n                        num_workers=0, pin_memory=(device.type == 'cuda'))\n\n# Simple CNN model\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2),\n            nn.Conv2d(32, 64, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2)\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(64 * 7 * 7, 128),\n            nn.ReLU(),\n            nn.Linear(128, 10)\n        )\n\n    def forward(self, x):\n        x = self.features(x)\n        x = self.classifier(x)\n        return x\n\n# Initialize model, loss function, and optimizer\nmodel = SimpleCNN().to(device)\ncriterion = nn.CrossEntropyLoss()\noptimizer = optim.Adam(model.parameters(), lr=learning_rate)\n\n# Training loop\nprint(\"Starting training...\")\nfor epoch in range(num_epochs):\n    model.train()\n    running_loss = 0.0\n    correct = 0\n    total = 0\n    \n    for i, (images, labels) in enumerate(train_loader):\n        images, labels = images.to(device), labels.to(device)\n        \n        # Zero the parameter gradients\n        optimizer.zero_grad()\n        \n        # Forward pass\n        outputs = model(images)\n        loss = criterion(outputs, labels)\n        \n        # Backward pass\n        loss.backward()\n        optimizer.step()\n        \n        # Statistics\n        running_loss += loss.item()\n        _, predicted = outputs.max(1)\n        total += labels.size(0)\n        correct += predicted.eq(labels).sum().item()\n        \n        if (i + 1) % 100 == 0:\n            print(f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], '\n                  f'Loss: {running_loss/100:.4f}')\n            running_loss = 0.0\n    \n    # Print epoch statistics\n    accuracy = 100. * correct / total\n    print(f'Epoch [{epoch+1}/{num_epochs}] - Training Accuracy: {accuracy:.2f}%')\n\n# Evaluation on test set\nmodel.eval()\ncorrect = 0\ntotal = 0\nwith torch.no_grad():\n    for images, labels in test_loader:\n        images, labels = images.to(device), labels.to(device)\n        outputs = model(images)\n        _, predicted = outputs.max(1)\n        total += labels.size(0)\n        correct += predicted.eq(labels).sum().item()\n\ntest_accuracy = 100. * correct / total\nprint(f'Test Accuracy: {test_accuracy:.2f}%')\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py",
+                "stdout": "",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py"
+            ],
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failures: the script timed out after 30s and produced stderr. Also the provided code is truncated (ends at `optimizer....`) and defines an MLP, not a CNN, so the required training loop/eval aren\u2019t fully present.\n\nFix:\n1) Provide complete, runnable code (no truncation) with a simple CNN (Conv2d->ReLU->MaxPool->Flatten->Linear).\n2) Use torchvision.datasets.MNIST or FashionMNIST instead of fetch_openml to avoid long download/preprocessing and sklearn dependency; add transforms.ToTensor().\n3) Keep runtime CPU-friendly: small batch size (e.g., 64), 1\u20132 epochs by default, limit num_workers=0, pin_memory only if CUDA.\n4) Include explicit training loop, periodic loss print, and evaluation accuracy on test set.\n5) Add clear run instructions (pip install torch torchvision, python script.py).",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "t1_slides_cnn": {
+            "agent": "presentation",
+            "success": true,
+            "output": {
+              "text": "Slide 1: Understanding Convolutional Neural Networks (CNNs)\n\n\n\nSlide 2: What are CNNs?\n\nCNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks.\n\nSlide 3: Why CNNs Work for Images?\n\nCNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.\n\nSlide 4: Key Operations in CNNs\n\n- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.\n\nSlide 5: Feature Maps and ReLU\n\nFeature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance.\n\nSlide 6: Pooling and Flattening Layers\n\n- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.\n\nSlide 7: Fully Connected Layer and Softmax\n\nThe fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.\n\nSlide 8: Training Loop Overview & Common Pitfalls\n\nTraining CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation.",
+              "format": "pptx",
+              "storyboard": {
+                "slides": [
+                  {
+                    "layout_idx": 0,
+                    "title": "Understanding Convolutional Neural Networks (CNNs)"
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "What are CNNs?",
+                    "content": "CNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks."
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Why CNNs Work for Images?",
+                    "content": "CNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.",
+                    "visual_assets": [
+                      {
+                        "type": "quote",
+                        "text": "In image processing, it's as if CNNs view the world through small, overlapping lenses.",
+                        "caption": "Spatial Awareness in CNNs"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Key Operations in CNNs",
+                    "content": "- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.",
+                    "visual_assets": [
+                      {
+                        "type": "image",
+                        "description": "Illustration of convolution, padding, and stride operations.",
+                        "caption": "Convolutional Process"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "Feature Maps and ReLU",
+                    "content": "Feature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance."
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Pooling and Flattening Layers",
+                    "content": "- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.",
+                    "visual_assets": [
+                      {
+                        "type": "quote",
+                        "text": "Pooling layers act like a summary function, capturing the essence of features.",
+                        "caption": "Dimensionality Reduction"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Fully Connected Layer and Softmax",
+                    "content": "The fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.",
+                    "visual_assets": [
+                      {
+                        "type": "code_snippet",
+                        "code": "import torch\nimport torch.nn as nn\n\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.conv1 = nn.Conv2d(1, 32, 3, 1)\n        self.fc1 = nn.Linear(32 * 13 * 13, 10)\n\n    def forward(self, x):\n        x = F.relu(self.conv1(x))\n        x = F.max_pool2d(x, 2)\n        x = x.view(-1, 32 * 13 * 13)\n        x = self.fc1(x)\n        return F.log_softmax(x, dim=1)",
+                        "language": "python",
+                        "caption": "Minimal CNN Model in PyTorch"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "Training Loop Overview & Common Pitfalls",
+                    "content": "Training CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation."
+                  }
+                ]
+              },
+              "metrics": {
+                "slide_count": 8,
+                "code_snippets_count": 1,
+                "charts_count": 0,
+                "formulas_count": 0
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767919682.pptx"
+            ],
+            "error": null,
+            "instruction": "No .pptx output was provided. Generate and attach/export a PowerPoint (.pptx) slide deck. Ensure it contains at least 1 slide (preferably 8\u201312) covering: what CNNs are, why they work for images, convolution/padding/stride, feature maps, ReLU, pooling, flatten + fully connected, softmax, training loop overview, and common pitfalls. Include at least one code snippet with a minimal CNN model definition and training invocation in PyTorch or TensorFlow. Then provide the .pptx file path/attachment as result.output.",
+            "attempts": 3,
+            "metadata": {}
+          },
+          "t3_video_cnn_lesson": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "The task failed because no video was successfully produced (video_success=false) and no MP4 artifact was provided (video_mp4_artifact is null). Provide an exported .mp4 file as result.output. Ensure the video follows the slide deck, visually explains convolution, filters, feature maps, pooling, and briefly walks through the code demo, ending with a quick overview of training/evaluation output. Then rerun validation so video_success=true and the artifact path/URL contains '.mp4'.",
+            "attempts": 3,
+            "metadata": {}
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "t1_slides_cnn",
+            "agent": "presentation",
+            "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_count_ok",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_code_snippets_ok",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_semantic_cnn_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "slides_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\builder_1767919522.py",
+                "exists": true
+              },
+              "slides_count_ok": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "slides_code_snippets_ok": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t1_slides_cnn",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_semantic_cnn_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_count_ok",
+                    "slides_code_snippets_ok"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\builder_1767919522.py",
+                      "exists": true
+                    },
+                    "slides_count_ok": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "slides_code_snippets_ok": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_count_ok\",\"slides_code_snippets_ok\",\"slides_semantic_cnn_topics\"],\"fix_instructions\":\"Deterministic checks indicate missing/unknown slide deck output: slides_count_ok and slides_code_snippets_ok have null values, and result.output is null, so the .pptx wasn\u2019t produced or wasn\u2019t captured. Generate and export the slide deck as a .pptx, ensure it contains at least 1 slide (ideally multiple) covering all required CNN topics (what CNNs are, why for images, convolution/padding/stride, feature maps, ReLU, pooling, flatten+FC, softmax, training loop, pitfalls) and include at least one code snippet showing a minimal CNN model definition plus a training invocation in PyTorch or TensorFlow. Provide the .pptx file path/bytes in result.output so it can be verified.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t2_code_cnn_demo",
+            "agent": "coder",
+            "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+            "criteria": [
+              {
+                "criterion_id": "code_run_success",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_training",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "code_run_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "code_no_stderr": {
+                "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 4, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                "expected": "",
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t2_code_cnn_demo",
+                  "agent": "coder",
+                  "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+                  "output": {
+                    "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nimport torchvision\nimport torchvision.transforms as transforms\nfrom torch.utils.data import DataLoader\nimport matplotlib.pyplot as plt\n\n# Set device to CPU for simplicity\ndevice = torch.device('cpu')\n\n# Hyperparameters\nbatch_size = 64\nnum_epochs = 3\nlearning_rate = 0.001\n\n# Data preprocessing and loading\ntransform = transforms.Compose([\n    transforms.ToTensor(),\n    transforms.Normalize((0.1307,), (0.3081,))  # MNIST mean and std\n])\n\n# Load MNIST dataset\ntrain_dataset = torchvision.datasets.MNIST(\n    root='./data', \n    train=True, \n    download=True, \n    transform=transform\n)\n\ntest_dataset = torchvision.datasets.MNIST(\n    root='./data', \n    train=False, \n    download=True, \n    transform=transform\n)\n\n# Create data loaders\ntrain_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)\ntest_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)\n\n# Simple CNN model definition\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        # First convolutional layer\n        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n        self.relu1 = nn.ReLU()\n        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)\n        \n        # Second convolutional layer\n        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n        self.relu2 = nn.ReLU()\n        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)\n        \n        # Fully connected layers\n        self.flatten = nn.Flatten()\n        self.fc1 = nn.Linear(64 * 7 * 7, 128)\n        self.relu3 = nn.ReLU()\n        self.dropout = nn.Dropout(0.5)\n        self.fc2 = nn.Linear(128, 10)  # 10 classes for MNIST\n        \n    def forward(self, x):\n        # First conv block\n        x = self.pool1(self.relu1(self.conv1(x)))\n        \n        # Second conv block\n        x = self.pool2(self.relu2(self.conv2(x)))\n        \n        # Fully connected layers\n        x = self.flatten(x)\n...",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py",
+                      "stdout": "",
+                      "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 4, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": 1,
+                        "stdout": "",
+                        "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 4, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_includes_training",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_run_success",
+                    "code_no_stderr"
+                  ],
+                  "deterministic_evidence": {
+                    "code_run_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "code_no_stderr": {
+                      "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 4, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                      "expected": "",
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_run_success\",\"code_no_stderr\"],\"fix_instructions\":\"The script fails at runtime because torchvision is not installed (ModuleNotFoundError: 'torchvision'). Fix by either (A) adding explicit install/run instructions (e.g., `pip install torch torchvision`) and/or a dependency check with a helpful error message, or (B) removing the torchvision dependency by using a dataset available without torchvision (e.g., `sklearn.datasets.fetch_openml('mnist_784')` or Keras MNIST) and adapting preprocessing accordingly. Also ensure the provided code is complete (the snippet is truncated at `x = self.flatten(x) ...`) and includes the full forward pass, training loop, evaluation accuracy printout, and a `if __name__ == '__main__':` entry point.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t3_video_cnn_lesson",
+            "agent": "video",
+            "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+            "criteria": [
+              {
+                "criterion_id": "video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mp4_artifact",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mentions_concepts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "video_mp4_artifact": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t3_video_cnn_lesson",
+                  "agent": "video",
+                  "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "video_mentions_concepts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "video_success",
+                    "video_mp4_artifact"
+                  ],
+                  "deterministic_evidence": {
+                    "video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "video_mp4_artifact": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.video_success\",\"deterministic_failures.video_mp4_artifact\",\"semantic.video_mentions_concepts\"],\"fix_instructions\":\"The task output is missing/failed: `video_success` is false and no .mp4 artifact was produced (`video_mp4_artifact` is null). Re-run the video render/export pipeline and ensure it outputs a valid MP4 file. Confirm the exported filename ends with .mp4 and attach/provide the artifact path/URL in `result.output`. Also ensure the narration/visuals explicitly cover convolution, filters, feature maps, pooling, and briefly walk through the provided code demo, including a quick overview of training/evaluation output, to satisfy the semantic criterion.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "t1_slides_cnn",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_code_snippets_ok",
+              "slides_count_ok",
+              "slides_semantic_cnn_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\builder_1767919522.py",
+                  "exists": true
+                },
+                "slides_count_ok": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "slides_code_snippets_ok": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic checks indicate missing/unknown slide deck output: slides_count_ok and slides_code_snippets_ok have null values, and result.output is null, so the .pptx wasn\u2019t produced or wasn\u2019t captured. Generate and export the slide deck as a .pptx, ensure it contains at least 1 slide (ideally multiple) covering all required CNN topics (what CNNs are, why for images, convolution/padding/stride, feature maps, ReLU, pooling, flatten+FC, softmax, training loop, pitfalls) and include at least one code snippet showing a minimal CNN model definition plus a training invocation in PyTorch or TensorFlow. Provide the .pptx file path/bytes in result.output so it can be verified."
+          },
+          {
+            "task_id": "t2_code_cnn_demo",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_no_stderr",
+              "code_run_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_run_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "code_no_stderr": {
+                  "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 4, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                  "expected": "",
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The script fails at runtime because torchvision is not installed (ModuleNotFoundError: 'torchvision'). Fix by either (A) adding explicit install/run instructions (e.g., `pip install torch torchvision`) and/or a dependency check with a helpful error message, or (B) removing the torchvision dependency by using a dataset available without torchvision (e.g., `sklearn.datasets.fetch_openml('mnist_784')` or Keras MNIST) and adapting preprocessing accordingly. Also ensure the provided code is complete (the snippet is truncated at `x = self.flatten(x) ...`) and includes the full forward pass, training loop, evaluation accuracy printout, and a `if __name__ == '__main__':` entry point."
+          },
+          {
+            "task_id": "t3_video_cnn_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "video_mp4_artifact",
+              "video_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "video_mp4_artifact": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The task output is missing/failed: `video_success` is false and no .mp4 artifact was produced (`video_mp4_artifact` is null). Re-run the video render/export pipeline and ensure it outputs a valid MP4 file. Confirm the exported filename ends with .mp4 and attach/provide the artifact path/URL in `result.output`. Also ensure the narration/visuals explicitly cover convolution, filters, feature maps, pooling, and briefly walk through the provided code demo, including a quick overview of training/evaluation output, to satisfy the semantic criterion."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson on Convolutional Neural Networks (CNN) including slides, runnable code, and a video.",
+          "subtasks": [
+            {
+              "task_id": "t1_slides_cnn",
+              "agent": "presentation",
+              "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_count_ok",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_code_snippets_ok",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_semantic_cnn_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t2_code_cnn_demo",
+              "agent": "coder",
+              "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+              "inputs": {
+                "output_filename": "t2_code_cnn_demo_20260109_0043.py",
+                "output_subdir": "run_4a3b8e9bad9b4b99858a8bc31d4e4937"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_run_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_training",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t3_video_cnn_lesson",
+              "agent": "video",
+              "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+              "inputs": {},
+              "dependencies": [
+                "t1_slides_cnn",
+                "t2_code_cnn_demo"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mp4_artifact",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mentions_concepts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "t2_code_cnn_demo": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torch.utils.data import DataLoader\nimport torchvision\nimport torchvision.transforms as transforms\n\n# Set random seed for reproducibility\ntorch.manual_seed(42)\n\n# Check if CUDA is available\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nprint(f\"Using device: {device}\")\n\n# Hyperparameters\nbatch_size = 64\nnum_epochs = 2\nlearning_rate = 0.001\n\n# Data transforms\ntransform = transforms.Compose([\n    transforms.ToTensor(),\n])\n\n# Load MNIST dataset\ntrain_dataset = torchvision.datasets.MNIST(root='./data', train=True, \n                                          download=True, transform=transform)\ntest_dataset = torchvision.datasets.MNIST(root='./data', train=False, \n                                         download=True, transform=transform)\n\n# Create data loaders\ntrain_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, \n                         num_workers=0, pin_memory=(device.type == 'cuda'))\ntest_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, \n                        num_workers=0, pin_memory=(device.type == 'cuda'))\n\n# Simple CNN model\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2),\n            nn.Conv2d(32, 64, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2)\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(64 * 7 * 7, 128),\n            nn.ReLU(),\n            nn.Linear(128, 10)\n        )\n\n    def forward(self, x):\n        x = self.features(x)\n        x = self.classifier(x)\n        return x\n\n# Initialize model, loss function, and optimizer\nmodel = SimpleCNN().to(device)\ncriterion = nn.CrossEntropyLoss()\noptimizer = optim.Adam(model.parameters(), lr=learning_rate)\n\n# Training loop\nprint(\"Starting training...\")\nfor epoch in range(num_epochs):\n    model.train()\n    running_loss = 0.0\n    correct = 0\n    total = 0\n    \n    for i, (images, labels) in enumerate(train_loader):\n        images, labels = images.to(device), labels.to(device)\n        \n        # Zero the parameter gradients\n        optimizer.zero_grad()\n        \n        # Forward pass\n        outputs = model(images)\n        loss = criterion(outputs, labels)\n        \n        # Backward pass\n        loss.backward()\n        optimizer.step()\n        \n        # Statistics\n        running_loss += loss.item()\n        _, predicted = outputs.max(1)\n        total += labels.size(0)\n        correct += predicted.eq(labels).sum().item()\n        \n        if (i + 1) % 100 == 0:\n            print(f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], '\n                  f'Loss: {running_loss/100:.4f}')\n            running_loss = 0.0\n    \n    # Print epoch statistics\n    accuracy = 100. * correct / total\n    print(f'Epoch [{epoch+1}/{num_epochs}] - Training Accuracy: {accuracy:.2f}%')\n\n# Evaluation on test set\nmodel.eval()\ncorrect = 0\ntotal = 0\nwith torch.no_grad():\n    for images, labels in test_loader:\n        images, labels = images.to(device), labels.to(device)\n        outputs = model(images)\n        _, predicted = outputs.max(1)\n        total += labels.size(0)\n        correct += predicted.eq(labels).sum().item()\n\ntest_accuracy = 100. * correct / total\nprint(f'Test Accuracy: {test_accuracy:.2f}%')\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py",
+                "stdout": "",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py"
+            ],
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failures: the script timed out after 30s and produced stderr. Also the provided code is truncated (ends at `optimizer....`) and defines an MLP, not a CNN, so the required training loop/eval aren\u2019t fully present.\n\nFix:\n1) Provide complete, runnable code (no truncation) with a simple CNN (Conv2d->ReLU->MaxPool->Flatten->Linear).\n2) Use torchvision.datasets.MNIST or FashionMNIST instead of fetch_openml to avoid long download/preprocessing and sklearn dependency; add transforms.ToTensor().\n3) Keep runtime CPU-friendly: small batch size (e.g., 64), 1\u20132 epochs by default, limit num_workers=0, pin_memory only if CUDA.\n4) Include explicit training loop, periodic loss print, and evaluation accuracy on test set.\n5) Add clear run instructions (pip install torch torchvision, python script.py).",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "t1_slides_cnn": {
+            "agent": "presentation",
+            "success": true,
+            "output": {
+              "text": "Slide 1: Understanding Convolutional Neural Networks (CNNs)\n\n\n\nSlide 2: What are CNNs?\n\nCNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks.\n\nSlide 3: Why CNNs Work for Images?\n\nCNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.\n\nSlide 4: Key Operations in CNNs\n\n- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.\n\nSlide 5: Feature Maps and ReLU\n\nFeature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance.\n\nSlide 6: Pooling and Flattening Layers\n\n- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.\n\nSlide 7: Fully Connected Layer and Softmax\n\nThe fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.\n\nSlide 8: Training Loop Overview & Common Pitfalls\n\nTraining CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation.",
+              "format": "pptx",
+              "storyboard": {
+                "slides": [
+                  {
+                    "layout_idx": 0,
+                    "title": "Understanding Convolutional Neural Networks (CNNs)"
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "What are CNNs?",
+                    "content": "CNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks."
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Why CNNs Work for Images?",
+                    "content": "CNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.",
+                    "visual_assets": [
+                      {
+                        "type": "quote",
+                        "text": "In image processing, it's as if CNNs view the world through small, overlapping lenses.",
+                        "caption": "Spatial Awareness in CNNs"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Key Operations in CNNs",
+                    "content": "- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.",
+                    "visual_assets": [
+                      {
+                        "type": "image",
+                        "description": "Illustration of convolution, padding, and stride operations.",
+                        "caption": "Convolutional Process"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "Feature Maps and ReLU",
+                    "content": "Feature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance."
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Pooling and Flattening Layers",
+                    "content": "- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.",
+                    "visual_assets": [
+                      {
+                        "type": "quote",
+                        "text": "Pooling layers act like a summary function, capturing the essence of features.",
+                        "caption": "Dimensionality Reduction"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Fully Connected Layer and Softmax",
+                    "content": "The fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.",
+                    "visual_assets": [
+                      {
+                        "type": "code_snippet",
+                        "code": "import torch\nimport torch.nn as nn\n\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.conv1 = nn.Conv2d(1, 32, 3, 1)\n        self.fc1 = nn.Linear(32 * 13 * 13, 10)\n\n    def forward(self, x):\n        x = F.relu(self.conv1(x))\n        x = F.max_pool2d(x, 2)\n        x = x.view(-1, 32 * 13 * 13)\n        x = self.fc1(x)\n        return F.log_softmax(x, dim=1)",
+                        "language": "python",
+                        "caption": "Minimal CNN Model in PyTorch"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "Training Loop Overview & Common Pitfalls",
+                    "content": "Training CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation."
+                  }
+                ]
+              },
+              "metrics": {
+                "slide_count": 8,
+                "code_snippets_count": 1,
+                "charts_count": 0,
+                "formulas_count": 0
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767919682.pptx"
+            ],
+            "error": null,
+            "instruction": "No .pptx output was provided. Generate and attach/export a PowerPoint (.pptx) slide deck. Ensure it contains at least 1 slide (preferably 8\u201312) covering: what CNNs are, why they work for images, convolution/padding/stride, feature maps, ReLU, pooling, flatten + fully connected, softmax, training loop overview, and common pitfalls. Include at least one code snippet with a minimal CNN model definition and training invocation in PyTorch or TensorFlow. Then provide the .pptx file path/attachment as result.output.",
+            "attempts": 3,
+            "metadata": {}
+          },
+          "t3_video_cnn_lesson": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "The task failed because no video was successfully produced (video_success=false) and no MP4 artifact was provided (video_mp4_artifact is null). Provide an exported .mp4 file as result.output. Ensure the video follows the slide deck, visually explains convolution, filters, feature maps, pooling, and briefly walks through the code demo, ending with a quick overview of training/evaluation output. Then rerun validation so video_success=true and the artifact path/URL contains '.mp4'.",
+            "attempts": 3,
+            "metadata": {}
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "t1_slides_cnn",
+            "agent": "presentation",
+            "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_count_ok",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_code_snippets_ok",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_semantic_cnn_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "slides_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "slides_count_ok": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "slides_code_snippets_ok": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t1_slides_cnn",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_semantic_cnn_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_file_exists",
+                    "slides_count_ok",
+                    "slides_code_snippets_ok"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "slides_count_ok": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "slides_code_snippets_ok": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_file_exists\",\"slides_count_ok\",\"slides_code_snippets_ok\",\"slides_semantic_cnn_topics\"],\"fix_instructions\":\"No .pptx output was provided. Generate and attach/export a PowerPoint (.pptx) slide deck. Ensure it contains at least 1 slide (preferably 8\u201312) covering: what CNNs are, why they work for images, convolution/padding/stride, feature maps, ReLU, pooling, flatten + fully connected, softmax, training loop overview, and common pitfalls. Include at least one code snippet with a minimal CNN model definition and training invocation in PyTorch or TensorFlow. Then provide the .pptx file path/attachment as result.output.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t2_code_cnn_demo",
+            "agent": "coder",
+            "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+            "criteria": [
+              {
+                "criterion_id": "code_run_success",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_training",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "code_run_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "code_no_stderr": {
+                "value": "Execution timed out after 30s.",
+                "expected": "",
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t2_code_cnn_demo",
+                  "agent": "coder",
+                  "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+                  "output": {
+                    "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torch.utils.data import DataLoader\nfrom sklearn.datasets import fetch_openml\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nimport numpy as np\n\n# Check if CUDA is available and set device\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nprint(f\"Using device: {device}\")\n\nclass MLP(nn.Module):\n    def __init__(self, input_size=784, hidden_size=128, num_classes=10):\n        super(MLP, self).__init__()\n        self.flatten = nn.Flatten()\n        self.fc1 = nn.Linear(input_size, hidden_size)\n        self.relu = nn.ReLU()\n        self.fc2 = nn.Linear(hidden_size, num_classes)\n        \n    def forward(self, x):\n        x = self.flatten(x)\n        x = self.fc1(x)\n        x = self.relu(x)\n        x = self.fc2(x)\n        return x\n\ndef load_mnist_data():\n    \"\"\"Load MNIST data using sklearn\"\"\"\n    print(\"Loading MNIST dataset...\")\n    mnist = fetch_openml('mnist_784', version=1, as_frame=False)\n    \n    # Normalize pixel values to [0, 1]\n    X = mnist.data.astype(np.float32) / 255.0\n    y = mnist.target.astype(np.int64)\n    \n    # Split into train and test sets\n    X_train, X_test, y_train, y_test = train_test_split(\n        X, y, test_size=0.2, random_state=42, stratify=y\n    )\n    \n    # Further split train into train and validation\n    X_train, X_val, y_train, y_val = train_test_split(\n        X_train, y_train, test_size=0.2, random_state=42, stratify=y_train\n    )\n    \n    return (X_train, y_train), (X_val, y_val), (X_test, y_test)\n\ndef train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs=5):\n    \"\"\"Train the model\"\"\"\n    model.train()\n    for epoch in range(num_epochs):\n        running_loss = 0.0\n        correct = 0\n        total = 0\n        \n        for batch_idx, (data, target) in enumerate(train_loader):\n            data, target = data.to(device), target.to(device)\n            \n            optimizer....",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py",
+                      "stdout": "",
+                      "stderr": "Execution timed out after 30s.",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": null,
+                        "stdout": "",
+                        "stderr": "Execution timed out after 30s.",
+                        "timed_out": true
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_includes_training",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_run_success",
+                    "code_no_stderr"
+                  ],
+                  "deterministic_evidence": {
+                    "code_run_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "code_no_stderr": {
+                      "value": "Execution timed out after 30s.",
+                      "expected": "",
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_run_success\",\"code_no_stderr\",\"code_includes_training\"],\"fix_instructions\":\"Deterministic failures: the script timed out after 30s and produced stderr. Also the provided code is truncated (ends at `optimizer....`) and defines an MLP, not a CNN, so the required training loop/eval aren\u2019t fully present.\\n\\nFix:\\n1) Provide complete, runnable code (no truncation) with a simple CNN (Conv2d->ReLU->MaxPool->Flatten->Linear).\\n2) Use torchvision.datasets.MNIST or FashionMNIST instead of fetch_openml to avoid long download/preprocessing and sklearn dependency; add transforms.ToTensor().\\n3) Keep runtime CPU-friendly: small batch size (e.g., 64), 1\u20132 epochs by default, limit num_workers=0, pin_memory only if CUDA.\\n4) Include explicit training loop, periodic loss print, and evaluation accuracy on test set.\\n5) Add clear run instructions (pip install torch torchvision, python script.py).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t3_video_cnn_lesson",
+            "agent": "video",
+            "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+            "criteria": [
+              {
+                "criterion_id": "video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mp4_artifact",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mentions_concepts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "video_mp4_artifact": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t3_video_cnn_lesson",
+                  "agent": "video",
+                  "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "video_mentions_concepts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "video_success",
+                    "video_mp4_artifact"
+                  ],
+                  "deterministic_evidence": {
+                    "video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "video_mp4_artifact": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.video_success\",\"deterministic_failures.video_mp4_artifact\",\"semantic_criteria.video_mentions_concepts\"],\"fix_instructions\":\"The task failed because no video was successfully produced (video_success=false) and no MP4 artifact was provided (video_mp4_artifact is null). Provide an exported .mp4 file as result.output. Ensure the video follows the slide deck, visually explains convolution, filters, feature maps, pooling, and briefly walks through the code demo, ending with a quick overview of training/evaluation output. Then rerun validation so video_success=true and the artifact path/URL contains '.mp4'.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "t1_slides_cnn",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_code_snippets_ok",
+              "slides_count_ok",
+              "slides_file_exists",
+              "slides_semantic_cnn_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "slides_count_ok": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "slides_code_snippets_ok": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx output was provided. Generate and attach/export a PowerPoint (.pptx) slide deck. Ensure it contains at least 1 slide (preferably 8\u201312) covering: what CNNs are, why they work for images, convolution/padding/stride, feature maps, ReLU, pooling, flatten + fully connected, softmax, training loop overview, and common pitfalls. Include at least one code snippet with a minimal CNN model definition and training invocation in PyTorch or TensorFlow. Then provide the .pptx file path/attachment as result.output."
+          },
+          {
+            "task_id": "t2_code_cnn_demo",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_includes_training",
+              "code_no_stderr",
+              "code_run_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_run_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "code_no_stderr": {
+                  "value": "Execution timed out after 30s.",
+                  "expected": "",
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failures: the script timed out after 30s and produced stderr. Also the provided code is truncated (ends at `optimizer....`) and defines an MLP, not a CNN, so the required training loop/eval aren\u2019t fully present.\n\nFix:\n1) Provide complete, runnable code (no truncation) with a simple CNN (Conv2d->ReLU->MaxPool->Flatten->Linear).\n2) Use torchvision.datasets.MNIST or FashionMNIST instead of fetch_openml to avoid long download/preprocessing and sklearn dependency; add transforms.ToTensor().\n3) Keep runtime CPU-friendly: small batch size (e.g., 64), 1\u20132 epochs by default, limit num_workers=0, pin_memory only if CUDA.\n4) Include explicit training loop, periodic loss print, and evaluation accuracy on test set.\n5) Add clear run instructions (pip install torch torchvision, python script.py)."
+          },
+          {
+            "task_id": "t3_video_cnn_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "video_mp4_artifact",
+              "video_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "video_mp4_artifact": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The task failed because no video was successfully produced (video_success=false) and no MP4 artifact was provided (video_mp4_artifact is null). Provide an exported .mp4 file as result.output. Ensure the video follows the slide deck, visually explains convolution, filters, feature maps, pooling, and briefly walks through the code demo, ending with a quick overview of training/evaluation output. Then rerun validation so video_success=true and the artifact path/URL contains '.mp4'."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson on Convolutional Neural Networks (CNN) including slides, runnable code, and a video.",
+          "subtasks": [
+            {
+              "task_id": "t1_slides_cnn",
+              "agent": "presentation",
+              "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_count_ok",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_code_snippets_ok",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_semantic_cnn_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t2_code_cnn_demo",
+              "agent": "coder",
+              "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+              "inputs": {
+                "output_filename": "t2_code_cnn_demo_20260109_0043.py",
+                "output_subdir": "run_4a3b8e9bad9b4b99858a8bc31d4e4937"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_run_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_training",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t3_video_cnn_lesson",
+              "agent": "video",
+              "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+              "inputs": {},
+              "dependencies": [
+                "t1_slides_cnn",
+                "t2_code_cnn_demo"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mp4_artifact",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mentions_concepts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "t2_code_cnn_demo": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torch.utils.data import DataLoader\nimport torchvision\nimport torchvision.transforms as transforms\n\n# Set random seed for reproducibility\ntorch.manual_seed(42)\n\n# Check if CUDA is available\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nprint(f\"Using device: {device}\")\n\n# Hyperparameters\nbatch_size = 64\nnum_epochs = 2\nlearning_rate = 0.001\n\n# Data transforms\ntransform = transforms.Compose([\n    transforms.ToTensor(),\n])\n\n# Load MNIST dataset\ntrain_dataset = torchvision.datasets.MNIST(root='./data', train=True, \n                                          download=True, transform=transform)\ntest_dataset = torchvision.datasets.MNIST(root='./data', train=False, \n                                         download=True, transform=transform)\n\n# Create data loaders\ntrain_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, \n                         num_workers=0, pin_memory=(device.type == 'cuda'))\ntest_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, \n                        num_workers=0, pin_memory=(device.type == 'cuda'))\n\n# Simple CNN model\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2),\n            nn.Conv2d(32, 64, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2)\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(64 * 7 * 7, 128),\n            nn.ReLU(),\n            nn.Linear(128, 10)\n        )\n\n    def forward(self, x):\n        x = self.features(x)\n        x = self.classifier(x)\n        return x\n\n# Initialize model, loss function, and optimizer\nmodel = SimpleCNN().to(device)\ncriterion = nn.CrossEntropyLoss()\noptimizer = optim.Adam(model.parameters(), lr=learning_rate)\n\n# Training loop\nprint(\"Starting training...\")\nfor epoch in range(num_epochs):\n    model.train()\n    running_loss = 0.0\n    correct = 0\n    total = 0\n    \n    for i, (images, labels) in enumerate(train_loader):\n        images, labels = images.to(device), labels.to(device)\n        \n        # Zero the parameter gradients\n        optimizer.zero_grad()\n        \n        # Forward pass\n        outputs = model(images)\n        loss = criterion(outputs, labels)\n        \n        # Backward pass\n        loss.backward()\n        optimizer.step()\n        \n        # Statistics\n        running_loss += loss.item()\n        _, predicted = outputs.max(1)\n        total += labels.size(0)\n        correct += predicted.eq(labels).sum().item()\n        \n        if (i + 1) % 100 == 0:\n            print(f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], '\n                  f'Loss: {running_loss/100:.4f}')\n            running_loss = 0.0\n    \n    # Print epoch statistics\n    accuracy = 100. * correct / total\n    print(f'Epoch [{epoch+1}/{num_epochs}] - Training Accuracy: {accuracy:.2f}%')\n\n# Evaluation on test set\nmodel.eval()\ncorrect = 0\ntotal = 0\nwith torch.no_grad():\n    for images, labels in test_loader:\n        images, labels = images.to(device), labels.to(device)\n        outputs = model(images)\n        _, predicted = outputs.max(1)\n        total += labels.size(0)\n        correct += predicted.eq(labels).sum().item()\n\ntest_accuracy = 100. * correct / total\nprint(f'Test Accuracy: {test_accuracy:.2f}%')\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py",
+                "stdout": "",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py"
+            ],
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failures: the script timed out after 30s and produced stderr. Also the provided code is truncated (ends at `optimizer....`) and defines an MLP, not a CNN, so the required training loop/eval aren\u2019t fully present.\n\nFix:\n1) Provide complete, runnable code (no truncation) with a simple CNN (Conv2d->ReLU->MaxPool->Flatten->Linear).\n2) Use torchvision.datasets.MNIST or FashionMNIST instead of fetch_openml to avoid long download/preprocessing and sklearn dependency; add transforms.ToTensor().\n3) Keep runtime CPU-friendly: small batch size (e.g., 64), 1\u20132 epochs by default, limit num_workers=0, pin_memory only if CUDA.\n4) Include explicit training loop, periodic loss print, and evaluation accuracy on test set.\n5) Add clear run instructions (pip install torch torchvision, python script.py).",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "t1_slides_cnn": {
+            "agent": "presentation",
+            "success": true,
+            "output": {
+              "text": "Slide 1: Understanding Convolutional Neural Networks (CNNs)\n\n\n\nSlide 2: What are CNNs?\n\nCNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks.\n\nSlide 3: Why CNNs Work for Images?\n\nCNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.\n\nSlide 4: Key Operations in CNNs\n\n- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.\n\nSlide 5: Feature Maps and ReLU\n\nFeature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance.\n\nSlide 6: Pooling and Flattening Layers\n\n- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.\n\nSlide 7: Fully Connected Layer and Softmax\n\nThe fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.\n\nSlide 8: Training Loop Overview & Common Pitfalls\n\nTraining CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation.",
+              "format": "pptx",
+              "storyboard": {
+                "slides": [
+                  {
+                    "layout_idx": 0,
+                    "title": "Understanding Convolutional Neural Networks (CNNs)"
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "What are CNNs?",
+                    "content": "CNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks."
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Why CNNs Work for Images?",
+                    "content": "CNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.",
+                    "visual_assets": [
+                      {
+                        "type": "quote",
+                        "text": "In image processing, it's as if CNNs view the world through small, overlapping lenses.",
+                        "caption": "Spatial Awareness in CNNs"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Key Operations in CNNs",
+                    "content": "- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.",
+                    "visual_assets": [
+                      {
+                        "type": "image",
+                        "description": "Illustration of convolution, padding, and stride operations.",
+                        "caption": "Convolutional Process"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "Feature Maps and ReLU",
+                    "content": "Feature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance."
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Pooling and Flattening Layers",
+                    "content": "- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.",
+                    "visual_assets": [
+                      {
+                        "type": "quote",
+                        "text": "Pooling layers act like a summary function, capturing the essence of features.",
+                        "caption": "Dimensionality Reduction"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 6,
+                    "title": "Fully Connected Layer and Softmax",
+                    "content": "The fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.",
+                    "visual_assets": [
+                      {
+                        "type": "code_snippet",
+                        "code": "import torch\nimport torch.nn as nn\n\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.conv1 = nn.Conv2d(1, 32, 3, 1)\n        self.fc1 = nn.Linear(32 * 13 * 13, 10)\n\n    def forward(self, x):\n        x = F.relu(self.conv1(x))\n        x = F.max_pool2d(x, 2)\n        x = x.view(-1, 32 * 13 * 13)\n        x = self.fc1(x)\n        return F.log_softmax(x, dim=1)",
+                        "language": "python",
+                        "caption": "Minimal CNN Model in PyTorch"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 5,
+                    "title": "Training Loop Overview & Common Pitfalls",
+                    "content": "Training CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation."
+                  }
+                ]
+              },
+              "metrics": {
+                "slide_count": 8,
+                "code_snippets_count": 1,
+                "charts_count": 0,
+                "formulas_count": 0
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767919682.pptx"
+            ],
+            "error": null,
+            "instruction": "No .pptx output was provided. Generate and attach/export a PowerPoint (.pptx) slide deck. Ensure it contains at least 1 slide (preferably 8\u201312) covering: what CNNs are, why they work for images, convolution/padding/stride, feature maps, ReLU, pooling, flatten + fully connected, softmax, training loop overview, and common pitfalls. Include at least one code snippet with a minimal CNN model definition and training invocation in PyTorch or TensorFlow. Then provide the .pptx file path/attachment as result.output.",
+            "attempts": 3,
+            "metadata": {}
+          },
+          "t3_video_cnn_lesson": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "The task failed because no video was successfully produced (video_success=false) and no MP4 artifact was provided (video_mp4_artifact is null). Provide an exported .mp4 file as result.output. Ensure the video follows the slide deck, visually explains convolution, filters, feature maps, pooling, and briefly walks through the code demo, ending with a quick overview of training/evaluation output. Then rerun validation so video_success=true and the artifact path/URL contains '.mp4'.",
+            "attempts": 3,
+            "metadata": {}
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "t1_slides_cnn",
+            "agent": "presentation",
+            "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_count_ok",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_code_snippets_ok",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_semantic_cnn_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "slides_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767919682.pptx",
+                "exists": true
+              },
+              "slides_count_ok": {
+                "value": 8,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "slides_code_snippets_ok": {
+                "value": 1,
+                "expected": 1,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t1_slides_cnn",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-level slide deck on CNNs. Include: what CNNs are, why they work for images, convolution/padding/stride, feature maps, activation (ReLU), pooling, flatten + fully connected, softmax for classification, simple training loop overview, and common pitfalls. Include at least 1 code snippet showing a minimal CNN model definition and training invocation (PyTorch or TensorFlow). Export as a .pptx.",
+                  "output": {
+                    "text": "Slide 1: Understanding Convolutional Neural Networks (CNNs)\n\n\n\nSlide 2: What are CNNs?\n\nCNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks.\n\nSlide 3: Why CNNs Work for Images?\n\nCNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.\n\nSlide 4: Key Operations in CNNs\n\n- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.\n\nSlide 5: Feature Maps and ReLU\n\nFeature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance.\n\nSlide 6: Pooling and Flattening Layers\n\n- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.\n\nSlide 7: Fully Connected Layer and Softmax\n\nThe fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.\n\nSlide 8: Training Loop Overview & Common Pitfalls\n\nTraining CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation.",
+                    "format": "pptx",
+                    "storyboard": {
+                      "slides": [
+                        {
+                          "layout_idx": 0,
+                          "title": "Understanding Convolutional Neural Networks (CNNs)"
+                        },
+                        {
+                          "layout_idx": 5,
+                          "title": "What are CNNs?",
+                          "content": "CNNs, or Convolutional Neural Networks, are a class of deep neural networks primarily used for processing grid-structured data like images. They are specifically effective for visual recognition tasks."
+                        },
+                        {
+                          "layout_idx": 6,
+                          "title": "Why CNNs Work for Images?",
+                          "content": "CNNs excel in handling images due to their ability to capture spatial hierarchies. They preserve the spatial relationship by using local receptive fields and sharing weights, suitable for visual data.",
+                          "visual_assets": [
+                            {
+                              "type": "quote",
+                              "text": "In image processing, it's as if CNNs view the world through small, overlapping lenses.",
+                              "caption": "Spatial Awareness in CNNs"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 6,
+                          "title": "Key Operations in CNNs",
+                          "content": "- **Convolution**: Sliding filter over input data to produce feature maps.\n- **Padding**: Adding layers of zeros to maintain dimension size.\n- **Stride**: The step size of filters.",
+                          "visual_assets": [
+                            {
+                              "type": "image",
+                              "description": "Illustration of convolution, padding, and stride operations.",
+                              "caption": "Convolutional Process"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 5,
+                          "title": "Feature Maps and ReLU",
+                          "content": "Feature Maps result from applying convolution operations. Rectified Linear Unit (ReLU) introduces non-linearity by setting negative values to zero, enhancing model performance."
+                        },
+                        {
+                          "layout_idx": 6,
+                          "title": "Pooling and Flattening Layers",
+                          "content": "- **Pooling**: Reduces dimensionality by taking the maximum or average value (e.g., max pooling).\n- **Flattening**: Converts 2D matrices into a 1D vector for fully connected layers.",
+                          "visual_assets": [
+                            {
+                              "type": "quote",
+                              "text": "Pooling layers act like a summary function, capturing the essence of features.",
+                              "caption": "Dimensionality Reduction"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 6,
+                          "title": "Fully Connected Layer and Softmax",
+                          "content": "The fully connected layer uses flattened data to compute a score for each class, while the Softmax function normalizes scores to probabilities for multi-class classification.",
+                          "visual_assets": [
+                            {
+                              "type": "code_snippet",
+                              "code": "import torch\nimport torch.nn as nn\n\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.conv1 = nn.Conv2d(1, 32, 3, 1)\n        self.fc1 = nn.Linear(32 * 13 * 13, 10)\n\n    def forward(self, x):\n        x = F.relu(self.conv1(x))\n        x = F.max_pool2d(x, 2)\n        x = x.view(-1, 32 * 13 * 13)\n        x = self.fc1(x)\n        return F.log_softmax(x, dim=1)",
+                              "language": "python",
+                              "caption": "Minimal CNN Model in PyTorch"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 5,
+                          "title": "Training Loop Overview & Common Pitfalls",
+                          "content": "Training CNNs involves forward propagation, loss computation, backpropagation, and updating the model weights. Common pitfalls include overfitting, vanishing gradients, and inadequate data augmentation."
+                        }
+                      ]
+                    },
+                    "metrics": {
+                      "slide_count": 8,
+                      "code_snippets_count": 1,
+                      "charts_count": 0,
+                      "formulas_count": 0
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_semantic_cnn_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "slides_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767919682.pptx",
+                      "exists": true
+                    },
+                    "slides_count_ok": {
+                      "value": 8,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "slides_code_snippets_ok": {
+                      "value": 1,
+                      "expected": 1,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"pass\",\"failed_criteria\":[],\"fix_instructions\":\"All required CNN beginner topics are covered across 8 slides, includes a minimal PyTorch code snippet, and the .pptx file exists. Minor improvement: the code snippet uses F.* without importing torch.nn.functional as F; add that import to avoid confusion.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "t2_code_cnn_demo",
+            "agent": "coder",
+            "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+            "criteria": [
+              {
+                "criterion_id": "code_run_success",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_training",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "code_run_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "code_no_stderr": {
+                "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                "expected": "",
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t2_code_cnn_demo",
+                  "agent": "coder",
+                  "instruction": "Generate runnable Python code for a beginner CNN demo. Use a standard dataset (e.g., MNIST/Fashion-MNIST) and a simple CNN architecture. Include: data loading, model definition, training loop for a few epochs, evaluation accuracy, and instructions to run. Prefer PyTorch for simplicity; keep runtime reasonable and include CPU-friendly settings.",
+                  "output": {
+                    "code": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\nfrom torch.utils.data import DataLoader\nimport torchvision\nimport torchvision.transforms as transforms\n\n# Set random seed for reproducibility\ntorch.manual_seed(42)\n\n# Check if CUDA is available\ndevice = torch.device(\"cuda\" if torch.cuda.is_available() else \"cpu\")\nprint(f\"Using device: {device}\")\n\n# Hyperparameters\nbatch_size = 64\nnum_epochs = 2\nlearning_rate = 0.001\n\n# Data transforms\ntransform = transforms.Compose([\n    transforms.ToTensor(),\n])\n\n# Load MNIST dataset\ntrain_dataset = torchvision.datasets.MNIST(root='./data', train=True, \n                                          download=True, transform=transform)\ntest_dataset = torchvision.datasets.MNIST(root='./data', train=False, \n                                         download=True, transform=transform)\n\n# Create data loaders\ntrain_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, \n                         num_workers=0, pin_memory=(device.type == 'cuda'))\ntest_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, \n                        num_workers=0, pin_memory=(device.type == 'cuda'))\n\n# Simple CNN model\nclass SimpleCNN(nn.Module):\n    def __init__(self):\n        super(SimpleCNN, self).__init__()\n        self.features = nn.Sequential(\n            nn.Conv2d(1, 32, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2),\n            nn.Conv2d(32, 64, kernel_size=3, padding=1),\n            nn.ReLU(),\n            nn.MaxPool2d(kernel_size=2, stride=2)\n        )\n        self.classifier = nn.Sequential(\n            nn.Flatten(),\n            nn.Linear(64 * 7 * 7, 128),\n            nn.ReLU(),\n            nn.Linear(128, 10)\n        )\n\n    def forward(self, x):\n        x = self.features(x)\n        x = self.classifier(x)\n        return x\n\n# Initialize model, loss function, and optimizer\nmodel = SimpleCNN().to(device)\ncriterion = nn.CrossEntropyLoss()\noptimizer = optim.Ad...",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py",
+                      "stdout": "",
+                      "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": 1,
+                        "stdout": "",
+                        "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_includes_training",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_run_success",
+                    "code_no_stderr"
+                  ],
+                  "deterministic_evidence": {
+                    "code_run_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "code_no_stderr": {
+                      "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                      "expected": "",
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_run_success\",\"code_no_stderr\"],\"fix_instructions\":\"The script fails at runtime because `torchvision` is not installed (`ModuleNotFoundError: No module named 'torchvision'`). Fix by either:\\n1) Adding clear install instructions at the top (recommended): `pip install torch torchvision` (or conda equivalents), and ensure versions match the installed PyTorch; OR\\n2) Removing the `torchvision` dependency by using `torch.utils.data` with an alternative built-in dataset source (e.g., `sklearn.datasets.fetch_openml('mnist_784')`) and converting to tensors, so the code runs with only `torch` installed.\\nAlso ensure the provided code is complete (the optimizer line is truncated in the output) and includes the full training loop, evaluation accuracy, and run instructions as requested.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t3_video_cnn_lesson",
+            "agent": "video",
+            "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+            "criteria": [
+              {
+                "criterion_id": "video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mp4_artifact",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mentions_concepts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "video_mp4_artifact": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t3_video_cnn_lesson",
+                  "agent": "video",
+                  "instruction": "Create a beginner-level video lesson on CNNs that follows the slide deck and briefly walks through the provided code demo. Include visual explanations of convolution, filters, feature maps, pooling, and a quick overview of the training/evaluation output. Export as an MP4.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "video_mentions_concepts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "video_success",
+                    "video_mp4_artifact"
+                  ],
+                  "deterministic_evidence": {
+                    "video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "video_mp4_artifact": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.video_success\",\"deterministic_failures.video_mp4_artifact\",\"semantic.video_mentions_concepts\"],\"fix_instructions\":\"No MP4 artifact was produced (video_success=false and video_mp4_artifact is null), so the deliverable is missing. Re-run the video generation/export step and ensure the output is an .mp4 file path is returned/attached. Verify the render completes successfully and that the narration/visuals explicitly cover convolution, filters, feature maps, pooling, and briefly walk through the provided code demo, including a quick overview of training/evaluation output, then export as MP4 and provide the artifact link/path.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "t1_slides_cnn",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {
+                "slides_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767919682.pptx",
+                  "exists": true
+                },
+                "slides_count_ok": {
+                  "value": 8,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "slides_code_snippets_ok": {
+                  "value": 1,
+                  "expected": 1,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "t2_code_cnn_demo",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_no_stderr",
+              "code_run_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_run_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "code_no_stderr": {
+                  "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4a3b8e9bad9b4b99858a8bc31d4e4937\\t2_code_cnn_demo_20260109_0043.py\", line 5, in <module>\n    import torchvision\nModuleNotFoundError: No module named 'torchvision'\n",
+                  "expected": "",
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The script fails at runtime because `torchvision` is not installed (`ModuleNotFoundError: No module named 'torchvision'`). Fix by either:\n1) Adding clear install instructions at the top (recommended): `pip install torch torchvision` (or conda equivalents), and ensure versions match the installed PyTorch; OR\n2) Removing the `torchvision` dependency by using `torch.utils.data` with an alternative built-in dataset source (e.g., `sklearn.datasets.fetch_openml('mnist_784')`) and converting to tensors, so the code runs with only `torch` installed.\nAlso ensure the provided code is complete (the optimizer line is truncated in the output) and includes the full training loop, evaluation accuracy, and run instructions as requested."
+          },
+          {
+            "task_id": "t3_video_cnn_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "video_mp4_artifact",
+              "video_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "video_mp4_artifact": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No MP4 artifact was produced (video_success=false and video_mp4_artifact is null), so the deliverable is missing. Re-run the video generation/export step and ensure the output is an .mp4 file path is returned/attached. Verify the render completes successfully and that the narration/visuals explicitly cover convolution, filters, feature maps, pooling, and briefly walk through the provided code demo, including a quick overview of training/evaluation output, then export as MP4 and provide the artifact link/path."
+          }
+        ]
+      }
+    }
+  ]
+}

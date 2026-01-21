@@ -1,0 +1,520 @@
+{
+  "run_id": "4dc910aab7e248db8a4a1b5c4e9e11c5",
+  "started_at": "2026-01-07T16:00:43.444941+00:00",
+  "user_text": "create a beginner level lesson on what is Machine Learning.",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "request": {
+        "model": "gpt-5.2",
+        "messages": [
+          {
+            "role": "system",
+            "content": "\nYou are an expert autonomous Task Orchestrator.\nYour goal is to analyze user requests and educational materials, then create a structured execution plan.\n\nAvailable Agents:\n- 'coder': Generates runnable Python code. Best for demonstrations, data analysis, and coding tutorials.\n- 'video': Creates video content. Best for visual explanations.\n- 'presentation': Generates PowerPoint slides (.pptx). Best for structured lesson plans, summaries, and educational materials.\n- 'quizzer': Creates quizzes. Best for assessments and review.\n\nInstructions:\n1. Analyze the user's input and provided files.\n2. Break down the goal into logical subtasks.\n3. Assign each subtask to the most appropriate agent.\n4. Provide specific, actionable instructions for each agent.\n5. For every subtask, include a non-empty 'acceptance_criteria' list.\n   - Each criterion must include: criterion_id, criterion_type, target, operator, expected, severity.\n   - Use criterion_type values: mcp_tool | output_shape | file_exists | semantic.\n   - Use operator values: equals | contains | exists | gte | lte.\n   - Use target paths that start with 'result.' or 'tools.'.\n   - For mcp_tool criteria, include tool: { name, args }.\n   - Use placeholders like $artifacts[0] or $output.validation.path inside tool args.\n6. Use the provided tool 'create_task_plan' to submit your plan.\n\nResponse Format Example:\n{\n  \"user_intent\": \"Create a lesson on Python lists with a video intro and a quiz.\",\n  \"subtasks\": [\n    {\n      \"task_id\": \"step1_code\",\n      \"agent\": \"coder\",\n      \"instruction\": \"Generate a Python script demonstrating list operations.\",\n      \"inputs\": {},\n      \"dependencies\": [],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"code_executes\",\n          \"criterion_type\": \"mcp_tool\",\n          \"tool\": {\"name\": \"python_check\", \"args\": {\"filepath\": \"$artifacts[0]\"}},\n          \"target\": \"tools.python_check.success\",\n          \"operator\": \"equals\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"tools.python_check.run.stderr\"\n        }\n      ]\n    },\n    {\n      \"task_id\": \"step2_video\",\n      \"agent\": \"video\",\n      \"instruction\": \"Create a video explaining the code.\",\n      \"inputs\": {},\n      \"dependencies\": [\"step1_code\"],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"video_semantic_ok\",\n          \"criterion_type\": \"semantic\",\n          \"target\": \"result.output\",\n          \"operator\": \"exists\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"result.output\"\n        }\n      ]\n    }\n  ]\n}\n"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "create a beginner level lesson on what is Machine Learning."
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_task_plan",
+              "description": "Create a structured execution plan for multiple agents.",
+              "parameters": {
+                "$defs": {
+                  "AcceptanceCriterion": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this criterion",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Criterion type: mcp_tool | output_shape | file_exists | semantic",
+                        "enum": [
+                          "mcp_tool",
+                          "output_shape",
+                          "file_exists",
+                          "semantic"
+                        ],
+                        "title": "Type",
+                        "type": "string"
+                      },
+                      "target": {
+                        "description": "Evaluation target path (e.g., result.output.text or tools.python_check.success)",
+                        "title": "Target",
+                        "type": "string"
+                      },
+                      "operator": {
+                        "description": "Operator: equals | contains | exists | gte | lte",
+                        "enum": [
+                          "equals",
+                          "contains",
+                          "exists",
+                          "gte",
+                          "lte"
+                        ],
+                        "title": "Operator",
+                        "type": "string"
+                      },
+                      "expected": {
+                        "default": null,
+                        "description": "Expected value to compare against",
+                        "title": "Expected"
+                      },
+                      "severity": {
+                        "default": "required",
+                        "description": "Severity: required | optional",
+                        "enum": [
+                          "required",
+                          "optional"
+                        ],
+                        "title": "Severity",
+                        "type": "string"
+                      },
+                      "tool": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": true,
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Tool call definition for mcp_tool criteria",
+                        "title": "Tool"
+                      },
+                      "evidence": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Evidence path to include in judger output",
+                        "title": "Evidence"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "target",
+                      "operator"
+                    ],
+                    "title": "AcceptanceCriterion",
+                    "type": "object"
+                  },
+                  "SubTask": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this subtask",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "agent": {
+                        "description": "The agent responsible (coder, video, text, quizzer)",
+                        "title": "Agent",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Detailed instruction for the agent",
+                        "title": "Title",
+                        "type": "string"
+                      },
+                      "inputs": {
+                        "additionalProperties": true,
+                        "description": "Specific inputs for the agent",
+                        "title": "Inputs",
+                        "type": "object"
+                      },
+                      "dependencies": {
+                        "description": "IDs of tasks that must complete first",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Dependencies",
+                        "type": "array"
+                      },
+                      "acceptance_criteria": {
+                        "description": "Structured criteria the judger will use",
+                        "items": {
+                          "$ref": "#/$defs/AcceptanceCriterion"
+                        },
+                        "title": "Acceptance Criteria",
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "agent",
+                      "title",
+                      "acceptance_criteria"
+                    ],
+                    "title": "SubTask",
+                    "type": "object"
+                  }
+                },
+                "properties": {
+                  "user_intent": {
+                    "description": "Summary of what the user wants to achieve",
+                    "title": "User Intent",
+                    "type": "string"
+                  },
+                  "subtasks": {
+                    "description": "List of executable steps",
+                    "items": {
+                      "$ref": "#/$defs/SubTask"
+                    },
+                    "title": "Subtasks",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "user_intent",
+                  "subtasks"
+                ],
+                "title": "TaskPlan",
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "create_task_plan"
+          }
+        }
+      },
+      "response": {
+        "tool_calls": [
+          {
+            "name": "create_task_plan",
+            "arguments": "{\"user_intent\":\"Create a beginner-level lesson explaining what Machine Learning is.\",\"subtasks\":[{\"id\":\"lesson_outline\",\"agent\":\"presentation\",\"title\":\"Create a beginner-friendly lesson outline on Machine Learning. Include: definition, why it matters, key terms (data, features, labels, model, training, inference), three main types (supervised/unsupervised/reinforcement), simple real-world examples, a high-level workflow, common misconceptions, and a short summary.\",\"dependencies\":[],\"acceptance_criteria\":[{\"id\":\"outline_sections_present\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Supervised\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_key_terms\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"features\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_workflow\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"train\",\"severity\":\"required\",\"evidence\":\"result.output\"}]},{\"id\":\"lesson_script\",\"agent\":\"text\",\"title\":\"Write the full beginner lesson in plain language (800\u20131200 words). Must include: an analogy, a short numbered workflow, and 3 quick examples (spam filter, movie recommendations, image recognition). End with a 5-bullet takeaway list.\",\"dependencies\":[\"lesson_outline\"],\"acceptance_criteria\":[{\"id\":\"word_count_range\",\"type\":\"output_shape\",\"target\":\"result.output.word_count\",\"operator\":\"gte\",\"expected\":800,\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_analogy\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"like\",\"severity\":\"optional\",\"evidence\":\"result.output.text\"},{\"id\":\"includes_three_examples\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"spam\",\"severity\":\"required\",\"evidence\":\"result.output.text\"},{\"id\":\"includes_takeaways\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"Takeaways\",\"severity\":\"required\",\"evidence\":\"result.output.text\"}]},{\"id\":\"knowledge_check_quiz\",\"agent\":\"quizzer\",\"title\":\"Create a short beginner quiz: 6 multiple-choice questions + answer key. Cover definitions, types of ML, overfitting intuition, and training vs inference.\",\"dependencies\":[\"lesson_script\"],\"acceptance_criteria\":[{\"id\":\"six_questions\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"1.\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"has_answer_key\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Answer Key\",\"severity\":\"required\",\"evidence\":\"result.output\"}]}]}"
+          }
+        ]
+      },
+      "parsed_plan": {
+        "user_intent": "Create a beginner-level lesson explaining what Machine Learning is.",
+        "subtasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly lesson outline on Machine Learning. Include: definition, why it matters, key terms (data, features, labels, model, training, inference), three main types (supervised/unsupervised/reinforcement), simple real-world examples, a high-level workflow, common misconceptions, and a short summary.",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "outline_sections_present",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_key_terms",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "features",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_workflow",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "lesson_script",
+            "agent": "text",
+            "instruction": "Write the full beginner lesson in plain language (800\u20131200 words). Must include: an analogy, a short numbered workflow, and 3 quick examples (spam filter, movie recommendations, image recognition). End with a 5-bullet takeaway list.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_outline"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "word_count_range",
+                "criterion_type": "output_shape",
+                "target": "result.output.word_count",
+                "operator": "gte",
+                "expected": 800,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_analogy",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "like",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_three_examples",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "spam",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_takeaways",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Takeaways",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ]
+          },
+          {
+            "task_id": "knowledge_check_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner quiz: 6 multiple-choice questions + answer key. Cover definitions, types of ML, overfitting intuition, and training vs inference.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_script"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "six_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "1.",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "Create a beginner-level lesson explaining what Machine Learning is.",
+    "subtasks": [
+      {
+        "task_id": "lesson_outline",
+        "agent": "presentation",
+        "instruction": "Create a beginner-friendly lesson outline on Machine Learning. Include: definition, why it matters, key terms (data, features, labels, model, training, inference), three main types (supervised/unsupervised/reinforcement), simple real-world examples, a high-level workflow, common misconceptions, and a short summary.",
+        "inputs": {},
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "outline_sections_present",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Supervised",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_key_terms",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "features",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_workflow",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "train",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "lesson_script",
+        "agent": "text",
+        "instruction": "Write the full beginner lesson in plain language (800\u20131200 words). Must include: an analogy, a short numbered workflow, and 3 quick examples (spam filter, movie recommendations, image recognition). End with a 5-bullet takeaway list.",
+        "inputs": {},
+        "dependencies": [
+          "lesson_outline"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "word_count_range",
+            "criterion_type": "output_shape",
+            "target": "result.output.word_count",
+            "operator": "gte",
+            "expected": 800,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_analogy",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "like",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "includes_three_examples",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "spam",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "includes_takeaways",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "Takeaways",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          }
+        ]
+      },
+      {
+        "task_id": "knowledge_check_quiz",
+        "agent": "quizzer",
+        "instruction": "Create a short beginner quiz: 6 multiple-choice questions + answer key. Cover definitions, types of ML, overfitting intuition, and training vs inference.",
+        "inputs": {},
+        "dependencies": [
+          "lesson_script"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "six_questions",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "1.",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "has_answer_key",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Answer Key",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "fail",
+  "agent_results": {
+    "lesson_outline": {
+      "agent": "presentation",
+      "success": false,
+      "output": null,
+      "artifacts": [
+        "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\builder_1767801862_v2.py"
+      ],
+      "instruction": "The provided output is null, so it cannot be evaluated against the criteria. Generate a lesson outline text that includes the word 'Supervised', mentions 'features' among the key terms, and includes a workflow section that uses the word 'train' (or 'training'). Ensure the outline also covers the requested items: definition, why it matters, key terms (data, features, labels, model, training, inference), supervised/unsupervised/reinforcement types with examples, high-level workflow, misconceptions, and summary.",
+      "attempts": 3,
+      "metadata": {},
+      "error": "Max retries exceeded."
+    },
+    "lesson_script": {
+      "agent": "text",
+      "success": true,
+      "output": {
+        "text": "Generated text content based on: Provide a complete beginner-friendly lesson of 800\u20131200 words in plain language. It must include: (1) an explicit analogy using the word \u201clike\u201d; (2) a short numbered workflow (e.g., 1\u20135 steps) explaining how an ML model is built/used; (3) three quick examples explicitly covering spam filtering, movie recommendations, and image recognition (use the words \u201cspam\u201d, \u201cmovie\u201d, and \u201cimage/recognition\u201d in context); and (4) end with a clearly labeled \u201cTakeaways\u201d section containing exactly 5 bullet points.",
+        "format": "markdown"
+      },
+      "artifacts": [],
+      "instruction": "Provide a complete beginner-friendly lesson of 800\u20131200 words in plain language. It must include: (1) an explicit analogy using the word \u201clike\u201d; (2) a short numbered workflow (e.g., 1\u20135 steps) explaining how an ML model is built/used; (3) three quick examples explicitly covering spam filtering, movie recommendations, and image recognition (use the words \u201cspam\u201d, \u201cmovie\u201d, and \u201cimage/recognition\u201d in context); and (4) end with a clearly labeled \u201cTakeaways\u201d section containing exactly 5 bullet points.",
+      "attempts": 3,
+      "metadata": {
+        "model": "gpt-4o"
+      },
+      "error": "Max retries exceeded."
+    },
+    "knowledge_check_quiz": {
+      "agent": "quizzer",
+      "success": true,
+      "output": {
+        "questions": [
+          {
+            "q": "Example Question 1?",
+            "a": "Answer A"
+          },
+          {
+            "q": "Example Question 2?",
+            "a": "Answer B"
+          }
+        ],
+        "total_questions": 2
+      },
+      "artifacts": [],
+      "instruction": "Provide a beginner quiz with exactly 6 multiple-choice questions (numbered 1\u20136). Include 3\u20134 answer choices (A\u2013D) for each question. Cover: basic ML definition, supervised vs unsupervised vs reinforcement learning, overfitting intuition, and training vs inference. Add an explicit 'Answer Key' section listing the correct option letter for each question.",
+      "attempts": 3,
+      "metadata": {
+        "model": "gpt-4-turbo"
+      },
+      "error": "Max retries exceeded."
+    }
+  }
+}

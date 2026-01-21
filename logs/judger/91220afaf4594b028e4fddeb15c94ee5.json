@@ -1,0 +1,2667 @@
+{
+  "run_id": "91220afaf4594b028e4fddeb15c94ee5",
+  "started_at": "2026-01-07T15:09:41.468050+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson introducing students to what Machine Learning is.",
+          "subtasks": [
+            {
+              "task_id": "step1_presentation",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output.slides",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.slides"
+                },
+                {
+                  "criterion_id": "covers_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_activity",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "activity",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                }
+              ]
+            },
+            {
+              "task_id": "step2_coder_demo",
+              "agent": "coder",
+              "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+              "inputs": {
+                "output_filename": "step2_coder_demo_20260107_1509.py",
+                "output_subdir": "run_91220afaf4594b028e4fddeb15c94ee5"
+              },
+              "dependencies": [
+                "step1_presentation"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_has_sklearn_pipeline",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "scikit-learn",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                },
+                {
+                  "criterion_id": "code_includes_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                },
+                {
+                  "criterion_id": "code_includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                }
+              ]
+            },
+            {
+              "task_id": "step3_quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+              "inputs": {},
+              "dependencies": [
+                "step1_presentation"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output.questions",
+                  "operator": "gte",
+                  "expected": 8,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.questions"
+                },
+                {
+                  "criterion_id": "has_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_types",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "unsupervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "step4_teacher_guide",
+              "agent": "text",
+              "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+              "inputs": {},
+              "dependencies": [
+                "step1_presentation",
+                "step2_coder_demo",
+                "step3_quiz"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "includes_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "Learning Objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "minutes",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_exit_ticket",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "Exit Ticket",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_presentation": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\builder_1767798826_v2.py"
+            ],
+            "instruction": "No slide deck output was provided (output is null), so required criteria cannot be verified. Provide a 10\u201312 slide deck introducing Machine Learning with: definition; difference from traditional programming; learning from data; supervised/unsupervised/reinforcement; real-world examples; workflow (data\u2192train\u2192evaluate\u2192predict); key vocabulary (feature/label/model/training/testing); ethics/bias note; speaker notes with a short script per slide; and at least one clearly labeled in-class mini-activity. Ensure the text explicitly includes the word \u201csupervised\u201d and mentions \u201cactivity\u201d.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step3_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "- Provide a beginner quiz with 8\u201310 total questions.\n- Include multiple-choice questions plus exactly 2 short-answer questions.\n- Ensure coverage includes: definition of ML, data vs model, supervised vs unsupervised (explicitly mention \u201cunsupervised\u201d), features vs labels, overfitting intuition, and a simple classification scenario question.\n- Add a clear \u201cAnswer Key\u201d section mapping each question to the correct answer.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step2_coder_demo": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "# Simple Supervised Learning Example with Scikit-learn\n# This script demonstrates basic machine learning workflow using the Iris dataset\n\n# Import necessary libraries\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\n# Load the Iris dataset\n# The Iris dataset contains 150 samples of iris flowers with 4 features each\niris = load_iris()\nX = iris.data  # Features: sepal length, sepal width, petal length, petal width\ny = iris.target  # Target: species of iris (setosa, versicolor, virginica)\n\nprint(\"Dataset loaded successfully!\")\nprint(f\"Number of samples: {len(X)}\")\nprint(f\"Number of features: {len(iris.feature_names)}\")\nprint(f\"Feature names: {iris.feature_names}\")\nprint(f\"Target names: {iris.target_names}\")\n\n# Split data into training and testing sets\n# 80% for training, 20% for testing\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nprint(\"\\nData splitting completed!\")\nprint(f\"Training set size: {len(X_train)}\")\nprint(f\"Testing set size: {len(X_test)}\")\n\n# Create and train the model\n# Using Random Forest Classifier - a simple yet powerful algorithm\nmodel = RandomForestClassifier(n_estimators=10, random_state=42)\nmodel.fit(X_train, y_train)\n\nprint(\"\\nModel training completed!\")\n\n# Make predictions on the test set\ny_pred = model.predict(X_test)\n\n# Evaluate model performance\naccuracy = accuracy_score(y_test, y_pred)\nprint(f\"\\nModel Accuracy: {accuracy:.2f} ({accuracy*100:.1f}%)\")\n\n# Make one prediction on a new sample\n# Using sample values: [5.1, 3.5, 1.4, 0.2] which represents a typical iris flower\nnew_sample = np.array([[5.1, 3.5, 1.4, 0.2]])\nprediction = model.predict(new_sample)\npredicted_class = iris.target_names[prediction[0]]\n\nprint(f\"\\nPrediction for new sample {new_sample[0]}:\")\nprint(f\"Predicted class: {predicted_class}\")\nprint(f\"Predicted class index: {prediction[0]}\")\n\n# Show some actual test results for comparison\nprint(\"\\nSample test results:\")\nfor i in range(min(5, len(X_test))):\n    actual = iris.target_names[y_test[i]]\n    predicted = iris.target_names[y_pred[i]]\n    print(f\"Actual: {actual:<10} | Predicted: {predicted}\")\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py",
+                "stdout": "",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py"
+            ],
+            "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "step4_teacher_guide": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_presentation",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+            "criteria": [
+              {
+                "criterion_id": "slides_count",
+                "criterion_type": "semantic",
+                "target": "result.output.slides",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.slides"
+              },
+              {
+                "criterion_id": "covers_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_activity",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "activity",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_presentation",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output.slides",
+                      "operator": "gte",
+                      "expected": 10,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.slides"
+                    },
+                    {
+                      "criterion_id": "covers_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_activity",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "activity",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_count\",\"covers_core_topics\",\"includes_activity\"],\"fix_instructions\":\"No slide deck output was provided (output=null), so none of the semantic requirements can be verified.\\n\\nTo fix:\\n1) Provide a 10\u201312 slide deck with slide titles and bullet content.\\n2) Include speaker notes (short script) for every slide.\\n3) Ensure it explicitly covers: definition of ML, contrast with traditional programming, learning from data, types (supervised/unsupervised/reinforcement), real-world examples, workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and an ethics/bias note.\\n4) Include at least one clearly labeled in-class mini-activity (use the word \u201cActivity\u201d in the slide text to satisfy the check).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_coder_demo",
+            "agent": "coder",
+            "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+            "criteria": [
+              {
+                "criterion_id": "code_has_sklearn_pipeline",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "scikit-learn",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "code_includes_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "code_includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output.code"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_coder_demo",
+                  "agent": "coder",
+                  "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+                  "output": {
+                    "code": "# Simple Supervised Learning Example with Scikit-learn\n# This script demonstrates basic machine learning workflow using the Iris dataset\n\n# Import necessary libraries\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\n# Step 1: Load the dataset\n# We'll use the famous Iris dataset which contains measurements of flower petals and sepals\nprint(\"Loading Iris dataset...\")\niris = load_iris()\nX = iris.data  # Features: sepal length, sepal width, petal length, petal width\ny = iris.target  # Target: species of iris (setosa, versicolor, virginica)\n\nprint(f\"Dataset shape: {X.shape}\")\nprint(f\"Number of classes: {len(iris.target_names)}\")\nprint(f\"Classes: {iris.target_names}\")\n\n# Step 2: Split the data into training and testing sets\n# 80% for training, 20% for testing\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nprint(f\"\\nTraining set size: {X_train.shape[0]} samples\")\nprint(f\"Testing set size: {X_test.shape[0]} samples\")\n\n# Step 3: Create and train the model\n# We'll use Random Forest Classifier - a simple yet powerful algorithm\nprint(\"\\nCreating and training the model...\")\nmodel = RandomForestClassifier(n_estimators=10, random_state=42)\nmodel.fit(X_train, y_train)\n\nprint(\"Model trained successfully!\")\n\n# Step 4: Make predictions on the test set\nprint(\"\\nMaking predictions on test data...\")\ny_pred = model.predict(X_test)\n\n# Step 5: Evaluate the model's performance\naccuracy = accuracy_score(y_test, y_pred)\nprint(f\"Model accuracy: {accuracy:.2f} ({accuracy*100:.1f}%)\")\n\n# Step 6: Make one prediction on a new sample\n# Let's predict a new iris flower with these measurements:\n# [5.1, 3.5, 1.4, 0.2] - typical values for a setosa iris\nnew_sample = np.array([[5.1, 3.5, 1.4, 0.2]])\nprediction = model.predict(new_sample)\npredicted_class = iris.target_names[prediction[0]]\n\nprint(f\"\\nMakin...",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py",
+                      "stdout": "",
+                      "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": 1,
+                        "stdout": "",
+                        "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_has_sklearn_pipeline",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "scikit-learn",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    },
+                    {
+                      "criterion_id": "code_includes_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    },
+                    {
+                      "criterion_id": "code_includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"Execution failed: scikit-learn not available in runtime (ModuleNotFoundError: No module named 'sklearn').\",\"Script appears truncated at the end (print statement cut off: \\\"Makin...\\\"), so the provided code is incomplete/unusable as-is.\"],\"fix_instructions\":\"1) Ensure scikit-learn is installed in the execution environment: `pip install scikit-learn` (optionally also `numpy`). Add run instructions at the top or in a comment block.\\n2) Provide the full, non-truncated script. Complete the final print statements and ensure the file ends cleanly.\\n3) (Optional robustness) Add a friendly check/exception around sklearn import to print installation instructions if missing.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "step3_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output.questions",
+                "operator": "gte",
+                "expected": 8,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.questions"
+              },
+              {
+                "criterion_id": "has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_types",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "unsupervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output.questions",
+                      "operator": "gte",
+                      "expected": 8,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.questions"
+                    },
+                    {
+                      "criterion_id": "has_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_types",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "unsupervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\",\"has_answer_key\",\"covers_types\"],\"fix_instructions\":\"- Increase the quiz to 8\u201310 questions total.\\n- Include multiple-choice questions plus exactly 2 short-answer questions.\\n- Add an explicit \\\"Answer Key\\\" section that maps each question to its correct answer.\\n- Ensure coverage includes the term/concept \\\"unsupervised\\\" (contrast supervised vs. unsupervised), and also address definition of ML, data vs. model, features vs. labels, overfitting intuition, and a simple classification scenario.\\n- Update output structure so `output.questions` contains all questions (8\u201310) and `output` includes the Answer Key text.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_teacher_guide",
+            "agent": "text",
+            "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+            "criteria": [
+              {
+                "criterion_id": "includes_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Learning Objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_timing",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "minutes",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_exit_ticket",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Exit Ticket",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_teacher_guide",
+                  "agent": "text",
+                  "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+                  "output": {
+                    "text": "Generated text content based on: Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "includes_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "Learning Objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "minutes",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_exit_ticket",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "Exit Ticket",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"includes_objectives\",\"includes_timing\",\"includes_exit_ticket\"],\"fix_instructions\":\"The submitted output is a placeholder sentence and does not contain the required lesson-plan sections. Revise the markdown to include: (1) a clearly labeled \\\"Learning Objectives\\\" section with 2\u20134 measurable objectives; (2) a timing breakdown for a 45\u201360 minute lesson with minute allocations (must include the word \\\"minutes\\\"); (3) a clearly labeled \\\"Exit Ticket\\\" prompt. Also add the other requested components: required materials, key discussion prompts, misconceptions to address, and differentiation tips.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "step1_presentation",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_core_topics",
+              "includes_activity",
+              "slides_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "No slide deck output was provided (output=null), so none of the semantic requirements can be verified.\n\nTo fix:\n1) Provide a 10\u201312 slide deck with slide titles and bullet content.\n2) Include speaker notes (short script) for every slide.\n3) Ensure it explicitly covers: definition of ML, contrast with traditional programming, learning from data, types (supervised/unsupervised/reinforcement), real-world examples, workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and an ethics/bias note.\n4) Include at least one clearly labeled in-class mini-activity (use the word \u201cActivity\u201d in the slide text to satisfy the check)."
+          },
+          {
+            "task_id": "step2_coder_demo",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "step3_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_types",
+              "has_answer_key",
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "- Increase the quiz to 8\u201310 questions total.\n- Include multiple-choice questions plus exactly 2 short-answer questions.\n- Add an explicit \"Answer Key\" section that maps each question to its correct answer.\n- Ensure coverage includes the term/concept \"unsupervised\" (contrast supervised vs. unsupervised), and also address definition of ML, data vs. model, features vs. labels, overfitting intuition, and a simple classification scenario.\n- Update output structure so `output.questions` contains all questions (8\u201310) and `output` includes the Answer Key text."
+          },
+          {
+            "task_id": "step4_teacher_guide",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_exit_ticket",
+              "includes_objectives",
+              "includes_timing"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The submitted output is a placeholder sentence and does not contain the required lesson-plan sections. Revise the markdown to include: (1) a clearly labeled \"Learning Objectives\" section with 2\u20134 measurable objectives; (2) a timing breakdown for a 45\u201360 minute lesson with minute allocations (must include the word \"minutes\"); (3) a clearly labeled \"Exit Ticket\" prompt. Also add the other requested components: required materials, key discussion prompts, misconceptions to address, and differentiation tips."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson introducing students to what Machine Learning is.",
+          "subtasks": [
+            {
+              "task_id": "step1_presentation",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output.slides",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.slides"
+                },
+                {
+                  "criterion_id": "covers_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_activity",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "activity",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                }
+              ]
+            },
+            {
+              "task_id": "step2_coder_demo",
+              "agent": "coder",
+              "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+              "inputs": {
+                "output_filename": "step2_coder_demo_20260107_1509.py",
+                "output_subdir": "run_91220afaf4594b028e4fddeb15c94ee5"
+              },
+              "dependencies": [
+                "step1_presentation"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_has_sklearn_pipeline",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "scikit-learn",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                },
+                {
+                  "criterion_id": "code_includes_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                },
+                {
+                  "criterion_id": "code_includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                }
+              ]
+            },
+            {
+              "task_id": "step3_quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+              "inputs": {},
+              "dependencies": [
+                "step1_presentation"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output.questions",
+                  "operator": "gte",
+                  "expected": 8,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.questions"
+                },
+                {
+                  "criterion_id": "has_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_types",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "unsupervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "step4_teacher_guide",
+              "agent": "text",
+              "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+              "inputs": {},
+              "dependencies": [
+                "step1_presentation",
+                "step2_coder_demo",
+                "step3_quiz"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "includes_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "Learning Objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "minutes",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_exit_ticket",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "Exit Ticket",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_presentation": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\builder_1767798826_v2.py"
+            ],
+            "instruction": "No slide deck output was provided (output is null), so required criteria cannot be verified. Provide a 10\u201312 slide deck introducing Machine Learning with: definition; difference from traditional programming; learning from data; supervised/unsupervised/reinforcement; real-world examples; workflow (data\u2192train\u2192evaluate\u2192predict); key vocabulary (feature/label/model/training/testing); ethics/bias note; speaker notes with a short script per slide; and at least one clearly labeled in-class mini-activity. Ensure the text explicitly includes the word \u201csupervised\u201d and mentions \u201cactivity\u201d.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step3_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "- Provide a beginner quiz with 8\u201310 total questions.\n- Include multiple-choice questions plus exactly 2 short-answer questions.\n- Ensure coverage includes: definition of ML, data vs model, supervised vs unsupervised (explicitly mention \u201cunsupervised\u201d), features vs labels, overfitting intuition, and a simple classification scenario question.\n- Add a clear \u201cAnswer Key\u201d section mapping each question to the correct answer.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step2_coder_demo": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "# Simple Supervised Learning Example with Scikit-learn\n# This script demonstrates basic machine learning workflow using the Iris dataset\n\n# Import necessary libraries\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\n# Load the Iris dataset\n# The Iris dataset contains 150 samples of iris flowers with 4 features each\niris = load_iris()\nX = iris.data  # Features: sepal length, sepal width, petal length, petal width\ny = iris.target  # Target: species of iris (setosa, versicolor, virginica)\n\nprint(\"Dataset loaded successfully!\")\nprint(f\"Number of samples: {len(X)}\")\nprint(f\"Number of features: {len(iris.feature_names)}\")\nprint(f\"Feature names: {iris.feature_names}\")\nprint(f\"Target names: {iris.target_names}\")\n\n# Split data into training and testing sets\n# 80% for training, 20% for testing\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nprint(\"\\nData splitting completed!\")\nprint(f\"Training set size: {len(X_train)}\")\nprint(f\"Testing set size: {len(X_test)}\")\n\n# Create and train the model\n# Using Random Forest Classifier - a simple yet powerful algorithm\nmodel = RandomForestClassifier(n_estimators=10, random_state=42)\nmodel.fit(X_train, y_train)\n\nprint(\"\\nModel training completed!\")\n\n# Make predictions on the test set\ny_pred = model.predict(X_test)\n\n# Evaluate model performance\naccuracy = accuracy_score(y_test, y_pred)\nprint(f\"\\nModel Accuracy: {accuracy:.2f} ({accuracy*100:.1f}%)\")\n\n# Make one prediction on a new sample\n# Using sample values: [5.1, 3.5, 1.4, 0.2] which represents a typical iris flower\nnew_sample = np.array([[5.1, 3.5, 1.4, 0.2]])\nprediction = model.predict(new_sample)\npredicted_class = iris.target_names[prediction[0]]\n\nprint(f\"\\nPrediction for new sample {new_sample[0]}:\")\nprint(f\"Predicted class: {predicted_class}\")\nprint(f\"Predicted class index: {prediction[0]}\")\n\n# Show some actual test results for comparison\nprint(\"\\nSample test results:\")\nfor i in range(min(5, len(X_test))):\n    actual = iris.target_names[y_test[i]]\n    predicted = iris.target_names[y_pred[i]]\n    print(f\"Actual: {actual:<10} | Predicted: {predicted}\")\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py",
+                "stdout": "",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py"
+            ],
+            "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "step4_teacher_guide": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_presentation",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+            "criteria": [
+              {
+                "criterion_id": "slides_count",
+                "criterion_type": "semantic",
+                "target": "result.output.slides",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.slides"
+              },
+              {
+                "criterion_id": "covers_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_activity",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "activity",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_presentation",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output.slides",
+                      "operator": "gte",
+                      "expected": 10,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.slides"
+                    },
+                    {
+                      "criterion_id": "covers_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_activity",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "activity",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_count\",\"covers_core_topics\",\"includes_activity\"],\"fix_instructions\":\"No slide deck output was provided (output is null), so required criteria cannot be verified. Provide a 10\u201312 slide deck introducing Machine Learning with: definition; difference from traditional programming; learning from data; supervised/unsupervised/reinforcement; real-world examples; workflow (data\u2192train\u2192evaluate\u2192predict); key vocabulary (feature/label/model/training/testing); ethics/bias note; speaker notes with a short script per slide; and at least one clearly labeled in-class mini-activity. Ensure the text explicitly includes the word \u201csupervised\u201d and mentions \u201cactivity\u201d.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_coder_demo",
+            "agent": "coder",
+            "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+            "criteria": [
+              {
+                "criterion_id": "code_has_sklearn_pipeline",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "scikit-learn",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "code_includes_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "code_includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output.code"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_coder_demo",
+                  "agent": "coder",
+                  "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+                  "output": {
+                    "code": "# Simple Supervised Learning Example with Scikit-learn\n# This script demonstrates basic machine learning workflow using the Iris dataset\n\n# Import necessary libraries\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\n# Load the Iris dataset\n# The Iris dataset contains 150 samples of iris flowers with 4 features each\niris = load_iris()\nX = iris.data  # Features: sepal length, sepal width, petal length, petal width\ny = iris.target  # Target: species of iris (setosa, versicolor, virginica)\n\nprint(\"Dataset loaded successfully!\")\nprint(f\"Dataset shape: {X.shape}\")\nprint(f\"Features: {iris.feature_names}\")\nprint(f\"Target classes: {iris.target_names}\")\n\n# Split data into training and testing sets\n# 80% for training, 20% for testing\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nprint(\"\\nData split completed!\")\nprint(f\"Training set size: {X_train.shape[0]}\")\nprint(f\"Testing set size: {X_test.shape[0]}\")\n\n# Create and train the model\n# Using Random Forest Classifier - a simple yet powerful algorithm\nmodel = RandomForestClassifier(n_estimators=10, random_state=42)\nmodel.fit(X_train, y_train)\n\nprint(\"\\nModel trained successfully!\")\n\n# Make predictions on the test set\ny_pred = model.predict(X_test)\n\n# Evaluate model performance\naccuracy = accuracy_score(y_test, y_pred)\nprint(f\"\\nModel Accuracy: {accuracy:.2f} ({accuracy*100:.1f}%)\")\n\n# Make one prediction on a new sample\n# Using sample values: [5.1, 3.5, 1.4, 0.2] which represents a flower\nnew_sample = np.array([[5.1, 3.5, 1.4, 0.2]])\nprediction = model.predict(new_sample)\npredicted_class = iris.target_names[prediction[0]]\n\nprint(f\"\\nPrediction for new sample {new_sample[0]}:\")\nprint(f\"Predicted class: {predicted_class}\")\nprint(f\"Predicted class index: {prediction[0]}\")\n\n# Show actual values for comparison\nprint(f\"\\nActual value...",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py",
+                      "stdout": "",
+                      "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": 1,
+                        "stdout": "",
+                        "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_has_sklearn_pipeline",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "scikit-learn",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    },
+                    {
+                      "criterion_id": "code_includes_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    },
+                    {
+                      "criterion_id": "code_includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"runtime_dependency_missing_sklearn\",\"incomplete_script_output\"],\"fix_instructions\":\"Install scikit-learn (and numpy) in the environment before running: `pip install scikit-learn numpy` (or `conda install scikit-learn numpy`). Also fix the script truncation at the end: the final print statement is cut off (`print(f\\\"\\\\nActual value...`) causing incomplete demo content; remove or complete that section. Add a short 'How to run' header with commands like `python demo.py` and optionally a try/except around sklearn import to print an install hint.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "step3_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output.questions",
+                "operator": "gte",
+                "expected": 8,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.questions"
+              },
+              {
+                "criterion_id": "has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_types",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "unsupervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output.questions",
+                      "operator": "gte",
+                      "expected": 8,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.questions"
+                    },
+                    {
+                      "criterion_id": "has_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_types",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "unsupervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\",\"has_answer_key\",\"covers_types\"],\"fix_instructions\":\"- Provide a beginner quiz with 8\u201310 total questions.\\n- Include multiple-choice questions plus exactly 2 short-answer questions.\\n- Ensure coverage includes: definition of ML, data vs model, supervised vs unsupervised (explicitly mention \u201cunsupervised\u201d), features vs labels, overfitting intuition, and a simple classification scenario question.\\n- Add a clear \u201cAnswer Key\u201d section mapping each question to the correct answer.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_teacher_guide",
+            "agent": "text",
+            "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+            "criteria": [
+              {
+                "criterion_id": "includes_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Learning Objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_timing",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "minutes",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_exit_ticket",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Exit Ticket",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_teacher_guide",
+                  "agent": "text",
+                  "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+                  "output": {
+                    "text": "Generated text content based on: The submitted output is a placeholder sentence and does not contain the required lesson-plan sections. Revise the markdown to include: (1) a clearly labeled \"Learning Objectives\" section with 2\u20134 measurable objectives; (2) a timing breakdown for a 45\u201360 minute lesson with minute allocations (must include the word \"minutes\"); (3) a clearly labeled \"Exit Ticket\" prompt. Also add the other requested components: required materials, key discussion prompts, misconceptions to address, and differentiation tips.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "includes_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "Learning Objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "minutes",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_exit_ticket",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "Exit Ticket",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"includes_objectives\",\"includes_timing\",\"includes_exit_ticket\"],\"fix_instructions\":\"Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "step1_presentation",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_core_topics",
+              "includes_activity",
+              "slides_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "No slide deck output was provided (output is null), so required criteria cannot be verified. Provide a 10\u201312 slide deck introducing Machine Learning with: definition; difference from traditional programming; learning from data; supervised/unsupervised/reinforcement; real-world examples; workflow (data\u2192train\u2192evaluate\u2192predict); key vocabulary (feature/label/model/training/testing); ethics/bias note; speaker notes with a short script per slide; and at least one clearly labeled in-class mini-activity. Ensure the text explicitly includes the word \u201csupervised\u201d and mentions \u201cactivity\u201d."
+          },
+          {
+            "task_id": "step2_coder_demo",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "step3_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_types",
+              "has_answer_key",
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "- Provide a beginner quiz with 8\u201310 total questions.\n- Include multiple-choice questions plus exactly 2 short-answer questions.\n- Ensure coverage includes: definition of ML, data vs model, supervised vs unsupervised (explicitly mention \u201cunsupervised\u201d), features vs labels, overfitting intuition, and a simple classification scenario question.\n- Add a clear \u201cAnswer Key\u201d section mapping each question to the correct answer."
+          },
+          {
+            "task_id": "step4_teacher_guide",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_exit_ticket",
+              "includes_objectives",
+              "includes_timing"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson introducing students to what Machine Learning is.",
+          "subtasks": [
+            {
+              "task_id": "step1_presentation",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output.slides",
+                  "operator": "gte",
+                  "expected": 10,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.slides"
+                },
+                {
+                  "criterion_id": "covers_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_activity",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "activity",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                }
+              ]
+            },
+            {
+              "task_id": "step2_coder_demo",
+              "agent": "coder",
+              "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+              "inputs": {
+                "output_filename": "step2_coder_demo_20260107_1509.py",
+                "output_subdir": "run_91220afaf4594b028e4fddeb15c94ee5"
+              },
+              "dependencies": [
+                "step1_presentation"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_has_sklearn_pipeline",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "scikit-learn",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                },
+                {
+                  "criterion_id": "code_includes_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                },
+                {
+                  "criterion_id": "code_includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output.code",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output.code"
+                }
+              ]
+            },
+            {
+              "task_id": "step3_quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+              "inputs": {},
+              "dependencies": [
+                "step1_presentation"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output.questions",
+                  "operator": "gte",
+                  "expected": 8,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.questions"
+                },
+                {
+                  "criterion_id": "has_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_types",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "unsupervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "step4_teacher_guide",
+              "agent": "text",
+              "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+              "inputs": {},
+              "dependencies": [
+                "step1_presentation",
+                "step2_coder_demo",
+                "step3_quiz"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "includes_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "Learning Objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "minutes",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                },
+                {
+                  "criterion_id": "includes_exit_ticket",
+                  "criterion_type": "semantic",
+                  "target": "result.output.text",
+                  "operator": "contains",
+                  "expected": "Exit Ticket",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output.text"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_presentation": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\builder_1767798826_v2.py"
+            ],
+            "instruction": "No slide deck output was provided (output is null), so required criteria cannot be verified. Provide a 10\u201312 slide deck introducing Machine Learning with: definition; difference from traditional programming; learning from data; supervised/unsupervised/reinforcement; real-world examples; workflow (data\u2192train\u2192evaluate\u2192predict); key vocabulary (feature/label/model/training/testing); ethics/bias note; speaker notes with a short script per slide; and at least one clearly labeled in-class mini-activity. Ensure the text explicitly includes the word \u201csupervised\u201d and mentions \u201cactivity\u201d.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step3_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "- Provide a beginner quiz with 8\u201310 total questions.\n- Include multiple-choice questions plus exactly 2 short-answer questions.\n- Ensure coverage includes: definition of ML, data vs model, supervised vs unsupervised (explicitly mention \u201cunsupervised\u201d), features vs labels, overfitting intuition, and a simple classification scenario question.\n- Add a clear \u201cAnswer Key\u201d section mapping each question to the correct answer.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step2_coder_demo": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "# Simple Supervised Learning Example with Scikit-learn\n# This script demonstrates basic machine learning workflow using the Iris dataset\n\n# Import necessary libraries\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\n# Load the Iris dataset\n# The Iris dataset contains 150 samples of iris flowers with 4 features each\niris = load_iris()\nX = iris.data  # Features: sepal length, sepal width, petal length, petal width\ny = iris.target  # Target: species of iris (setosa, versicolor, virginica)\n\nprint(\"Dataset loaded successfully!\")\nprint(f\"Number of samples: {len(X)}\")\nprint(f\"Number of features: {len(iris.feature_names)}\")\nprint(f\"Feature names: {iris.feature_names}\")\nprint(f\"Target names: {iris.target_names}\")\n\n# Split data into training and testing sets\n# 80% for training, 20% for testing\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nprint(\"\\nData splitting completed!\")\nprint(f\"Training set size: {len(X_train)}\")\nprint(f\"Testing set size: {len(X_test)}\")\n\n# Create and train the model\n# Using Random Forest Classifier - a simple yet powerful algorithm\nmodel = RandomForestClassifier(n_estimators=10, random_state=42)\nmodel.fit(X_train, y_train)\n\nprint(\"\\nModel training completed!\")\n\n# Make predictions on the test set\ny_pred = model.predict(X_test)\n\n# Evaluate model performance\naccuracy = accuracy_score(y_test, y_pred)\nprint(f\"\\nModel Accuracy: {accuracy:.2f} ({accuracy*100:.1f}%)\")\n\n# Make one prediction on a new sample\n# Using sample values: [5.1, 3.5, 1.4, 0.2] which represents a typical iris flower\nnew_sample = np.array([[5.1, 3.5, 1.4, 0.2]])\nprediction = model.predict(new_sample)\npredicted_class = iris.target_names[prediction[0]]\n\nprint(f\"\\nPrediction for new sample {new_sample[0]}:\")\nprint(f\"Predicted class: {predicted_class}\")\nprint(f\"Predicted class index: {prediction[0]}\")\n\n# Show some actual test results for comparison\nprint(\"\\nSample test results:\")\nfor i in range(min(5, len(X_test))):\n    actual = iris.target_names[y_test[i]]\n    predicted = iris.target_names[y_pred[i]]\n    print(f\"Actual: {actual:<10} | Predicted: {predicted}\")\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py",
+                "stdout": "",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py"
+            ],
+            "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "step4_teacher_guide": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_presentation",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+            "criteria": [
+              {
+                "criterion_id": "slides_count",
+                "criterion_type": "semantic",
+                "target": "result.output.slides",
+                "operator": "gte",
+                "expected": 10,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.slides"
+              },
+              {
+                "criterion_id": "covers_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_activity",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "activity",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_presentation",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck (10\u201312 slides) introducing Machine Learning: definition, how it differs from traditional programming, core idea of learning from data, types (supervised/unsupervised/reinforcement), common real-world examples, basic workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and simple ethics/bias note. Include speaker notes with a short script per slide and at least one in-class mini-activity.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output.slides",
+                      "operator": "gte",
+                      "expected": 10,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.slides"
+                    },
+                    {
+                      "criterion_id": "covers_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_activity",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "activity",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_count\",\"covers_core_topics\",\"includes_activity\"],\"fix_instructions\":\"No slide deck output was provided (output is null), so requirements cannot be verified. Provide a 10\u201312 slide deck with slide titles/bullets plus speaker notes per slide. Ensure the deck explicitly covers: definition of ML, difference from traditional programming, learning from data, types (include the word 'supervised' along with unsupervised and reinforcement), real-world examples, workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and an ethics/bias note. Include at least one clearly labeled in-class mini-activity (use the word 'activity' in the slide content/notes).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_coder_demo",
+            "agent": "coder",
+            "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+            "criteria": [
+              {
+                "criterion_id": "code_has_sklearn_pipeline",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "scikit-learn",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "code_includes_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "code_includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output.code"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_coder_demo",
+                  "agent": "coder",
+                  "instruction": "Write a simple, runnable Python notebook/script demo for beginners showing a tiny supervised learning example (e.g., predicting house price or classifying iris) using scikit-learn. Keep it minimal: load dataset, split, train a model, evaluate accuracy, make one prediction. Add clear comments and print statements. Provide instructions to run.",
+                  "output": {
+                    "code": "# Simple Supervised Learning Example with Scikit-learn\n# This script demonstrates basic machine learning workflow using the Iris dataset\n\n# Import necessary libraries\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nimport numpy as np\n\n# Load the Iris dataset\n# The Iris dataset contains 150 samples of iris flowers with 4 features each\niris = load_iris()\nX = iris.data  # Features: sepal length, sepal width, petal length, petal width\ny = iris.target  # Target: species of iris (setosa, versicolor, virginica)\n\nprint(\"Dataset loaded successfully!\")\nprint(f\"Number of samples: {len(X)}\")\nprint(f\"Number of features: {len(iris.feature_names)}\")\nprint(f\"Feature names: {iris.feature_names}\")\nprint(f\"Target names: {iris.target_names}\")\n\n# Split data into training and testing sets\n# 80% for training, 20% for testing\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n\nprint(\"\\nData splitting completed!\")\nprint(f\"Training set size: {len(X_train)}\")\nprint(f\"Testing set size: {len(X_test)}\")\n\n# Create and train the model\n# Using Random Forest Classifier - a simple yet powerful algorithm\nmodel = RandomForestClassifier(n_estimators=10, random_state=42)\nmodel.fit(X_train, y_train)\n\nprint(\"\\nModel training completed!\")\n\n# Make predictions on the test set\ny_pred = model.predict(X_test)\n\n# Evaluate model performance\naccuracy = accuracy_score(y_test, y_pred)\nprint(f\"\\nModel Accuracy: {accuracy:.2f} ({accuracy*100:.1f}%)\")\n\n# Make one prediction on a new sample\n# Using sample values: [5.1, 3.5, 1.4, 0.2] which represents a typical iris flower\nnew_sample = np.array([[5.1, 3.5, 1.4, 0.2]])\nprediction = model.predict(new_sample)\npredicted_class = iris.target_names[prediction[0]]\n\nprint(f\"\\nPrediction for new sample {new_sample[0]}:\")\nprint(f\"Predicted class: {predicted_class}\")\nprint(f\"Predicted class index: {predict...",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py",
+                      "stdout": "",
+                      "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": 1,
+                        "stdout": "",
+                        "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_91220afaf4594b028e4fddeb15c94ee5\\step2_coder_demo_20260107_1509.py\", line 5, in <module>\n    from sklearn.datasets import load_iris\nModuleNotFoundError: No module named 'sklearn'\n",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_has_sklearn_pipeline",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "scikit-learn",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    },
+                    {
+                      "criterion_id": "code_includes_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    },
+                    {
+                      "criterion_id": "code_includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output.code",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output.code"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"Runtime dependency missing (scikit-learn not installed in execution environment)\",\"Script output is truncated/incomplete (ends with `print(f\\\"Predicted class index: {predict...`), causing unusable code\"],\"fix_instructions\":\"1) Ensure scikit-learn is available in the runtime: install with `pip install scikit-learn` (and `numpy`) or use an environment that includes it. Optionally add a short header comment with install instructions.\\n2) Fix the truncated last line: complete the final print statement, e.g. `print(f\\\"Predicted class index: {prediction[0]}\\\")`.\\n3) Re-run to confirm the script executes end-to-end: loads iris, splits, trains, prints accuracy, and prints one prediction.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "step3_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output.questions",
+                "operator": "gte",
+                "expected": 8,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.questions"
+              },
+              {
+                "criterion_id": "has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_types",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "unsupervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner quiz (8\u201310 questions) to check understanding: multiple choice + 2 short answer. Cover definition, data/model, supervised vs unsupervised, features/labels, overfitting intuition, and a simple scenario classification. Provide answer key.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output.questions",
+                      "operator": "gte",
+                      "expected": 8,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.questions"
+                    },
+                    {
+                      "criterion_id": "has_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_types",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "unsupervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\",\"has_answer_key\",\"covers_types\"],\"fix_instructions\":\"- Expand the quiz to 8\u201310 total questions.\\n- Use mostly multiple-choice questions and include exactly 2 short-answer questions.\\n- Add an explicit \\\"Answer Key\\\" section that lists the correct option/solution for each question.\\n- Ensure coverage of required topics, including explicitly mentioning \\\"unsupervised\\\" learning (and supervised vs unsupervised), definition of ML, data vs model, features vs labels, overfitting intuition, and a simple classification scenario.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_teacher_guide",
+            "agent": "text",
+            "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+            "criteria": [
+              {
+                "criterion_id": "includes_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Learning Objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_timing",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "minutes",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_exit_ticket",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Exit Ticket",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_teacher_guide",
+                  "agent": "text",
+                  "instruction": "Write a 45\u201360 minute lesson plan/teacher guide using the slides + demo: learning objectives, required materials, timing breakdown, key discussion prompts, misconceptions to address, differentiation tips, and a brief exit ticket prompt.",
+                  "output": {
+                    "text": "Generated text content based on: Replace the placeholder text with a complete 45\u201360 minute teacher guide in markdown that includes clearly labeled sections: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with minute allocations (must include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "includes_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "Learning Objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "minutes",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    },
+                    {
+                      "criterion_id": "includes_exit_ticket",
+                      "criterion_type": "semantic",
+                      "target": "result.output.text",
+                      "operator": "contains",
+                      "expected": "Exit Ticket",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output.text"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"includes_objectives\",\"includes_timing\",\"includes_exit_ticket\"],\"fix_instructions\":\"The submission is still placeholder text and does not include the required teacher-guide sections. Replace it with a complete 45\u201360 minute lesson plan in markdown that includes clearly labeled headings for: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with specific minute allocations (and explicitly include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt. Ensure the exact phrases \u201cLearning Objectives\u201d and \u201cExit Ticket\u201d appear as headings, and that \u201cminutes\u201d appears in the timing section.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "step1_presentation",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_core_topics",
+              "includes_activity",
+              "slides_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "No slide deck output was provided (output is null), so requirements cannot be verified. Provide a 10\u201312 slide deck with slide titles/bullets plus speaker notes per slide. Ensure the deck explicitly covers: definition of ML, difference from traditional programming, learning from data, types (include the word 'supervised' along with unsupervised and reinforcement), real-world examples, workflow (data\u2192train\u2192evaluate\u2192predict), key vocabulary (feature/label/model/training/testing), and an ethics/bias note. Include at least one clearly labeled in-class mini-activity (use the word 'activity' in the slide content/notes)."
+          },
+          {
+            "task_id": "step2_coder_demo",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "step3_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_types",
+              "has_answer_key",
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "- Expand the quiz to 8\u201310 total questions.\n- Use mostly multiple-choice questions and include exactly 2 short-answer questions.\n- Add an explicit \"Answer Key\" section that lists the correct option/solution for each question.\n- Ensure coverage of required topics, including explicitly mentioning \"unsupervised\" learning (and supervised vs unsupervised), definition of ML, data vs model, features vs labels, overfitting intuition, and a simple classification scenario."
+          },
+          {
+            "task_id": "step4_teacher_guide",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_exit_ticket",
+              "includes_objectives",
+              "includes_timing"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The submission is still placeholder text and does not include the required teacher-guide sections. Replace it with a complete 45\u201360 minute lesson plan in markdown that includes clearly labeled headings for: **Learning Objectives** (2\u20134 measurable objectives), **Required Materials**, **Timing Breakdown** with specific minute allocations (and explicitly include the word \u201cminutes\u201d), **Key Discussion Prompts**, **Common Misconceptions & Fixes**, **Differentiation Tips**, and an **Exit Ticket** prompt. Ensure the exact phrases \u201cLearning Objectives\u201d and \u201cExit Ticket\u201d appear as headings, and that \u201cminutes\u201d appears in the timing section."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pedia - Agent Orchestrator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --accent-color: #00f2fe;
+            --text-color: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            display: flex;
+            gap: 20px;
+            height: 85vh;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 3;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .config-panel h3 {
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 4px;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+        }
+
+        input[type="checkbox"]:checked {
+            background: var(--accent-color);
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: '✔';
+            position: absolute;
+            color: #000;
+            font-size: 14px;
+            left: 3px;
+            top: 0;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+        /* Scrollbar styling */
+        .chat-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-area::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .chat-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .agent-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 5px;
+        }
+
+        .agent-content {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #eee;
+            white-space: pre-wrap; /* Preserve whitespace for code/text */
+        }
+
+        .input-area {
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        #user-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.1em;
+            outline: none;
+            font-family: inherit;
+        }
+
+        #user-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        #send-btn {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Specific Agent Styles */
+        .agent-box.video { border-left: 4px solid #ff4b4b; }
+        .agent-box.slides { border-left: 4px solid #ffa502; }
+        .agent-box.code { border-left: 4px solid #2ecc71; font-family: 'Courier New', monospace; }
+        .agent-box.quiz { border-left: 4px solid #9b59b6; }
+        
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="sidebar">
+        <h1>AI Pedia</h1>
+        
+        <div class="config-panel">
+            <h3>Output Configuration</h3>
+            <div class="checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="check-video" checked>
+                    <span>Video Explanation</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="check-slides" checked>
+                    <span>Presentation Slides</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="check-code" checked>
+                    <span>Code Example</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="check-quizzes" checked>
+                    <span>Interactive Quiz</span>
+                </label>
+            
+                <label class="checkbox-item" style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                    <span style="font-size:0.9em;">Attach Files (PDF/Txt)</span>
+                </label>
+                <input type="file" id="file-upload" multiple style="color: white; font-size: 0.8em;">
+        </div>
+        </div>
+        
+        <div style="margin-top: auto; font-size: 0.8em; color: rgba(255,255,255,0.4);">
+            <p>Powered by Multi-Agent System</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="chat-area" id="messag-container">
+            <!-- Messages and Agent Responses will appear here -->
+            <div class="agent-box">
+                <div class="agent-header">System</div>
+                <div class="agent-content">Welcome to AI Pedia. Select your desired output formats and ask a question to begin.</div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Ask about a topic (e.g., 'Transformer Architecture')...">
+            <button id="send-btn">Generate</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sendBtn = document.getElementById('send-btn');
+    const userInput = document.getElementById('user-input');
+    const messageContainer = document.getElementById('messag-container'); // fixed typo in id if needed, matched HTML
+
+    sendBtn.addEventListener('click', startGeneration);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startGeneration();
+    });
+
+    async function startGeneration() {
+        const query = userInput.value.trim();
+        if (!query) return;
+
+        // User Message
+        appendMessage('User', query);
+        userInput.value = '';
+
+        // Gather Config
+        const config = {
+            video: document.getElementById('check-video').checked,
+            slides: document.getElementById('check-slides').checked,
+            code: document.getElementById('check-code').checked,
+            quizzes: document.getElementById('check-quizzes').checked
+        };
+
+        // Start EventSource Stream
+        
+        // Upload Files First
+        const fileInput = document.getElementById('file-upload');
+        let uploadedFiles = [];
+        
+        if (fileInput.files.length > 0) {
+            const formData = new FormData();
+            for (let i = 0; i < fileInput.files.length; i++) {
+                formData.append('files', fileInput.files[i]);
+            }
+            
+            appendMessage('System', 'Uploading files...');
+            
+            try {
+                const uploadResp = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const uploadResult = await uploadResp.json();
+                uploadedFiles = uploadResult.paths;
+                appendMessage('System', `Uploaded ${uploadedFiles.length} files.`);
+            } catch (e) {
+                appendMessage('System Error', 'Upload failed: ' + e);
+                return;
+            }
+        }
+    const queryParams = new URLSearchParams({
+            topic: query,
+            files: JSON.stringify(uploadedFiles),
+            ...config
+        });
+
+        // Use a persistent connection or one-time stream
+        const eventSource = new EventSource(`/stream_generate?${queryParams.toString()}`);
+
+        let currentAgentBox = null;
+        let currentAgentName = '';
+
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            
+            // Handle different event types from backend
+            if (data.type === 'start') {
+                // Start of a new agent's block
+                currentAgentName = data.agent;
+                currentAgentBox = createAgentBox(data.agent, data.agent_type);
+                messageContainer.appendChild(currentAgentBox);
+                scrollToBottom();
+            } else if (data.type === 'chunk') {
+                // Streaming text content
+                if (currentAgentBox) {
+                    const contentDiv = currentAgentBox.querySelector('.agent-content');
+                    contentDiv.innerHTML += data.content; // Use innerHTML to allow basic formatting if needed
+                    scrollToBottom();
+                }
+            } else if (data.type === 'end') {
+                // Agent finished
+                currentAgentBox = null;
+            } else if (data.type === 'error') {
+                appendMessage('System Error', data.content);
+                eventSource.close();
+            } else if (data.type === 'complete') {
+                eventSource.close();
+            }
+        };
+
+        eventSource.onerror = function() {
+            console.error("EventSource failed.");
+            eventSource.close();
+        };
+    }
+
+    function appendMessage(sender, text) {
+        const box = document.createElement('div');
+        box.className = 'agent-box';
+        box.innerHTML = `
+            <div class="agent-header">${sender}</div>
+            <div class="agent-content">${text}</div>
+        `;
+        messageContainer.appendChild(box);
+        scrollToBottom();
+    }
+
+    function createAgentBox(agentName, agentType) {
+        const box = document.createElement('div');
+        // agentType can be 'video', 'slides', 'code', 'quiz', 'text' to apply specific border colors
+        box.className = `agent-box ${agentType || 'text'}`;
+        box.innerHTML = `
+            <div class="agent-header">${agentName}</div>
+            <div class="agent-content"></div> 
+        `;
+        return box;
+    }
+
+    function scrollToBottom() {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+</script>
+
+</body>
+</html>

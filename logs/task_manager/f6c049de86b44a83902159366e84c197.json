@@ -1,0 +1,559 @@
+{
+  "run_id": "f6c049de86b44a83902159366e84c197",
+  "started_at": "2026-01-05T04:10:44.650959+00:00",
+  "user_text": "create a lesson for beginners on python \"class\"",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "request": {
+        "model": "gpt-5.2",
+        "messages": [
+          {
+            "role": "system",
+            "content": "\nYou are an expert autonomous Task Orchestrator.\nYour goal is to analyze user requests and educational materials, then create a structured execution plan.\n\nAvailable Agents:\n- 'coder': Generates runnable Python code. Best for demonstrations, data analysis, and coding tutorials.\n- 'video': Creates video content. Best for visual explanations.\n- 'text': Generates markdown text/notes. Best for summaries, lesson plans, and articles.\n- 'quizzer': Creates quizzes. Best for assessments and review.\n\nInstructions:\n1. Analyze the user's input and provided files.\n2. Break down the goal into logical subtasks.\n3. Assign each subtask to the most appropriate agent.\n4. Provide specific, actionable instructions for each agent.\n5. For every subtask, include a non-empty 'acceptance_criteria' list.\n   - Each criterion must include: criterion_id, criterion_type, target, operator, expected, severity.\n   - Use criterion_type values: mcp_tool | output_shape | file_exists | semantic.\n   - Use operator values: equals | contains | exists | gte | lte.\n   - Use target paths that start with 'result.' or 'tools.'.\n   - For mcp_tool criteria, include tool: { name, args }.\n   - Use placeholders like $artifacts[0] or $output.validation.path inside tool args.\n6. Use the provided tool 'create_task_plan' to submit your plan.\n\nResponse Format Example:\n{\n  \"user_intent\": \"Create a lesson on Python lists with a video intro and a quiz.\",\n  \"subtasks\": [\n    {\n      \"task_id\": \"step1_code\",\n      \"agent\": \"coder\",\n      \"instruction\": \"Generate a Python script demonstrating list operations.\",\n      \"inputs\": {},\n      \"dependencies\": [],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"code_executes\",\n          \"criterion_type\": \"mcp_tool\",\n          \"tool\": {\"name\": \"python_check\", \"args\": {\"filepath\": \"$artifacts[0]\"}},\n          \"target\": \"tools.python_check.success\",\n          \"operator\": \"equals\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"tools.python_check.run.stderr\"\n        }\n      ]\n    },\n    {\n      \"task_id\": \"step2_video\",\n      \"agent\": \"video\",\n      \"instruction\": \"Create a video explaining the code.\",\n      \"inputs\": {},\n      \"dependencies\": [\"step1_code\"],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"video_semantic_ok\",\n          \"criterion_type\": \"semantic\",\n          \"target\": \"result.output\",\n          \"operator\": \"exists\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"result.output\"\n        }\n      ]\n    }\n  ]\n}\n"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "create a lesson for beginners on python \"class\""
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_task_plan",
+              "description": "Create a structured execution plan for multiple agents.",
+              "parameters": {
+                "$defs": {
+                  "AcceptanceCriterion": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this criterion",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Criterion type: mcp_tool | output_shape | file_exists | semantic",
+                        "enum": [
+                          "mcp_tool",
+                          "output_shape",
+                          "file_exists",
+                          "semantic"
+                        ],
+                        "title": "Type",
+                        "type": "string"
+                      },
+                      "target": {
+                        "description": "Evaluation target path (e.g., result.output.text or tools.python_check.success)",
+                        "title": "Target",
+                        "type": "string"
+                      },
+                      "operator": {
+                        "description": "Operator: equals | contains | exists | gte | lte",
+                        "enum": [
+                          "equals",
+                          "contains",
+                          "exists",
+                          "gte",
+                          "lte"
+                        ],
+                        "title": "Operator",
+                        "type": "string"
+                      },
+                      "expected": {
+                        "default": null,
+                        "description": "Expected value to compare against",
+                        "title": "Expected"
+                      },
+                      "severity": {
+                        "default": "required",
+                        "description": "Severity: required | optional",
+                        "enum": [
+                          "required",
+                          "optional"
+                        ],
+                        "title": "Severity",
+                        "type": "string"
+                      },
+                      "tool": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": true,
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Tool call definition for mcp_tool criteria",
+                        "title": "Tool"
+                      },
+                      "evidence": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Evidence path to include in judger output",
+                        "title": "Evidence"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "target",
+                      "operator"
+                    ],
+                    "title": "AcceptanceCriterion",
+                    "type": "object"
+                  },
+                  "SubTask": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this subtask",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "agent": {
+                        "description": "The agent responsible (coder, video, text, quizzer)",
+                        "title": "Agent",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Detailed instruction for the agent",
+                        "title": "Title",
+                        "type": "string"
+                      },
+                      "inputs": {
+                        "additionalProperties": true,
+                        "description": "Specific inputs for the agent",
+                        "title": "Inputs",
+                        "type": "object"
+                      },
+                      "dependencies": {
+                        "description": "IDs of tasks that must complete first",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Dependencies",
+                        "type": "array"
+                      },
+                      "acceptance_criteria": {
+                        "description": "Structured criteria the judger will use",
+                        "items": {
+                          "$ref": "#/$defs/AcceptanceCriterion"
+                        },
+                        "title": "Acceptance Criteria",
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "agent",
+                      "title",
+                      "acceptance_criteria"
+                    ],
+                    "title": "SubTask",
+                    "type": "object"
+                  }
+                },
+                "properties": {
+                  "user_intent": {
+                    "description": "Summary of what the user wants to achieve",
+                    "title": "User Intent",
+                    "type": "string"
+                  },
+                  "subtasks": {
+                    "description": "List of executable steps",
+                    "items": {
+                      "$ref": "#/$defs/SubTask"
+                    },
+                    "title": "Subtasks",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "user_intent",
+                  "subtasks"
+                ],
+                "title": "TaskPlan",
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "create_task_plan"
+          }
+        }
+      },
+      "response": {
+        "tool_calls": [
+          {
+            "name": "create_task_plan",
+            "arguments": "{\"user_intent\":\"Create a beginner-friendly lesson explaining Python classes, with clear notes, runnable examples, and a short quiz.\",\"subtasks\":[{\"id\":\"text_lesson_outline\",\"agent\":\"text\",\"title\":\"Write a beginner lesson in Markdown on Python classes. Include: what a class/object is, defining a class, __init__, instance vs class attributes, methods, self, creating objects, a small real-world example, common mistakes, and a short recap. Keep tone beginner-friendly and include code blocks.\",\"dependencies\":[],\"acceptance_criteria\":[{\"id\":\"lesson_has_required_sections\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"__init__\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"lesson_includes_examples\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"class \",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"lesson_is_markdown\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"```python\",\"severity\":\"required\",\"evidence\":\"result.output\"}]},{\"id\":\"coder_runnable_examples\",\"agent\":\"coder\",\"title\":\"Create a runnable Python script with examples used in the lesson. Include: a simple class (e.g., Dog), demonstration of instance vs class attributes, at least two methods, and a short main() that prints outputs. Add comments aligned with the lesson.\",\"dependencies\":[\"text_lesson_outline\"],\"acceptance_criteria\":[{\"id\":\"code_contains_class_init\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"def __init__\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"code_demonstrates_instance_and_class_attr\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"@\",\"severity\":\"optional\",\"evidence\":\"result.output\"},{\"id\":\"code_has_main_guard\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"if __name__ == \\\"__main__\\\":\",\"severity\":\"required\",\"evidence\":\"result.output\"}]},{\"id\":\"quiz_beginner_classes\",\"agent\":\"quizzer\",\"title\":\"Create a short quiz (8\u201310 questions) for beginners on Python classes. Mix multiple choice and short answer. Cover: class vs object, __init__, self, methods, attributes, instance vs class attributes, and basic terminology. Provide an answer key.\",\"dependencies\":[\"text_lesson_outline\"],\"acceptance_criteria\":[{\"id\":\"quiz_has_min_questions\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"1.\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"quiz_includes_answer_key\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"Answer\",\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"quiz_covers_init_self\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"self\",\"severity\":\"required\",\"evidence\":\"result.output\"}]}]}"
+          }
+        ]
+      },
+      "parsed_plan": {
+        "user_intent": "Create a beginner-friendly lesson explaining Python classes, with clear notes, runnable examples, and a short quiz.",
+        "subtasks": [
+          {
+            "task_id": "text_lesson_outline",
+            "agent": "text",
+            "instruction": "Write a beginner lesson in Markdown on Python classes. Include: what a class/object is, defining a class, __init__, instance vs class attributes, methods, self, creating objects, a small real-world example, common mistakes, and a short recap. Keep tone beginner-friendly and include code blocks.",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "lesson_has_required_sections",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "lesson_includes_examples",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "class ",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "lesson_is_markdown",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "coder_runnable_examples",
+            "agent": "coder",
+            "instruction": "Create a runnable Python script with examples used in the lesson. Include: a simple class (e.g., Dog), demonstration of instance vs class attributes, at least two methods, and a short main() that prints outputs. Add comments aligned with the lesson.",
+            "inputs": {},
+            "dependencies": [
+              "text_lesson_outline"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "code_contains_class_init",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "def __init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "code_demonstrates_instance_and_class_attr",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "@",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "code_has_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\":",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          },
+          {
+            "task_id": "quiz_beginner_classes",
+            "agent": "quizzer",
+            "instruction": "Create a short quiz (8\u201310 questions) for beginners on Python classes. Mix multiple choice and short answer. Cover: class vs object, __init__, self, methods, attributes, instance vs class attributes, and basic terminology. Provide an answer key.",
+            "inputs": {},
+            "dependencies": [
+              "text_lesson_outline"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "quiz_has_min_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "1.",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "quiz_includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "quiz_covers_init_self",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "self",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "Create a beginner-friendly lesson explaining Python classes, with clear notes, runnable examples, and a short quiz.",
+    "subtasks": [
+      {
+        "task_id": "text_lesson_outline",
+        "agent": "text",
+        "instruction": "Write a beginner lesson in Markdown on Python classes. Include: what a class/object is, defining a class, __init__, instance vs class attributes, methods, self, creating objects, a small real-world example, common mistakes, and a short recap. Keep tone beginner-friendly and include code blocks.",
+        "inputs": {},
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "lesson_has_required_sections",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "__init__",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "lesson_includes_examples",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "class ",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "lesson_is_markdown",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "```python",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      },
+      {
+        "task_id": "coder_runnable_examples",
+        "agent": "coder",
+        "instruction": "Create a runnable Python script with examples used in the lesson. Include: a simple class (e.g., Dog), demonstration of instance vs class attributes, at least two methods, and a short main() that prints outputs. Add comments aligned with the lesson.",
+        "inputs": {
+          "output_filename": "coder_runnable_examples_20260105_0410.py",
+          "output_subdir": "run_f6c049de86b44a83902159366e84c197"
+        },
+        "dependencies": [
+          "text_lesson_outline"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "code_contains_class_init",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "def __init__",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "code_demonstrates_instance_and_class_attr",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "@",
+            "severity": "optional",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "code_has_main_guard",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "if __name__ == \"__main__\":",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "script_file_exists",
+            "criterion_type": "file_exists",
+            "target": "result.artifacts[0]",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.artifacts[0]"
+          }
+        ]
+      },
+      {
+        "task_id": "quiz_beginner_classes",
+        "agent": "quizzer",
+        "instruction": "Create a short quiz (8\u201310 questions) for beginners on Python classes. Mix multiple choice and short answer. Cover: class vs object, __init__, self, methods, attributes, instance vs class attributes, and basic terminology. Provide an answer key.",
+        "inputs": {},
+        "dependencies": [
+          "text_lesson_outline"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "quiz_has_min_questions",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "1.",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "quiz_includes_answer_key",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "Answer",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "quiz_covers_init_self",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "self",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "partial",
+  "agent_results": {
+    "text_lesson_outline": {
+      "agent": "text",
+      "success": true,
+      "output": {
+        "text": "Generated text content based on: Output is a placeholder, not an actual beginner-friendly Markdown lesson. Replace with a complete Markdown lesson on Python classes that includes: explanation of class/object; defining a class with a `class ...:` example; `__init__` explanation and example; instance vs class attributes with example; methods, `self`, and calling methods; instantiation examples; a small real-world example (e.g., BankAccount/Dog/Student) with usage; common mistakes; and a short recap. Include at least one fenced Python code block using ```python.",
+        "format": "markdown"
+      },
+      "artifacts": [],
+      "instruction": "Output is a placeholder, not an actual beginner-friendly Markdown lesson. Replace with a complete Markdown lesson on Python classes that includes: explanation of class/object; defining a class with a `class ...:` example; `__init__` explanation and example; instance vs class attributes with example; methods, `self`, and calling methods; instantiation examples; a small real-world example (e.g., BankAccount/Dog/Student) with usage; common mistakes; and a short recap. Include at least one fenced Python code block using ```python.",
+      "attempts": 3,
+      "metadata": {
+        "model": "gpt-4o"
+      },
+      "error": "Max retries exceeded."
+    },
+    "quiz_beginner_classes": {
+      "agent": "quizzer",
+      "success": true,
+      "output": {
+        "questions": [
+          {
+            "q": "Example Question 1?",
+            "a": "Answer A"
+          },
+          {
+            "q": "Example Question 2?",
+            "a": "Answer B"
+          }
+        ],
+        "total_questions": 2
+      },
+      "artifacts": [],
+      "instruction": "Output must be a short quiz of 8\u201310 questions (not 2). Mix multiple-choice and short-answer. Ensure the quiz text clearly includes an answer key section, and explicitly covers __init__ and the meaning/use of self, plus class vs object, methods, attributes, and instance vs class attributes. Format questions with numbering (e.g., 1., 2., \u2026) so the min-questions check passes.",
+      "attempts": 3,
+      "metadata": {
+        "model": "gpt-4-turbo"
+      },
+      "error": "Max retries exceeded."
+    },
+    "coder_runnable_examples": {
+      "agent": "coder",
+      "success": true,
+      "output": {
+        "code": "class Dog:\n    \"\"\"A simple Dog class to demonstrate class and instance attributes.\"\"\"\n    \n    # Class attribute - shared by all instances of the class\n    species = \"Canis lupus\"\n    \n    def __init__(self, name, breed):\n        \"\"\"\n        Initialize a Dog instance with name and breed.\n        These are instance attributes - unique to each instance.\n        \"\"\"\n        self.name = name      # Instance attribute\n        self.breed = breed    # Instance attribute\n    \n    def bark(self):\n        \"\"\"\n        Method that demonstrates instance behavior.\n        Each dog barks differently based on its name.\n        \"\"\"\n        return f\"{self.name} says Woof!\"\n    \n    def get_info(self):\n        \"\"\"\n        Another method showing how to access both \n        instance and class attributes.\n        \"\"\"\n        return f\"{self.name} is a {self.breed} ({self.species})\"\n\ndef main():\n    \"\"\"Main function to demonstrate Dog class usage.\"\"\"\n    \n    # Create two Dog instances\n    dog1 = Dog(\"Buddy\", \"Golden Retriever\")\n    dog2 = Dog(\"Max\", \"German Shepherd\")\n    \n    # Demonstrate instance attributes\n    print(\"Instance Attributes:\")\n    print(f\"dog1.name = {dog1.name}\")\n    print(f\"dog1.breed = {dog1.breed}\")\n    print(f\"dog2.name = {dog2.name}\")\n    print(f\"dog2.breed = {dog2.breed}\")\n    \n    # Demonstrate class attribute\n    print(\"\\nClass Attribute:\")\n    print(f\"Dog.species = {Dog.species}\")\n    print(f\"dog1.species = {dog1.species}\")\n    print(f\"dog2.species = {dog2.species}\")\n    \n    # Show that class attribute is shared\n    print(\"\\nModifying class attribute:\")\n    Dog.species = \"Canis familiaris\"\n    print(f\"After changing Dog.species:\")\n    print(f\"dog1.species = {dog1.species}\")\n    print(f\"dog2.species = {dog2.species}\")\n    \n    # Demonstrate methods\n    print(\"\\nMethod Calls:\")\n    print(dog1.bark())\n    print(dog2.bark())\n    print(dog1.get_info())\n    print(dog2.get_info())\n\nif __name__ == \"__main__\":\n    main()\n",
+        "validation": {
+          "success": true,
+          "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_f6c049de86b44a83902159366e84c197\\coder_runnable_examples_20260105_0410.py",
+          "stdout": "Instance Attributes:\ndog1.name = Buddy\ndog1.breed = Golden Retriever\ndog2.name = Max\ndog2.breed = German Shepherd\n\nClass Attribute:\nDog.species = Canis lupus\ndog1.species = Canis lupus\ndog2.species = Canis lupus\n\nModifying class attribute:\nAfter changing Dog.species:\ndog1.species = Canis familiaris\ndog2.species = Canis familiaris\n\nMethod Calls:\nBuddy says Woof!\nMax says Woof!\nBuddy is a Golden Retriever (Canis familiaris)\nMax is a German Shepherd (Canis familiaris)\n",
+          "stderr": "",
+          "compile_success": true,
+          "run_success": true,
+          "compile_details": {
+            "success": true,
+            "returncode": 0,
+            "stdout": "",
+            "stderr": "",
+            "timed_out": false
+          },
+          "run_details": {
+            "success": true,
+            "returncode": 0,
+            "stdout": "Instance Attributes:\ndog1.name = Buddy\ndog1.breed = Golden Retriever\ndog2.name = Max\ndog2.breed = German Shepherd\n\nClass Attribute:\nDog.species = Canis lupus\ndog1.species = Canis lupus\ndog2.species = Canis lupus\n\nModifying class attribute:\nAfter changing Dog.species:\ndog1.species = Canis familiaris\ndog2.species = Canis familiaris\n\nMethod Calls:\nBuddy says Woof!\nMax says Woof!\nBuddy is a Golden Retriever (Canis familiaris)\nMax is a German Shepherd (Canis familiaris)\n",
+            "stderr": "",
+            "timed_out": false
+          }
+        }
+      },
+      "artifacts": [
+        "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_f6c049de86b44a83902159366e84c197\\coder_runnable_examples_20260105_0410.py"
+      ],
+      "instruction": "Create a runnable Python script with examples used in the lesson. Include: a simple class (e.g., Dog), demonstration of instance vs class attributes, at least two methods, and a short main() that prints outputs. Add comments aligned with the lesson.",
+      "attempts": 3,
+      "metadata": {
+        "model": "qwen3-coder-flash"
+      },
+      "error": "Max retries exceeded."
+    }
+  }
+}

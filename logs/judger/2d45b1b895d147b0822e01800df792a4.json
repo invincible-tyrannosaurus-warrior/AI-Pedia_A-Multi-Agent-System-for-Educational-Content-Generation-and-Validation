@@ -1,0 +1,2535 @@
+{
+  "run_id": "2d45b1b895d147b0822e01800df792a4",
+  "started_at": "2026-01-07T16:50:34.663858+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a downloadable PPTX slide deck and a Python file containing explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "outline_lesson",
+              "agent": "presentation",
+              "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_has_pacing",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "20",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_has_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_has_slide_list",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Slide",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "build_pptx",
+              "agent": "presentation",
+              "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_named_correctly",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": "machine_learning_beginner_lesson.pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_min_slides",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "slides",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "write_python_lesson",
+              "agent": "coder",
+              "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+              "inputs": {
+                "output_filename": "write_python_lesson_20260107_1650.py",
+                "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+              },
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_named_correctly",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": "ml_beginner_lesson.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_contains_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_contains_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "package_delivery",
+              "agent": "coder",
+              "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+              "inputs": {
+                "output_filename": "package_delivery_20260107_1650.py",
+                "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+              },
+              "dependencies": [
+                "build_pptx",
+                "write_python_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "mentions_pptx",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "machine_learning_beginner_lesson.pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "mentions_python_file",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "ml_beginner_lesson.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "has_run_command",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "outline_lesson": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "The task output is null/empty, so none of the required semantic criteria can be satisfied. Provide a complete slide-by-slide lesson outline (~20 minutes) that explicitly includes: (1) minute-by-minute pacing totaling ~20 minutes (include the number '20' or a 0\u201320 min breakdown), (2) core topics including the word 'supervised' (also cover unsupervised, reinforcement, train/test split, features/labels, overfitting, evaluation), and (3) a slide list labeled with 'Slide' for each slide plus speaker notes and a simple real-world anchoring example.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "write_python_lesson": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: required Python file artifact is missing (ml_beginner_lesson.py not found), so output cannot be evaluated. To fix: create and include an artifact at path exactly 'ml_beginner_lesson.py'. Ensure the script contains a main() guard and runnable sklearn example using a built-in dataset. Include explicit use of train_test_split, model training, predictions, and evaluation (e.g., accuracy_score). Add a short overfitting demo comparing train vs test performance (e.g., high-degree polynomial features or different model complexities).",
+            "attempts": 3
+          },
+          "build_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "Deterministic failure: the required PPTX artifact does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx file named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Include required sections: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, common pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Ensure the result references the artifact path and indicates slide count.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "package_delivery": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide a README-style text that explicitly references the PPTX file name \"machine_learning_beginner_lesson.pptx\" and the Python script \"ml_beginner_lesson.py\", and include a clear run command that contains \"python\" (e.g., `python ml_beginner_lesson.py`). Mention any requirements (e.g., Python version, pip install commands) and indicate both artifacts are ready for download.",
+            "attempts": 3
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "agent": "presentation",
+            "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+            "criteria": [
+              {
+                "criterion_id": "outline_has_pacing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "20",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_slide_list",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Slide",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "outline_lesson",
+                  "agent": "presentation",
+                  "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_pacing",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "20",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_has_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_has_slide_list",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Slide",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_has_pacing\",\"outline_has_core_topics\",\"outline_has_slide_list\"],\"fix_instructions\":\"No lesson outline was provided (output is null), so required semantic elements cannot be verified. Provide the requested ~20-minute slide-by-slide lesson outline including minute-by-minute pacing, key ML concepts (definition; supervised/unsupervised/reinforcement; train/test split; features/labels; overfitting; evaluation), and include the word 'Slide' for each slide title/section.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "build_pptx",
+            "agent": "presentation",
+            "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_min_slides",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "slides",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "build_pptx",
+                  "agent": "presentation",
+                  "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_named_correctly",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts[0].path",
+                      "operator": "contains",
+                      "expected": "machine_learning_beginner_lesson.pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts[0].path"
+                    },
+                    {
+                      "criterion_id": "pptx_has_min_slides",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "slides",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_named_correctly\",\"pptx_has_min_slides\",\"pptx_file_exists\"],\"fix_instructions\":\"Deterministic failure: the PPTX artifact does not exist (pptx_file_exists=false) and output is null. Generate and export a PowerPoint file named exactly 'machine_learning_beginner_lesson.pptx' containing ~10\u201314 slides with required sections (title, objectives, ML vs traditional, types, workflow, example, diagram/chart placeholders, pitfalls, recap) and concise speaker notes on each slide. Ensure the build process returns the artifact path in result.artifacts[0].path.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "write_python_lesson",
+            "agent": "coder",
+            "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_contains_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_contains_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "py_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "write_python_lesson",
+                  "agent": "coder",
+                  "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_named_correctly",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts[0].path",
+                      "operator": "contains",
+                      "expected": "ml_beginner_lesson.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts[0].path"
+                    },
+                    {
+                      "criterion_id": "py_contains_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_contains_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"py_named_correctly\",\"py_contains_train_test_split\",\"py_file_exists\"],\"fix_instructions\":\"Deterministic failure: required Python file artifact was not produced (ml_beginner_lesson.py does not exist). Create and include a file named exactly 'ml_beginner_lesson.py' as an artifact. Ensure the file contains runnable code with a main() that loads a built-in sklearn dataset, uses train_test_split, trains a LogisticRegression (or LinearRegression), makes predictions, prints evaluation (e.g., accuracy), and includes an overfitting demonstration (e.g., compare train vs test accuracy for simple vs complex model).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "package_delivery",
+            "agent": "coder",
+            "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+            "criteria": [
+              {
+                "criterion_id": "mentions_pptx",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_python_file",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "has_run_command",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "package_delivery",
+                  "agent": "coder",
+                  "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "mentions_pptx",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "machine_learning_beginner_lesson.pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "mentions_python_file",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "ml_beginner_lesson.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "has_run_command",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"mentions_pptx\",\"mentions_python_file\",\"has_run_command\"],\"fix_instructions\":\"Provide a short README-style text in result.output that explicitly references the downloadable artifacts `machine_learning_beginner_lesson.pptx` and `ml_beginner_lesson.py`, and includes a run command containing the word `python` (e.g., `python ml_beginner_lesson.py`). Optionally include requirements/install step (e.g., `pip install -r requirements.txt` or specific packages) and brief usage notes.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_has_core_topics",
+              "outline_has_pacing",
+              "outline_has_slide_list"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "No lesson outline was provided (output is null), so required semantic elements cannot be verified. Provide the requested ~20-minute slide-by-slide lesson outline including minute-by-minute pacing, key ML concepts (definition; supervised/unsupervised/reinforcement; train/test split; features/labels; overfitting; evaluation), and include the word 'Slide' for each slide title/section."
+          },
+          {
+            "task_id": "build_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_file_exists",
+              "pptx_named_correctly"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: the PPTX artifact does not exist (pptx_file_exists=false) and output is null. Generate and export a PowerPoint file named exactly 'machine_learning_beginner_lesson.pptx' containing ~10\u201314 slides with required sections (title, objectives, ML vs traditional, types, workflow, example, diagram/chart placeholders, pitfalls, recap) and concise speaker notes on each slide. Ensure the build process returns the artifact path in result.artifacts[0].path."
+          },
+          {
+            "task_id": "write_python_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_contains_train_test_split",
+              "py_file_exists",
+              "py_named_correctly"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: required Python file artifact was not produced (ml_beginner_lesson.py does not exist). Create and include a file named exactly 'ml_beginner_lesson.py' as an artifact. Ensure the file contains runnable code with a main() that loads a built-in sklearn dataset, uses train_test_split, trains a LogisticRegression (or LinearRegression), makes predictions, prints evaluation (e.g., accuracy), and includes an overfitting demonstration (e.g., compare train vs test accuracy for simple vs complex model)."
+          },
+          {
+            "task_id": "package_delivery",
+            "verdict": "fail",
+            "failed_criteria": [
+              "has_run_command",
+              "mentions_pptx",
+              "mentions_python_file"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a short README-style text in result.output that explicitly references the downloadable artifacts `machine_learning_beginner_lesson.pptx` and `ml_beginner_lesson.py`, and includes a run command containing the word `python` (e.g., `python ml_beginner_lesson.py`). Optionally include requirements/install step (e.g., `pip install -r requirements.txt` or specific packages) and brief usage notes."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a downloadable PPTX slide deck and a Python file containing explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "outline_lesson",
+              "agent": "presentation",
+              "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_has_pacing",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "20",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_has_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_has_slide_list",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Slide",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "build_pptx",
+              "agent": "presentation",
+              "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_named_correctly",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": "machine_learning_beginner_lesson.pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_min_slides",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "slides",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "write_python_lesson",
+              "agent": "coder",
+              "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+              "inputs": {
+                "output_filename": "write_python_lesson_20260107_1650.py",
+                "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+              },
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_named_correctly",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": "ml_beginner_lesson.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_contains_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_contains_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "package_delivery",
+              "agent": "coder",
+              "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+              "inputs": {
+                "output_filename": "package_delivery_20260107_1650.py",
+                "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+              },
+              "dependencies": [
+                "build_pptx",
+                "write_python_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "mentions_pptx",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "machine_learning_beginner_lesson.pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "mentions_python_file",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "ml_beginner_lesson.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "has_run_command",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "outline_lesson": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "The task output is null/empty, so none of the required semantic criteria can be satisfied. Provide a complete slide-by-slide lesson outline (~20 minutes) that explicitly includes: (1) minute-by-minute pacing totaling ~20 minutes (include the number '20' or a 0\u201320 min breakdown), (2) core topics including the word 'supervised' (also cover unsupervised, reinforcement, train/test split, features/labels, overfitting, evaluation), and (3) a slide list labeled with 'Slide' for each slide plus speaker notes and a simple real-world anchoring example.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "write_python_lesson": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: required Python file artifact is missing (ml_beginner_lesson.py not found), so output cannot be evaluated. To fix: create and include an artifact at path exactly 'ml_beginner_lesson.py'. Ensure the script contains a main() guard and runnable sklearn example using a built-in dataset. Include explicit use of train_test_split, model training, predictions, and evaluation (e.g., accuracy_score). Add a short overfitting demo comparing train vs test performance (e.g., high-degree polynomial features or different model complexities).",
+            "attempts": 3
+          },
+          "build_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "Deterministic failure: the required PPTX artifact does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx file named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Include required sections: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, common pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Ensure the result references the artifact path and indicates slide count.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "package_delivery": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide a README-style text that explicitly references the PPTX file name \"machine_learning_beginner_lesson.pptx\" and the Python script \"ml_beginner_lesson.py\", and include a clear run command that contains \"python\" (e.g., `python ml_beginner_lesson.py`). Mention any requirements (e.g., Python version, pip install commands) and indicate both artifacts are ready for download.",
+            "attempts": 3
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "agent": "presentation",
+            "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+            "criteria": [
+              {
+                "criterion_id": "outline_has_pacing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "20",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_slide_list",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Slide",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "outline_lesson",
+                  "agent": "presentation",
+                  "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_pacing",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "20",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_has_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_has_slide_list",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Slide",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_has_pacing\",\"outline_has_core_topics\",\"outline_has_slide_list\"],\"fix_instructions\":\"The task output is null/empty, so none of the required semantic criteria can be satisfied. Provide a complete slide-by-slide lesson outline (~20 minutes) that explicitly includes: (1) minute-by-minute pacing totaling ~20 minutes (include the number '20' or a 0\u201320 min breakdown), (2) core topics including the word 'supervised' (also cover unsupervised, reinforcement, train/test split, features/labels, overfitting, evaluation), and (3) a slide list labeled with 'Slide' for each slide plus speaker notes and a simple real-world anchoring example.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "build_pptx",
+            "agent": "presentation",
+            "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_min_slides",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "slides",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "build_pptx",
+                  "agent": "presentation",
+                  "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_named_correctly",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts[0].path",
+                      "operator": "contains",
+                      "expected": "machine_learning_beginner_lesson.pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts[0].path"
+                    },
+                    {
+                      "criterion_id": "pptx_has_min_slides",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "slides",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_named_correctly\",\"pptx_has_min_slides\"],\"fix_instructions\":\"Deterministic failure: the required PPTX artifact does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx file named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Include required sections: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, common pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Ensure the result references the artifact path and indicates slide count.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "write_python_lesson",
+            "agent": "coder",
+            "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_contains_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_contains_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "py_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "write_python_lesson",
+                  "agent": "coder",
+                  "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_named_correctly",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts[0].path",
+                      "operator": "contains",
+                      "expected": "ml_beginner_lesson.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts[0].path"
+                    },
+                    {
+                      "criterion_id": "py_contains_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_contains_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"py_named_correctly\",\"py_contains_train_test_split\",\"py_file_exists\"],\"fix_instructions\":\"Deterministic failure: required Python file artifact is missing (ml_beginner_lesson.py not found), so output cannot be evaluated. To fix: create and include an artifact at path exactly 'ml_beginner_lesson.py'. Ensure the script contains a main() guard and runnable sklearn example using a built-in dataset. Include explicit use of train_test_split, model training, predictions, and evaluation (e.g., accuracy_score). Add a short overfitting demo comparing train vs test performance (e.g., high-degree polynomial features or different model complexities).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "package_delivery",
+            "agent": "coder",
+            "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+            "criteria": [
+              {
+                "criterion_id": "mentions_pptx",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_python_file",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "has_run_command",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "package_delivery",
+                  "agent": "coder",
+                  "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "mentions_pptx",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "machine_learning_beginner_lesson.pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "mentions_python_file",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "ml_beginner_lesson.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "has_run_command",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"mentions_pptx\",\"mentions_python_file\",\"has_run_command\"],\"fix_instructions\":\"Provide a README-style text that explicitly references the PPTX file name \\\"machine_learning_beginner_lesson.pptx\\\" and the Python script \\\"ml_beginner_lesson.py\\\", and include a clear run command that contains \\\"python\\\" (e.g., `python ml_beginner_lesson.py`). Mention any requirements (e.g., Python version, pip install commands) and indicate both artifacts are ready for download.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_has_core_topics",
+              "outline_has_pacing",
+              "outline_has_slide_list"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The task output is null/empty, so none of the required semantic criteria can be satisfied. Provide a complete slide-by-slide lesson outline (~20 minutes) that explicitly includes: (1) minute-by-minute pacing totaling ~20 minutes (include the number '20' or a 0\u201320 min breakdown), (2) core topics including the word 'supervised' (also cover unsupervised, reinforcement, train/test split, features/labels, overfitting, evaluation), and (3) a slide list labeled with 'Slide' for each slide plus speaker notes and a simple real-world anchoring example."
+          },
+          {
+            "task_id": "build_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_file_exists",
+              "pptx_named_correctly"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: the required PPTX artifact does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx file named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Include required sections: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, common pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Ensure the result references the artifact path and indicates slide count."
+          },
+          {
+            "task_id": "write_python_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_contains_train_test_split",
+              "py_file_exists",
+              "py_named_correctly"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: required Python file artifact is missing (ml_beginner_lesson.py not found), so output cannot be evaluated. To fix: create and include an artifact at path exactly 'ml_beginner_lesson.py'. Ensure the script contains a main() guard and runnable sklearn example using a built-in dataset. Include explicit use of train_test_split, model training, predictions, and evaluation (e.g., accuracy_score). Add a short overfitting demo comparing train vs test performance (e.g., high-degree polynomial features or different model complexities)."
+          },
+          {
+            "task_id": "package_delivery",
+            "verdict": "fail",
+            "failed_criteria": [
+              "has_run_command",
+              "mentions_pptx",
+              "mentions_python_file"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a README-style text that explicitly references the PPTX file name \"machine_learning_beginner_lesson.pptx\" and the Python script \"ml_beginner_lesson.py\", and include a clear run command that contains \"python\" (e.g., `python ml_beginner_lesson.py`). Mention any requirements (e.g., Python version, pip install commands) and indicate both artifacts are ready for download."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what Machine Learning is, including a downloadable PPTX slide deck and a Python file containing explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "outline_lesson",
+              "agent": "presentation",
+              "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_has_pacing",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "20",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_has_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_has_slide_list",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Slide",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "build_pptx",
+              "agent": "presentation",
+              "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_named_correctly",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": "machine_learning_beginner_lesson.pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_min_slides",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "slides",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "write_python_lesson",
+              "agent": "coder",
+              "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+              "inputs": {
+                "output_filename": "write_python_lesson_20260107_1650.py",
+                "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+              },
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_named_correctly",
+                  "criterion_type": "semantic",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": "ml_beginner_lesson.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_contains_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_contains_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "package_delivery",
+              "agent": "coder",
+              "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+              "inputs": {
+                "output_filename": "package_delivery_20260107_1650.py",
+                "output_subdir": "run_2d45b1b895d147b0822e01800df792a4"
+              },
+              "dependencies": [
+                "build_pptx",
+                "write_python_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "mentions_pptx",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "machine_learning_beginner_lesson.pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "mentions_python_file",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "ml_beginner_lesson.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "has_run_command",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "outline_lesson": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "The task output is null/empty, so none of the required semantic criteria can be satisfied. Provide a complete slide-by-slide lesson outline (~20 minutes) that explicitly includes: (1) minute-by-minute pacing totaling ~20 minutes (include the number '20' or a 0\u201320 min breakdown), (2) core topics including the word 'supervised' (also cover unsupervised, reinforcement, train/test split, features/labels, overfitting, evaluation), and (3) a slide list labeled with 'Slide' for each slide plus speaker notes and a simple real-world anchoring example.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "write_python_lesson": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: required Python file artifact is missing (ml_beginner_lesson.py not found), so output cannot be evaluated. To fix: create and include an artifact at path exactly 'ml_beginner_lesson.py'. Ensure the script contains a main() guard and runnable sklearn example using a built-in dataset. Include explicit use of train_test_split, model training, predictions, and evaluation (e.g., accuracy_score). Add a short overfitting demo comparing train vs test performance (e.g., high-degree polynomial features or different model complexities).",
+            "attempts": 3
+          },
+          "build_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "Deterministic failure: the required PPTX artifact does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx file named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Include required sections: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, common pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Ensure the result references the artifact path and indicates slide count.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "package_delivery": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide a README-style text that explicitly references the PPTX file name \"machine_learning_beginner_lesson.pptx\" and the Python script \"ml_beginner_lesson.py\", and include a clear run command that contains \"python\" (e.g., `python ml_beginner_lesson.py`). Mention any requirements (e.g., Python version, pip install commands) and indicate both artifacts are ready for download.",
+            "attempts": 3
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "agent": "presentation",
+            "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+            "criteria": [
+              {
+                "criterion_id": "outline_has_pacing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "20",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_has_slide_list",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Slide",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "outline_lesson",
+                  "agent": "presentation",
+                  "instruction": "Design a beginner-friendly lesson structure (~20 minutes) on 'What is Machine Learning?' including learning objectives, pacing (minute-by-minute), key concepts (definition, supervised/unsupervised/reinforcement, train/test split, features/labels, overfitting, evaluation), and a simple real-world example to anchor the lesson. Provide a slide-by-slide outline with speaker notes.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_pacing",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "20",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_has_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_has_slide_list",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Slide",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_has_pacing\",\"outline_has_core_topics\",\"outline_has_slide_list\"],\"fix_instructions\":\"No output was provided (output=null), so required semantic criteria cannot be met. Provide a slide-by-slide lesson outline (~20 minutes) that explicitly includes minute-by-minute pacing (mentioning 20 minutes), covers core topics including supervised/unsupervised/reinforcement learning, and uses 'Slide X' labels plus speaker notes and a real-world anchor example.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "build_pptx",
+            "agent": "presentation",
+            "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_min_slides",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "slides",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "build_pptx",
+                  "agent": "presentation",
+                  "instruction": "Generate a PPTX slide deck for the lesson. Target 10\u201314 slides suitable for ~20 minutes. Include: title, objectives, what ML is (vs traditional programming), types of ML, key workflow (data->features->model->train->evaluate->deploy), example (e.g., house price prediction or spam detection), simple chart/diagram placeholders, common pitfalls (bias/overfitting/data leakage), and recap. Add concise speaker notes per slide. Export as a .pptx file named 'machine_learning_beginner_lesson.pptx'.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_named_correctly",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts[0].path",
+                      "operator": "contains",
+                      "expected": "machine_learning_beginner_lesson.pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts[0].path"
+                    },
+                    {
+                      "criterion_id": "pptx_has_min_slides",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "slides",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_named_correctly\",\"pptx_has_min_slides\"],\"fix_instructions\":\"Deterministic failure: the required PPTX file does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Ensure slides include: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Provide the artifact path in result.artifacts[0].path and include slide count/confirmation in output.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "write_python_lesson",
+            "agent": "coder",
+            "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_named_correctly",
+                "criterion_type": "semantic",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_contains_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_contains_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "py_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "write_python_lesson",
+                  "agent": "coder",
+                  "instruction": "Create a well-commented Python file named 'ml_beginner_lesson.py' that doubles as lesson notes + runnable examples. It should explain concepts in comments/docstrings and include small, runnable demos using scikit-learn on a built-in dataset (e.g., Iris or Breast Cancer). Include: loading data, train/test split, a simple model (LinearRegression or LogisticRegression), training, predictions, evaluation metric, and a short section demonstrating overfitting idea (e.g., compare simple vs complex model or train vs test accuracy). Ensure code runs as a script with a main() and prints outputs. Avoid external data downloads beyond sklearn built-ins.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_named_correctly",
+                      "criterion_type": "semantic",
+                      "target": "result.artifacts[0].path",
+                      "operator": "contains",
+                      "expected": "ml_beginner_lesson.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.artifacts[0].path"
+                    },
+                    {
+                      "criterion_id": "py_contains_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_contains_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"py_named_correctly\",\"py_contains_train_test_split\"],\"fix_instructions\":\"Deterministic failure: required Python file does not exist (ml_beginner_lesson.py). Create and include an artifact at path 'ml_beginner_lesson.py'. Ensure the script contains and uses sklearn.model_selection.train_test_split, trains a simple model (e.g., LogisticRegression on Iris/Breast Cancer), makes predictions, prints evaluation (preferably accuracy), and includes an overfitting demo (e.g., compare train vs test accuracy for simple vs more complex model). Include a main() entry point and print outputs when run as a script.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "package_delivery",
+            "agent": "coder",
+            "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+            "criteria": [
+              {
+                "criterion_id": "mentions_pptx",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "machine_learning_beginner_lesson.pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_python_file",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "ml_beginner_lesson.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "has_run_command",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "package_delivery",
+                  "agent": "coder",
+                  "instruction": "Provide a short README-style text in the output describing how to use the PPTX and run the Python script (requirements, run command). Ensure both artifacts are referenced and ready for download.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "mentions_pptx",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "machine_learning_beginner_lesson.pptx",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "mentions_python_file",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "ml_beginner_lesson.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "has_run_command",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"mentions_pptx\",\"mentions_python_file\",\"has_run_command\"],\"fix_instructions\":\"The output is empty. Provide a short README-style text that explicitly references both artifacts by filename: machine_learning_beginner_lesson.pptx and ml_beginner_lesson.py, and include at least one run command containing the word 'python' (e.g., `python ml_beginner_lesson.py`). Also mention basic requirements (e.g., Python version, any pip installs if needed) and state that both files are ready for download.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_has_core_topics",
+              "outline_has_pacing",
+              "outline_has_slide_list"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "No output was provided (output=null), so required semantic criteria cannot be met. Provide a slide-by-slide lesson outline (~20 minutes) that explicitly includes minute-by-minute pacing (mentioning 20 minutes), covers core topics including supervised/unsupervised/reinforcement learning, and uses 'Slide X' labels plus speaker notes and a real-world anchor example."
+          },
+          {
+            "task_id": "build_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_file_exists",
+              "pptx_named_correctly"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: the required PPTX file does not exist (machine_learning_beginner_lesson.pptx). Generate and export a .pptx named exactly 'machine_learning_beginner_lesson.pptx' containing 10\u201314 slides. Ensure slides include: title, objectives, ML vs traditional programming, types of ML, workflow (data\u2192features\u2192model\u2192train\u2192evaluate\u2192deploy), an example (house prices or spam), diagram/chart placeholders, pitfalls (bias/overfitting/data leakage), recap, and concise speaker notes per slide. Provide the artifact path in result.artifacts[0].path and include slide count/confirmation in output."
+          },
+          {
+            "task_id": "write_python_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_contains_train_test_split",
+              "py_file_exists",
+              "py_named_correctly"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: required Python file does not exist (ml_beginner_lesson.py). Create and include an artifact at path 'ml_beginner_lesson.py'. Ensure the script contains and uses sklearn.model_selection.train_test_split, trains a simple model (e.g., LogisticRegression on Iris/Breast Cancer), makes predictions, prints evaluation (preferably accuracy), and includes an overfitting demo (e.g., compare train vs test accuracy for simple vs more complex model). Include a main() entry point and print outputs when run as a script."
+          },
+          {
+            "task_id": "package_delivery",
+            "verdict": "fail",
+            "failed_criteria": [
+              "has_run_command",
+              "mentions_pptx",
+              "mentions_python_file"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The output is empty. Provide a short README-style text that explicitly references both artifacts by filename: machine_learning_beginner_lesson.pptx and ml_beginner_lesson.py, and include at least one run command containing the word 'python' (e.g., `python ml_beginner_lesson.py`). Also mention basic requirements (e.g., Python version, any pip installs if needed) and state that both files are ready for download."
+          }
+        ]
+      }
+    }
+  ]
+}

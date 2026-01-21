@@ -1,0 +1,1545 @@
+{
+  "run_id": "492f40d469644adfa2caf0472a0f9cd3",
+  "started_at": "2026-01-07T16:45:24.234651+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a ~20-minute beginner lesson on Machine Learning, delivered as a PPTX slide deck plus a Python file containing explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "slides_pptx",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_min_slides",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "12",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "pptx_contains_key_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "pptx_contains_workflow",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train/test",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "python_lesson_file",
+              "agent": "coder",
+              "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+              "inputs": {
+                "output_filename": "python_lesson_file_20260107_1645.py",
+                "output_subdir": "run_492f40d469644adfa2caf0472a0f9cd3"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_contains_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_mentions_fit_predict",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "fit",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_includes_examples",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "LogisticRegression",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_includes_kmeans",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KMeans",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "python_lesson_file": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: no .py file was produced (py_file_exists=false) and result.output is empty, so semantic criteria cannot be satisfied. Fix: create and return a single runnable .py file (or include its full contents in result.output) that includes a main guard (if __name__ == \"__main__\":), uses scikit-learn examples for (1) classification with train_test_split, (optionally StandardScaler), LogisticRegression, accuracy; (2) regression with LinearRegression and MAE; (3) unsupervised KMeans on Iris features. Add beginner-friendly comments/docstrings explaining features/labels, fit/predict workflow, overfitting, and print results when run.",
+            "attempts": 3
+          },
+          "slides_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No .pptx output file was provided (result.output is null and pptx_file_exists=false), so the submission is unusable. Generate and attach the PowerPoint (.pptx) slide deck with ~12\u201316 slides and speaker notes including estimated timing per slide. Ensure the deck explicitly includes the required topics/terms: definition of ML, why it matters, key terms (features, labels, model, training, inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, explicit train/test split, overfitting intuition, evaluation metrics (accuracy vs MAE), and a recap + Q&A slide.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "slides_pptx",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_min_slides",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "12",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "pptx_contains_key_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "pptx_contains_workflow",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train/test",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "slides_pptx",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_has_min_slides",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "12",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "pptx_contains_key_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "pptx_contains_workflow",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train/test",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_exists\",\"pptx_has_min_slides\",\"pptx_contains_key_topics\",\"pptx_contains_workflow\"],\"fix_instructions\":\"No .pptx output file was produced (output is null and file does not exist), which is a deterministic failure. Generate and attach a PowerPoint (.pptx) slide deck with ~12\u201316 slides for a ~20-minute beginner talk on Machine Learning. Ensure the deck explicitly includes: (1) types of ML with the word 'supervised' (and unsupervised, reinforcement) plus simple examples, (2) an ML workflow slide that explicitly mentions 'train/test split' or 'train/test', (3) key terms (features, labels, model, training, inference), (4) overfitting intuition, (5) evaluation metrics including accuracy vs MAE, and (6) recap + Q&A. Include speaker notes on each slide with estimated timing per slide. Then provide the .pptx file path or attachment as result.output.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "python_lesson_file",
+            "agent": "coder",
+            "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_contains_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_mentions_fit_predict",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "fit",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_includes_examples",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "LogisticRegression",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_includes_kmeans",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KMeans",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "py_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "python_lesson_file",
+                  "agent": "coder",
+                  "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_contains_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_mentions_fit_predict",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "fit",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_includes_examples",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "LogisticRegression",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_includes_kmeans",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KMeans",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"py_file_exists\",\"py_contains_main_guard\",\"py_mentions_fit_predict\",\"py_includes_examples\",\"py_includes_kmeans\"],\"fix_instructions\":\"Deterministic failure: no .py file was produced/saved. Create and provide a single runnable Python (.py) file containing a beginner-friendly mini-lesson with rich comments/docstrings. It must include: (1) classification example using train_test_split, optional StandardScaler, LogisticRegression, and print accuracy; (2) regression example using LinearRegression and print MAE; (3) unsupervised example using KMeans on Iris features. The file must explain features/labels, fit/predict, overfitting, and interpretation of outputs. Include a main() function and an if __name__ == \\\"__main__\\\": guard, and ensure code runs as-is.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "slides_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_contains_key_topics",
+              "pptx_contains_workflow",
+              "pptx_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx output file was produced (output is null and file does not exist), which is a deterministic failure. Generate and attach a PowerPoint (.pptx) slide deck with ~12\u201316 slides for a ~20-minute beginner talk on Machine Learning. Ensure the deck explicitly includes: (1) types of ML with the word 'supervised' (and unsupervised, reinforcement) plus simple examples, (2) an ML workflow slide that explicitly mentions 'train/test split' or 'train/test', (3) key terms (features, labels, model, training, inference), (4) overfitting intuition, (5) evaluation metrics including accuracy vs MAE, and (6) recap + Q&A. Include speaker notes on each slide with estimated timing per slide. Then provide the .pptx file path or attachment as result.output."
+          },
+          {
+            "task_id": "python_lesson_file",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_contains_main_guard",
+              "py_file_exists",
+              "py_includes_examples",
+              "py_includes_kmeans",
+              "py_mentions_fit_predict"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no .py file was produced/saved. Create and provide a single runnable Python (.py) file containing a beginner-friendly mini-lesson with rich comments/docstrings. It must include: (1) classification example using train_test_split, optional StandardScaler, LogisticRegression, and print accuracy; (2) regression example using LinearRegression and print MAE; (3) unsupervised example using KMeans on Iris features. The file must explain features/labels, fit/predict, overfitting, and interpretation of outputs. Include a main() function and an if __name__ == \"__main__\": guard, and ensure code runs as-is."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a ~20-minute beginner lesson on Machine Learning, delivered as a PPTX slide deck plus a Python file containing explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "slides_pptx",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_min_slides",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "12",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "pptx_contains_key_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "pptx_contains_workflow",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train/test",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "python_lesson_file",
+              "agent": "coder",
+              "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+              "inputs": {
+                "output_filename": "python_lesson_file_20260107_1645.py",
+                "output_subdir": "run_492f40d469644adfa2caf0472a0f9cd3"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_contains_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_mentions_fit_predict",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "fit",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_includes_examples",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "LogisticRegression",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_includes_kmeans",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KMeans",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "python_lesson_file": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: no .py file was produced (py_file_exists=false) and result.output is empty, so semantic criteria cannot be satisfied. Fix: create and return a single runnable .py file (or include its full contents in result.output) that includes a main guard (if __name__ == \"__main__\":), uses scikit-learn examples for (1) classification with train_test_split, (optionally StandardScaler), LogisticRegression, accuracy; (2) regression with LinearRegression and MAE; (3) unsupervised KMeans on Iris features. Add beginner-friendly comments/docstrings explaining features/labels, fit/predict workflow, overfitting, and print results when run.",
+            "attempts": 3
+          },
+          "slides_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No .pptx output file was provided (result.output is null and pptx_file_exists=false), so the submission is unusable. Generate and attach the PowerPoint (.pptx) slide deck with ~12\u201316 slides and speaker notes including estimated timing per slide. Ensure the deck explicitly includes the required topics/terms: definition of ML, why it matters, key terms (features, labels, model, training, inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, explicit train/test split, overfitting intuition, evaluation metrics (accuracy vs MAE), and a recap + Q&A slide.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "slides_pptx",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_min_slides",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "12",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "pptx_contains_key_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "pptx_contains_workflow",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train/test",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "slides_pptx",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_has_min_slides",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "12",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "pptx_contains_key_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "pptx_contains_workflow",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train/test",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_exists\",\"pptx_has_min_slides\",\"pptx_contains_key_topics\",\"pptx_contains_workflow\"],\"fix_instructions\":\"No .pptx output file was provided (result.output is null and pptx_file_exists=false), so the submission is unusable. Generate and attach the PowerPoint (.pptx) slide deck with ~12\u201316 slides and speaker notes including estimated timing per slide. Ensure the deck explicitly includes the required topics/terms: definition of ML, why it matters, key terms (features, labels, model, training, inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, explicit train/test split, overfitting intuition, evaluation metrics (accuracy vs MAE), and a recap + Q&A slide.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "python_lesson_file",
+            "agent": "coder",
+            "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_contains_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_mentions_fit_predict",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "fit",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_includes_examples",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "LogisticRegression",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_includes_kmeans",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KMeans",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "py_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "python_lesson_file",
+                  "agent": "coder",
+                  "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_contains_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_mentions_fit_predict",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "fit",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_includes_examples",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "LogisticRegression",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_includes_kmeans",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KMeans",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"py_file_exists\",\"py_contains_main_guard\",\"py_mentions_fit_predict\",\"py_includes_examples\",\"py_includes_kmeans\"],\"fix_instructions\":\"Deterministic failure: no .py file was produced (py_file_exists=false) and result.output is empty, so semantic criteria cannot be satisfied. Fix: create and return a single runnable .py file (or include its full contents in result.output) that includes a main guard (if __name__ == \\\"__main__\\\":), uses scikit-learn examples for (1) classification with train_test_split, (optionally StandardScaler), LogisticRegression, accuracy; (2) regression with LinearRegression and MAE; (3) unsupervised KMeans on Iris features. Add beginner-friendly comments/docstrings explaining features/labels, fit/predict workflow, overfitting, and print results when run.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "slides_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_contains_key_topics",
+              "pptx_contains_workflow",
+              "pptx_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx output file was provided (result.output is null and pptx_file_exists=false), so the submission is unusable. Generate and attach the PowerPoint (.pptx) slide deck with ~12\u201316 slides and speaker notes including estimated timing per slide. Ensure the deck explicitly includes the required topics/terms: definition of ML, why it matters, key terms (features, labels, model, training, inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, explicit train/test split, overfitting intuition, evaluation metrics (accuracy vs MAE), and a recap + Q&A slide."
+          },
+          {
+            "task_id": "python_lesson_file",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_contains_main_guard",
+              "py_file_exists",
+              "py_includes_examples",
+              "py_includes_kmeans",
+              "py_mentions_fit_predict"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no .py file was produced (py_file_exists=false) and result.output is empty, so semantic criteria cannot be satisfied. Fix: create and return a single runnable .py file (or include its full contents in result.output) that includes a main guard (if __name__ == \"__main__\":), uses scikit-learn examples for (1) classification with train_test_split, (optionally StandardScaler), LogisticRegression, accuracy; (2) regression with LinearRegression and MAE; (3) unsupervised KMeans on Iris features. Add beginner-friendly comments/docstrings explaining features/labels, fit/predict workflow, overfitting, and print results when run."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a ~20-minute beginner lesson on Machine Learning, delivered as a PPTX slide deck plus a Python file containing explanations and example code.",
+          "subtasks": [
+            {
+              "task_id": "slides_pptx",
+              "agent": "presentation",
+              "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_min_slides",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "12",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "pptx_contains_key_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "pptx_contains_workflow",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train/test",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "python_lesson_file",
+              "agent": "coder",
+              "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+              "inputs": {
+                "output_filename": "python_lesson_file_20260107_1645.py",
+                "output_subdir": "run_492f40d469644adfa2caf0472a0f9cd3"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "py_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "py_contains_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_mentions_fit_predict",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "fit",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_includes_examples",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "LogisticRegression",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "py_includes_kmeans",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KMeans",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "python_lesson_file": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Deterministic failure: no .py file was produced (py_file_exists=false) and result.output is empty, so semantic criteria cannot be satisfied. Fix: create and return a single runnable .py file (or include its full contents in result.output) that includes a main guard (if __name__ == \"__main__\":), uses scikit-learn examples for (1) classification with train_test_split, (optionally StandardScaler), LogisticRegression, accuracy; (2) regression with LinearRegression and MAE; (3) unsupervised KMeans on Iris features. Add beginner-friendly comments/docstrings explaining features/labels, fit/predict workflow, overfitting, and print results when run.",
+            "attempts": 3
+          },
+          "slides_pptx": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No .pptx output file was provided (result.output is null and pptx_file_exists=false), so the submission is unusable. Generate and attach the PowerPoint (.pptx) slide deck with ~12\u201316 slides and speaker notes including estimated timing per slide. Ensure the deck explicitly includes the required topics/terms: definition of ML, why it matters, key terms (features, labels, model, training, inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, explicit train/test split, overfitting intuition, evaluation metrics (accuracy vs MAE), and a recap + Q&A slide.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "slides_pptx",
+            "agent": "presentation",
+            "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_min_slides",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "12",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "pptx_contains_key_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "pptx_contains_workflow",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train/test",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "slides_pptx",
+                  "agent": "presentation",
+                  "instruction": "Create a beginner-friendly slide deck (~20 minutes, ~12\u201316 slides) explaining what Machine Learning is. Include: definition, why it matters, key terms (features/labels/model/training/inference), types (supervised/unsupervised/reinforcement) with simple examples, ML workflow, train/test split, overfitting intuition, evaluation metrics (accuracy vs. MAE), and a short recap + Q&A slide. Provide speaker notes with estimated timing per slide. Output as a .pptx file.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_has_min_slides",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "12",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "pptx_contains_key_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "pptx_contains_workflow",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train/test",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_exists\",\"pptx_contains_key_topics\",\"pptx_contains_workflow\",\"pptx_has_min_slides\"],\"fix_instructions\":\"Deterministic failure: no .pptx output was provided (file missing). Generate and attach a .pptx slide deck (12\u201316 slides) with speaker notes and timing per slide. Ensure the content explicitly includes the required key topics and phrases such as \u201csupervised\u201d, \u201cunsupervised\u201d, \u201creinforcement\u201d, and \u201ctrain/test split\u201d (or \u201ctrain/test\u201d). Include definition, why it matters, key terms (features/labels/model/training/inference), workflow, overfitting intuition, evaluation metrics (accuracy vs MAE), recap + Q&A slide.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "python_lesson_file",
+            "agent": "coder",
+            "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+            "criteria": [
+              {
+                "criterion_id": "py_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "py_contains_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_mentions_fit_predict",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "fit",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_includes_examples",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "LogisticRegression",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "py_includes_kmeans",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KMeans",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "py_file_exists": {
+                "value": null,
+                "exists": false
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "python_lesson_file",
+                  "agent": "coder",
+                  "instruction": "Generate a single Python file that reads like a mini-lesson with rich comments/docstrings (beginner level). Include runnable examples using scikit-learn: (1) simple classification (e.g., Iris or breast cancer) with train/test split, standardization if needed, LogisticRegression, accuracy; (2) simple regression (e.g., California housing or synthetic) with LinearRegression, MAE; (3) brief unsupervised demo with KMeans on Iris features. Include explanations of features/labels, fit/predict, overfitting concept, and how to interpret outputs. Ensure code is runnable as-is with a main() guard and prints results. Save as .py.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "py_contains_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_mentions_fit_predict",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "fit",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_includes_examples",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "LogisticRegression",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "py_includes_kmeans",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KMeans",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "py_file_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "py_file_exists": {
+                      "value": null,
+                      "exists": false
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"py_file_exists\",\"py_contains_main_guard\",\"py_mentions_fit_predict\",\"py_includes_examples\",\"py_includes_kmeans\"],\"fix_instructions\":\"Deterministic failure: no .py file was produced (py_file_exists=false). Create and provide a single runnable Python script saved as a .py file. It must include a main guard (`if __name__ == \\\"__main__\\\":`), beginner-friendly comments/docstrings explaining features vs labels, fit/predict workflow, overfitting concept, and interpretation of outputs. Include runnable scikit-learn demos: (1) classification using Iris or breast cancer with train/test split, optional StandardScaler, LogisticRegression, and accuracy; (2) regression using California housing or synthetic with LinearRegression and MAE; (3) unsupervised KMeans on Iris features. Ensure the script prints results when run.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "slides_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_contains_key_topics",
+              "pptx_contains_workflow",
+              "pptx_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no .pptx output was provided (file missing). Generate and attach a .pptx slide deck (12\u201316 slides) with speaker notes and timing per slide. Ensure the content explicitly includes the required key topics and phrases such as \u201csupervised\u201d, \u201cunsupervised\u201d, \u201creinforcement\u201d, and \u201ctrain/test split\u201d (or \u201ctrain/test\u201d). Include definition, why it matters, key terms (features/labels/model/training/inference), workflow, overfitting intuition, evaluation metrics (accuracy vs MAE), recap + Q&A slide."
+          },
+          {
+            "task_id": "python_lesson_file",
+            "verdict": "fail",
+            "failed_criteria": [
+              "py_contains_main_guard",
+              "py_file_exists",
+              "py_includes_examples",
+              "py_includes_kmeans",
+              "py_mentions_fit_predict"
+            ],
+            "evidence": {
+              "deterministic": {
+                "py_file_exists": {
+                  "value": null,
+                  "exists": false
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no .py file was produced (py_file_exists=false). Create and provide a single runnable Python script saved as a .py file. It must include a main guard (`if __name__ == \"__main__\":`), beginner-friendly comments/docstrings explaining features vs labels, fit/predict workflow, overfitting concept, and interpretation of outputs. Include runnable scikit-learn demos: (1) classification using Iris or breast cancer with train/test split, optional StandardScaler, LogisticRegression, and accuracy; (2) regression using California housing or synthetic with LinearRegression and MAE; (3) unsupervised KMeans on Iris features. Ensure the script prints results when run."
+          }
+        ]
+      }
+    }
+  ]
+}

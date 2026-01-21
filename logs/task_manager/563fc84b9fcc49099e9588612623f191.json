@@ -1,0 +1,705 @@
+{
+  "run_id": "563fc84b9fcc49099e9588612623f191",
+  "started_at": "2026-01-05T06:12:06.950493+00:00",
+  "user_text": "create a complete lesson that explains some high level operations and definitions of \"class\" in python.",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "request": {
+        "model": "gpt-5.2",
+        "messages": [
+          {
+            "role": "system",
+            "content": "\nYou are an expert autonomous Task Orchestrator.\nYour goal is to analyze user requests and educational materials, then create a structured execution plan.\n\nAvailable Agents:\n- 'coder': Generates runnable Python code. Best for demonstrations, data analysis, and coding tutorials.\n- 'video': Creates video content. Best for visual explanations.\n- 'presentation': Generates PowerPoint slides (.pptx). Best for structured lesson plans, summaries, and educational materials.\n- 'quizzer': Creates quizzes. Best for assessments and review.\n\nInstructions:\n1. Analyze the user's input and provided files.\n2. Break down the goal into logical subtasks.\n3. Assign each subtask to the most appropriate agent.\n4. Provide specific, actionable instructions for each agent.\n5. For every subtask, include a non-empty 'acceptance_criteria' list.\n   - Each criterion must include: criterion_id, criterion_type, target, operator, expected, severity.\n   - Use criterion_type values: mcp_tool | output_shape | file_exists | semantic.\n   - Use operator values: equals | contains | exists | gte | lte.\n   - Use target paths that start with 'result.' or 'tools.'.\n   - For mcp_tool criteria, include tool: { name, args }.\n   - Use placeholders like $artifacts[0] or $output.validation.path inside tool args.\n6. Use the provided tool 'create_task_plan' to submit your plan.\n\nResponse Format Example:\n{\n  \"user_intent\": \"Create a lesson on Python lists with a video intro and a quiz.\",\n  \"subtasks\": [\n    {\n      \"task_id\": \"step1_code\",\n      \"agent\": \"coder\",\n      \"instruction\": \"Generate a Python script demonstrating list operations.\",\n      \"inputs\": {},\n      \"dependencies\": [],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"code_executes\",\n          \"criterion_type\": \"mcp_tool\",\n          \"tool\": {\"name\": \"python_check\", \"args\": {\"filepath\": \"$artifacts[0]\"}},\n          \"target\": \"tools.python_check.success\",\n          \"operator\": \"equals\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"tools.python_check.run.stderr\"\n        }\n      ]\n    },\n    {\n      \"task_id\": \"step2_video\",\n      \"agent\": \"video\",\n      \"instruction\": \"Create a video explaining the code.\",\n      \"inputs\": {},\n      \"dependencies\": [\"step1_code\"],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"video_semantic_ok\",\n          \"criterion_type\": \"semantic\",\n          \"target\": \"result.output\",\n          \"operator\": \"exists\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"result.output\"\n        }\n      ]\n    }\n  ]\n}\n"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "create a complete lesson that explains some high level operations and definitions of \"class\" in python."
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_task_plan",
+              "description": "Create a structured execution plan for multiple agents.",
+              "parameters": {
+                "$defs": {
+                  "AcceptanceCriterion": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this criterion",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Criterion type: mcp_tool | output_shape | file_exists | semantic",
+                        "enum": [
+                          "mcp_tool",
+                          "output_shape",
+                          "file_exists",
+                          "semantic"
+                        ],
+                        "title": "Type",
+                        "type": "string"
+                      },
+                      "target": {
+                        "description": "Evaluation target path (e.g., result.output.text or tools.python_check.success)",
+                        "title": "Target",
+                        "type": "string"
+                      },
+                      "operator": {
+                        "description": "Operator: equals | contains | exists | gte | lte",
+                        "enum": [
+                          "equals",
+                          "contains",
+                          "exists",
+                          "gte",
+                          "lte"
+                        ],
+                        "title": "Operator",
+                        "type": "string"
+                      },
+                      "expected": {
+                        "default": null,
+                        "description": "Expected value to compare against",
+                        "title": "Expected"
+                      },
+                      "severity": {
+                        "default": "required",
+                        "description": "Severity: required | optional",
+                        "enum": [
+                          "required",
+                          "optional"
+                        ],
+                        "title": "Severity",
+                        "type": "string"
+                      },
+                      "tool": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": true,
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Tool call definition for mcp_tool criteria",
+                        "title": "Tool"
+                      },
+                      "evidence": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Evidence path to include in judger output",
+                        "title": "Evidence"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "target",
+                      "operator"
+                    ],
+                    "title": "AcceptanceCriterion",
+                    "type": "object"
+                  },
+                  "SubTask": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this subtask",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "agent": {
+                        "description": "The agent responsible (coder, video, text, quizzer)",
+                        "title": "Agent",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Detailed instruction for the agent",
+                        "title": "Title",
+                        "type": "string"
+                      },
+                      "inputs": {
+                        "additionalProperties": true,
+                        "description": "Specific inputs for the agent",
+                        "title": "Inputs",
+                        "type": "object"
+                      },
+                      "dependencies": {
+                        "description": "IDs of tasks that must complete first",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Dependencies",
+                        "type": "array"
+                      },
+                      "acceptance_criteria": {
+                        "description": "Structured criteria the judger will use",
+                        "items": {
+                          "$ref": "#/$defs/AcceptanceCriterion"
+                        },
+                        "title": "Acceptance Criteria",
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "agent",
+                      "title",
+                      "acceptance_criteria"
+                    ],
+                    "title": "SubTask",
+                    "type": "object"
+                  }
+                },
+                "properties": {
+                  "user_intent": {
+                    "description": "Summary of what the user wants to achieve",
+                    "title": "User Intent",
+                    "type": "string"
+                  },
+                  "subtasks": {
+                    "description": "List of executable steps",
+                    "items": {
+                      "$ref": "#/$defs/SubTask"
+                    },
+                    "title": "Subtasks",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "user_intent",
+                  "subtasks"
+                ],
+                "title": "TaskPlan",
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "create_task_plan"
+          }
+        }
+      },
+      "response": {
+        "tool_calls": [
+          {
+            "name": "create_task_plan",
+            "arguments": "{\"user_intent\":\"Create a complete lesson that explains high-level operations and definitions of a Python class.\",\"subtasks\":[{\"id\":\"lesson_outline_content\",\"agent\":\"presentation\",\"title\":\"Draft a complete lesson plan on Python classes. Include: learning objectives, prerequisites, key vocabulary (class, object, instance, attribute, method, __init__, self, inheritance, encapsulation), conceptual explanations, and a structured flow (intro \u2192 core concepts \u2192 examples \u2192 exercises \u2192 recap). Provide speaker notes and a short glossary.\",\"dependencies\":[],\"acceptance_criteria\":[{\"id\":\"outline_exists\",\"type\":\"output_shape\",\"target\":\"result.output\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"covers_key_terms\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"__init__\",\"severity\":\"required\",\"evidence\":\"result.output.text\"},{\"id\":\"includes_object_instance_distinction\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"instance\",\"severity\":\"required\",\"evidence\":\"result.output.text\"},{\"id\":\"includes_exercises\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"Exercise\",\"severity\":\"required\",\"evidence\":\"result.output.text\"}]},{\"id\":\"code_examples\",\"agent\":\"coder\",\"title\":\"Create runnable Python code examples for the lesson illustrating: defining a class, constructor (__init__), instance vs class attributes, methods (instance and classmethod), properties, dunder methods (__repr__ or __str__), basic inheritance with super(), and a small usage demo. Include comments aligned to the lesson sections.\",\"dependencies\":[\"lesson_outline_content\"],\"acceptance_criteria\":[{\"id\":\"code_block_exists\",\"type\":\"output_shape\",\"target\":\"result.output.code\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"includes_inheritance\",\"type\":\"semantic\",\"target\":\"result.output.code\",\"operator\":\"contains\",\"expected\":\"class\",\"severity\":\"required\",\"evidence\":\"result.output.code\"},{\"id\":\"includes_super\",\"type\":\"semantic\",\"target\":\"result.output.code\",\"operator\":\"contains\",\"expected\":\"super()\",\"severity\":\"required\",\"evidence\":\"result.output.code\"},{\"id\":\"includes_init\",\"type\":\"semantic\",\"target\":\"result.output.code\",\"operator\":\"contains\",\"expected\":\"def __init__\",\"severity\":\"required\",\"evidence\":\"result.output.code\"}]},{\"id\":\"assessment_quiz\",\"agent\":\"quizzer\",\"title\":\"Write a short assessment for the Python classes lesson: 8\u201312 questions mixed format (MCQ, true/false, short answer, code reading). Provide an answer key and brief rationales. Ensure questions cover: class vs object, attributes vs methods, self, __init__, inheritance, and method resolution order at a high level.\",\"dependencies\":[\"lesson_outline_content\",\"code_examples\"],\"acceptance_criteria\":[{\"id\":\"quiz_exists\",\"type\":\"output_shape\",\"target\":\"result.output\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.output\"},{\"id\":\"has_answer_key\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"Answer Key\",\"severity\":\"required\",\"evidence\":\"result.output.text\"},{\"id\":\"question_count\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"1.\",\"severity\":\"required\",\"evidence\":\"result.output.text\"}]},{\"id\":\"final_compiled_lesson\",\"agent\":\"presentation\",\"title\":\"Compile the final lesson document in a clean, student-friendly format (Markdown). Include: section headings, explanations, embedded code from the coder step, a guided practice walkthrough, common pitfalls, summary, and the quiz at the end. Ensure the lesson can be delivered as a 45\u201360 minute session.\",\"dependencies\":[\"lesson_outline_content\",\"code_examples\",\"assessment_quiz\"],\"acceptance_criteria\":[{\"id\":\"final_lesson_markdown\",\"type\":\"output_shape\",\"target\":\"result.output.text\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"result.output.text\"},{\"id\":\"includes_code_sections\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"```python\",\"severity\":\"required\",\"evidence\":\"result.output.text\"},{\"id\":\"includes_common_pitfalls\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"Common pitfalls\",\"severity\":\"required\",\"evidence\":\"result.output.text\"},{\"id\":\"includes_quiz_section\",\"type\":\"semantic\",\"target\":\"result.output.text\",\"operator\":\"contains\",\"expected\":\"Quiz\",\"severity\":\"required\",\"evidence\":\"result.output.text\"}]}]}"
+          }
+        ]
+      },
+      "parsed_plan": {
+        "user_intent": "Create a complete lesson that explains high-level operations and definitions of a Python class.",
+        "subtasks": [
+          {
+            "task_id": "lesson_outline_content",
+            "agent": "presentation",
+            "instruction": "Draft a complete lesson plan on Python classes. Include: learning objectives, prerequisites, key vocabulary (class, object, instance, attribute, method, __init__, self, inheritance, encapsulation), conceptual explanations, and a structured flow (intro \u2192 core concepts \u2192 examples \u2192 exercises \u2192 recap). Provide speaker notes and a short glossary.",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_key_terms",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_object_instance_distinction",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "instance",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_exercises",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Exercise",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ]
+          },
+          {
+            "task_id": "code_examples",
+            "agent": "coder",
+            "instruction": "Create runnable Python code examples for the lesson illustrating: defining a class, constructor (__init__), instance vs class attributes, methods (instance and classmethod), properties, dunder methods (__repr__ or __str__), basic inheritance with super(), and a small usage demo. Include comments aligned to the lesson sections.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_outline_content"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "code_block_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output.code",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_inheritance",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "class",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "includes_super",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "super()",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              },
+              {
+                "criterion_id": "includes_init",
+                "criterion_type": "semantic",
+                "target": "result.output.code",
+                "operator": "contains",
+                "expected": "def __init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.code"
+              }
+            ]
+          },
+          {
+            "task_id": "assessment_quiz",
+            "agent": "quizzer",
+            "instruction": "Write a short assessment for the Python classes lesson: 8\u201312 questions mixed format (MCQ, true/false, short answer, code reading). Provide an answer key and brief rationales. Ensure questions cover: class vs object, attributes vs methods, self, __init__, inheritance, and method resolution order at a high level.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_outline_content",
+              "code_examples"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "quiz_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "has_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "question_count",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "1.",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ]
+          },
+          {
+            "task_id": "final_compiled_lesson",
+            "agent": "presentation",
+            "instruction": "Compile the final lesson document in a clean, student-friendly format (Markdown). Include: section headings, explanations, embedded code from the coder step, a guided practice walkthrough, common pitfalls, summary, and the quiz at the end. Ensure the lesson can be delivered as a 45\u201360 minute session.",
+            "inputs": {},
+            "dependencies": [
+              "lesson_outline_content",
+              "code_examples",
+              "assessment_quiz"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "final_lesson_markdown",
+                "criterion_type": "output_shape",
+                "target": "result.output.text",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_code_sections",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_common_pitfalls",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Common pitfalls",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              },
+              {
+                "criterion_id": "includes_quiz_section",
+                "criterion_type": "semantic",
+                "target": "result.output.text",
+                "operator": "contains",
+                "expected": "Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output.text"
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "Create a complete lesson that explains high-level operations and definitions of a Python class.",
+    "subtasks": [
+      {
+        "task_id": "lesson_outline_content",
+        "agent": "presentation",
+        "instruction": "Draft a complete lesson plan on Python classes. Include: learning objectives, prerequisites, key vocabulary (class, object, instance, attribute, method, __init__, self, inheritance, encapsulation), conceptual explanations, and a structured flow (intro \u2192 core concepts \u2192 examples \u2192 exercises \u2192 recap). Provide speaker notes and a short glossary.",
+        "inputs": {},
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "outline_exists",
+            "criterion_type": "output_shape",
+            "target": "result.output",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "covers_key_terms",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "__init__",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "includes_object_instance_distinction",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "instance",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "includes_exercises",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "Exercise",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          }
+        ]
+      },
+      {
+        "task_id": "code_examples",
+        "agent": "coder",
+        "instruction": "Create runnable Python code examples for the lesson illustrating: defining a class, constructor (__init__), instance vs class attributes, methods (instance and classmethod), properties, dunder methods (__repr__ or __str__), basic inheritance with super(), and a small usage demo. Include comments aligned to the lesson sections.",
+        "inputs": {
+          "output_filename": "code_examples_20260105_0612.py",
+          "output_subdir": "run_563fc84b9fcc49099e9588612623f191"
+        },
+        "dependencies": [
+          "lesson_outline_content"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "code_block_exists",
+            "criterion_type": "output_shape",
+            "target": "result.output.code",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "includes_inheritance",
+            "criterion_type": "semantic",
+            "target": "result.output.code",
+            "operator": "contains",
+            "expected": "class",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.code"
+          },
+          {
+            "criterion_id": "includes_super",
+            "criterion_type": "semantic",
+            "target": "result.output.code",
+            "operator": "contains",
+            "expected": "super()",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.code"
+          },
+          {
+            "criterion_id": "includes_init",
+            "criterion_type": "semantic",
+            "target": "result.output.code",
+            "operator": "contains",
+            "expected": "def __init__",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.code"
+          },
+          {
+            "criterion_id": "script_file_exists",
+            "criterion_type": "file_exists",
+            "target": "result.artifacts[0]",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.artifacts[0]"
+          }
+        ]
+      },
+      {
+        "task_id": "assessment_quiz",
+        "agent": "quizzer",
+        "instruction": "Write a short assessment for the Python classes lesson: 8\u201312 questions mixed format (MCQ, true/false, short answer, code reading). Provide an answer key and brief rationales. Ensure questions cover: class vs object, attributes vs methods, self, __init__, inheritance, and method resolution order at a high level.",
+        "inputs": {},
+        "dependencies": [
+          "lesson_outline_content",
+          "code_examples"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "quiz_exists",
+            "criterion_type": "output_shape",
+            "target": "result.output",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output"
+          },
+          {
+            "criterion_id": "has_answer_key",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "Answer Key",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "question_count",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "1.",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          }
+        ]
+      },
+      {
+        "task_id": "final_compiled_lesson",
+        "agent": "presentation",
+        "instruction": "Compile the final lesson document in a clean, student-friendly format (Markdown). Include: section headings, explanations, embedded code from the coder step, a guided practice walkthrough, common pitfalls, summary, and the quiz at the end. Ensure the lesson can be delivered as a 45\u201360 minute session.",
+        "inputs": {},
+        "dependencies": [
+          "lesson_outline_content",
+          "code_examples",
+          "assessment_quiz"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "final_lesson_markdown",
+            "criterion_type": "output_shape",
+            "target": "result.output.text",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "includes_code_sections",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "```python",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "includes_common_pitfalls",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "Common pitfalls",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          },
+          {
+            "criterion_id": "includes_quiz_section",
+            "criterion_type": "semantic",
+            "target": "result.output.text",
+            "operator": "contains",
+            "expected": "Quiz",
+            "severity": "required",
+            "tool": null,
+            "evidence": "result.output.text"
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "partial",
+  "agent_results": {
+    "lesson_outline_content": {
+      "agent": "presentation",
+      "success": false,
+      "error": "Max retries exceeded.",
+      "instruction": "Deterministic failure: outline_exists is missing (no outline/lesson plan output was provided). Provide a complete lesson plan text. Ensure it explicitly includes the terms '__init__' and 'instance', and contains an 'Exercise' section. Include all requested components: learning objectives, prerequisites, key vocabulary (class, object, instance, attribute, method, __init__, self, inheritance, encapsulation), conceptual explanations, structured flow (intro \u2192 core concepts \u2192 examples \u2192 exercises \u2192 recap), speaker notes, and a short glossary.",
+      "attempts": 3
+    },
+    "code_examples": {
+      "agent": "coder",
+      "success": true,
+      "output": {
+        "code": "# Class definition example\nclass Person:\n    # Class attribute - shared by all instances\n    species = \"Homo sapiens\"\n    \n    # Constructor method - initializes new instances\n    def __init__(self, name, age):\n        # Instance attributes - unique to each instance\n        self.name = name\n        self.age = age\n        self._email = None  # Protected attribute\n    \n    # Instance method - operates on instance data\n    def introduce(self):\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Class method - operates on class data, not instance data\n    @classmethod\n    def get_species(cls):\n        return cls.species\n    \n    # Property decorator - creates getter/setter for controlled access\n    @property\n    def email(self):\n        return self._email\n    \n    @email.setter\n    def email(self, value):\n        if \"@\" in value:\n            self._email = value\n        else:\n            raise ValueError(\"Invalid email format\")\n    \n    # Dunder method - string representation of object\n    def __str__(self):\n        return f\"{self.name} ({self.age} years old)\"\n    \n    # Dunder method - official string representation for debugging\n    def __repr__(self):\n        return f\"Person('{self.name}', {self.age})\"\n\n# Inheritance example\nclass Student(Person):\n    # Inherits from Person class\n    def __init__(self, name, age, student_id):\n        # Call parent constructor using super()\n        super().__init__(name, age)\n        self.student_id = student_id\n    \n    # Override parent method\n    def introduce(self):\n        return f\"I'm {self.name}, a student with ID {self.student_id}\"\n    \n    # Additional method specific to Student\n    def study(self, subject):\n        return f\"{self.name} is studying {subject}\"\n\n# Usage demonstration\nif __name__ == \"__main__\":\n    # Creating instances\n    person1 = Person(\"Alice\", 30)\n    person2 = Person(\"Bob\", 25)\n    \n    # Using instance methods\n    print(person1.introduce())\n    print(person2.introduce())\n    \n    # Accessing class attribute\n    print(f\"All people belong to species: {Person.species}\")\n    \n    # Accessing class method\n    print(f\"Species: {Person.get_species()}\")\n    \n    # Using properties\n    person1.email = \"alice@example.com\"\n    print(f\"{person1.name}'s email: {person1.email}\")\n    \n    # Using dunder methods\n    print(str(person1))  # Calls __str__\n    print(repr(person1))  # Calls __repr__\n    \n    # Inheritance demonstration\n    student1 = Student(\"Charlie\", 20, \"S12345\")\n    print(student1.introduce())  # Overridden method\n    print(student1.study(\"Python\"))  # New method\n    print(f\"Student ID: {student1.student_id}\")\n    \n    # Demonstrating inheritance with super()\n    print(f\"Student inherits from: {Student.__bases__[0].__name__}\")\n",
+        "validation": {
+          "success": true,
+          "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_563fc84b9fcc49099e9588612623f191\\code_examples_20260105_0612.py",
+          "stdout": "Hi, I'm Alice, 30 years old.\nHi, I'm Bob, 25 years old.\nAll people belong to species: Homo sapiens\nSpecies: Homo sapiens\nAlice's email: alice@example.com\nAlice (30 years old)\nPerson('Alice', 30)\nI'm Charlie, a student with ID S12345\nCharlie is studying Python\nStudent ID: S12345\nStudent inherits from: Person\n",
+          "stderr": "",
+          "compile_success": true,
+          "run_success": true,
+          "compile_details": {
+            "success": true,
+            "returncode": 0,
+            "stdout": "",
+            "stderr": "",
+            "timed_out": false
+          },
+          "run_details": {
+            "success": true,
+            "returncode": 0,
+            "stdout": "Hi, I'm Alice, 30 years old.\nHi, I'm Bob, 25 years old.\nAll people belong to species: Homo sapiens\nSpecies: Homo sapiens\nAlice's email: alice@example.com\nAlice (30 years old)\nPerson('Alice', 30)\nI'm Charlie, a student with ID S12345\nCharlie is studying Python\nStudent ID: S12345\nStudent inherits from: Person\n",
+            "stderr": "",
+            "timed_out": false
+          }
+        }
+      },
+      "artifacts": [
+        "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_563fc84b9fcc49099e9588612623f191\\code_examples_20260105_0612.py"
+      ],
+      "instruction": "Create runnable Python code examples for the lesson illustrating: defining a class, constructor (__init__), instance vs class attributes, methods (instance and classmethod), properties, dunder methods (__repr__ or __str__), basic inheritance with super(), and a small usage demo. Include comments aligned to the lesson sections.",
+      "attempts": 3,
+      "metadata": {
+        "model": "qwen3-coder-flash"
+      }
+    },
+    "assessment_quiz": {
+      "agent": "quizzer",
+      "success": true,
+      "output": {
+        "questions": [
+          {
+            "q": "Example Question 1?",
+            "a": "Answer A"
+          },
+          {
+            "q": "Example Question 2?",
+            "a": "Answer B"
+          }
+        ],
+        "total_questions": 2
+      },
+      "artifacts": [],
+      "instruction": "Output must be a short assessment for Python classes with 8\u201312 questions in mixed formats (MCQ, true/false, short answer, code reading). Include an explicit 'Answer Key' section with brief rationales. Ensure coverage of: class vs object, attributes vs methods, self, __init__, inheritance, and method resolution order (high level). Current output has only 2 example questions and no answer key.",
+      "attempts": 3,
+      "metadata": {
+        "model": "gpt-4-turbo"
+      },
+      "error": "Max retries exceeded."
+    },
+    "final_compiled_lesson": {
+      "agent": "presentation",
+      "success": false,
+      "error": "Max retries exceeded.",
+      "instruction": "Provide the compiled lesson as a Markdown document (either as a file named final_lesson_markdown / final_lesson_markdown.md, or include the full Markdown in result.output.text). Ensure it includes: (1) at least one Python code block fenced with ```python, (2) a 'Common pitfalls' section, and (3) a 'Quiz' section at the end. Also include headings, explanations, guided practice walkthrough, summary, and ensure it fits a 45\u201360 minute session.",
+      "attempts": 3
+    }
+  }
+}

@@ -1,0 +1,802 @@
+{
+  "run_id": "047354394f8a4d37aff1ba7b898b9a0d",
+  "started_at": "2026-01-13T14:34:57.219262+00:00",
+  "user_text": "create a lesson on linear regression. i need slides, video, code and quiz all together.",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "request": {
+        "model": "gpt-5.2",
+        "messages": [
+          {
+            "role": "system",
+            "content": "\nYou are an expert autonomous Task Orchestrator.\nYour goal is to analyze user requests and educational materials, then create a structured execution plan.\n\nAvailable Agents:\n- 'coder': Generates runnable Python code. Best for demonstrations, data analysis, and coding tutorials.\n- 'video': Creates video content. Best for visual explanations.\n- 'presentation': Generates PowerPoint slides (.pptx). Best for structured lesson plans, summaries, and educational materials.\n- 'quizzer': Creates quizzes. Best for assessments and review.\n\nInstructions:\n1. Analyze the user's input and provided files.\n2. Break down the goal into logical subtasks.\n3. Assign each subtask to the most appropriate agent.\n4. Provide specific, actionable instructions for each agent.\n5. For every subtask, include a non-empty 'acceptance_criteria' list.\n   - Each criterion must include: criterion_id, criterion_type, target, operator, expected, severity.\n   - Use criterion_type values: mcp_tool | output_shape | file_exists | semantic.\n   - Use operator values: equals | contains | exists | gte | lte.\n   - Use target paths that start with 'result.' or 'tools.'.\n   - For mcp_tool criteria, include tool: { name, args }.\n   - Use placeholders like $artifacts[0] or $output.validation.path inside tool args.\n   - **CRITICAL**: For `semantic` criteria, ONLY check for concepts EXPLICITLY requested by the user. Do NOT invent constraints (e.g., do not require \"KNN\" unless user asked for it).\n6. Use the provided tool 'create_task_plan' to submit your plan.\n7. CRITICAL For 'presentation' agent tasks:\n   - ALWAYS include `output.metrics.slide_count` (gte 1)\n   - If code is involved, include `output.metrics.code_snippets_count` (gte 1)\n   - These are deterministic checks (`output_shape`) that are FASTER than semantic checks.\n8. CRITICAL For 'coder' agent tasks:\n   - DO NOT use the `python_check` mcp_tool. The agent validates itself.\n   - Use `output_shape` to check `result.output.validation.run_success` (equals true).\n   - Use `output_shape` to check `result.output.validation.stderr` (equals \"\").\n9. CRITICAL For 'video' agent tasks:\n   - Must check for MP4 output: `output_shape` on `result.artifacts[0]` (contains \".mp4\").\n   - Ensure success: `output_shape` on `result.success` (equals true).\n10. CRITICAL For tasks involving uploaded files:\n   - Check the 'AVAILABLE AS LOCAL FILE' name in the input.\n   - You MUST use this EXACT filename in the agent 'instruction'.\n   - Do NOT guess names like 'ML_example.pdf'. Use the actual on-disk name (e.g., '173628_ML_Example.pdf').\n\nResponse Format Example:\n{\n  \"user_intent\": \"Create a lesson on Python lists with a video intro and a quiz.\",\n  \"subtasks\": [\n    {\n      \"task_id\": \"step1_code\",\n      \"agent\": \"coder\",\n      \"instruction\": \"Generate a Python script demonstrating list operations.\",\n      \"inputs\": {},\n      \"dependencies\": [],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"code_success\",\n          \"criterion_type\": \"output_shape\",\n          \"target\": \"result.output.validation.run_success\",\n          \"operator\": \"equals\",\n          \"expected\": true,\n          \"severity\": \"required\"\n        }\n      ]\n    },\n    {\n      \"task_id\": \"step2_video\",\n      \"agent\": \"video\",\n      \"instruction\": \"Create a video explaining the code.\",\n      \"inputs\": {},\n      \"dependencies\": [\"step1_code\"],\n      \"acceptance_criteria\": [\n        {\n          \"criterion_id\": \"video_semantic_ok\",\n          \"criterion_type\": \"semantic\",\n          \"target\": \"result.output\",\n          \"operator\": \"exists\",\n          \"expected\": true,\n          \"severity\": \"required\",\n          \"evidence\": \"result.output\"\n        }\n      ]\n    }\n  ]\n}\n"
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "create a lesson on linear regression. i need slides, video, code and quiz all together."
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_task_plan",
+              "description": "Create a structured execution plan for multiple agents.",
+              "parameters": {
+                "$defs": {
+                  "AcceptanceCriterion": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this criterion",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Criterion type: mcp_tool | output_shape | file_exists | semantic",
+                        "enum": [
+                          "mcp_tool",
+                          "output_shape",
+                          "file_exists",
+                          "semantic"
+                        ],
+                        "title": "Type",
+                        "type": "string"
+                      },
+                      "target": {
+                        "description": "Evaluation target path (e.g., result.output.text or tools.python_check.success)",
+                        "title": "Target",
+                        "type": "string"
+                      },
+                      "operator": {
+                        "description": "Operator: equals | contains | exists | gte | lte",
+                        "enum": [
+                          "equals",
+                          "contains",
+                          "exists",
+                          "gte",
+                          "lte"
+                        ],
+                        "title": "Operator",
+                        "type": "string"
+                      },
+                      "expected": {
+                        "default": null,
+                        "description": "Expected value to compare against",
+                        "title": "Expected"
+                      },
+                      "severity": {
+                        "default": "required",
+                        "description": "Severity: required | optional",
+                        "enum": [
+                          "required",
+                          "optional"
+                        ],
+                        "title": "Severity",
+                        "type": "string"
+                      },
+                      "tool": {
+                        "anyOf": [
+                          {
+                            "additionalProperties": true,
+                            "type": "object"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Tool call definition for mcp_tool criteria",
+                        "title": "Tool"
+                      },
+                      "evidence": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "default": null,
+                        "description": "Evidence path to include in judger output",
+                        "title": "Evidence"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "target",
+                      "operator"
+                    ],
+                    "title": "AcceptanceCriterion",
+                    "type": "object"
+                  },
+                  "SubTask": {
+                    "properties": {
+                      "id": {
+                        "description": "Unique identifier for this subtask",
+                        "title": "Id",
+                        "type": "string"
+                      },
+                      "agent": {
+                        "description": "The agent responsible (coder, video, text, quizzer)",
+                        "title": "Agent",
+                        "type": "string"
+                      },
+                      "title": {
+                        "description": "Detailed instruction for the agent",
+                        "title": "Title",
+                        "type": "string"
+                      },
+                      "inputs": {
+                        "additionalProperties": true,
+                        "description": "Specific inputs for the agent",
+                        "title": "Inputs",
+                        "type": "object"
+                      },
+                      "dependencies": {
+                        "description": "IDs of tasks that must complete first",
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "Dependencies",
+                        "type": "array"
+                      },
+                      "acceptance_criteria": {
+                        "description": "Structured criteria the judger will use",
+                        "items": {
+                          "$ref": "#/$defs/AcceptanceCriterion"
+                        },
+                        "title": "Acceptance Criteria",
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "agent",
+                      "title",
+                      "acceptance_criteria"
+                    ],
+                    "title": "SubTask",
+                    "type": "object"
+                  }
+                },
+                "properties": {
+                  "user_intent": {
+                    "description": "Summary of what the user wants to achieve",
+                    "title": "User Intent",
+                    "type": "string"
+                  },
+                  "subtasks": {
+                    "description": "List of executable steps",
+                    "items": {
+                      "$ref": "#/$defs/SubTask"
+                    },
+                    "title": "Subtasks",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "user_intent",
+                  "subtasks"
+                ],
+                "title": "TaskPlan",
+                "type": "object"
+              }
+            }
+          }
+        ],
+        "tool_choice": {
+          "type": "function",
+          "function": {
+            "name": "create_task_plan"
+          }
+        }
+      },
+      "response": {
+        "tool_calls": [
+          {
+            "name": "create_task_plan",
+            "arguments": "{\"user_intent\":\"Create a complete lesson on linear regression including slides, an explanatory video, runnable code, and a quiz.\",\"subtasks\":[{\"id\":\"step1_code\",\"agent\":\"coder\",\"title\":\"Create runnable Python code that demonstrates linear regression end-to-end: generate or load a simple dataset, fit a linear regression model, compute key metrics (MSE/RMSE and R^2), and visualize the fitted line vs data (and optionally residuals). Save outputs (plots) and include clear comments so it can be used in the lesson.\",\"dependencies\":[],\"acceptance_criteria\":[{\"id\":\"code_runs\",\"type\":\"output_shape\",\"target\":\"result.output.validation.run_success\",\"operator\":\"equals\",\"expected\":true,\"severity\":\"required\"},{\"id\":\"no_stderr\",\"type\":\"output_shape\",\"target\":\"result.output.validation.stderr\",\"operator\":\"equals\",\"expected\":\"\",\"severity\":\"required\"},{\"id\":\"mentions_linear_regression\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"linear regression\",\"severity\":\"required\"},{\"id\":\"computes_r2_or_mse\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"Expect code to compute at least one standard regression metric (R^2 and/or MSE/RMSE) and show a fit/plot.\"}]},{\"id\":\"step2_slides\",\"agent\":\"presentation\",\"title\":\"Create a slide deck teaching linear regression. Include: problem setup, hypothesis/model, cost function intuition, fitting (closed-form normal equation and/or gradient descent conceptually), evaluation metrics (R^2, MSE/RMSE), assumptions/limitations, overfitting and train/test split, and a walkthrough referencing the code from step1_code. Include at least one slide with a code snippet excerpt.\",\"dependencies\":[\"step1_code\"],\"acceptance_criteria\":[{\"id\":\"slides_generated\",\"type\":\"file_exists\",\"target\":\"result.artifacts[0]\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\"},{\"id\":\"slide_count\",\"type\":\"output_shape\",\"target\":\"result.output.metrics.slide_count\",\"operator\":\"gte\",\"expected\":1,\"severity\":\"required\"},{\"id\":\"code_snippets\",\"type\":\"output_shape\",\"target\":\"result.output.metrics.code_snippets_count\",\"operator\":\"gte\",\"expected\":1,\"severity\":\"required\"},{\"id\":\"covers_key_topics\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"Slides include explanation of linear regression model, fitting, and evaluation metrics.\"}]},{\"id\":\"step3_video\",\"agent\":\"video\",\"title\":\"Produce an MP4 lesson video explaining linear regression, aligned with the slide deck from step2_slides and using visuals (slide-like frames or rendered slides) plus brief on-screen math/model and code highlights. Include a narrative that introduces the model, shows fitting on the example dataset, interprets coefficients, and explains metrics.\",\"dependencies\":[\"step2_slides\",\"step1_code\"],\"acceptance_criteria\":[{\"id\":\"video_success\",\"type\":\"output_shape\",\"target\":\"result.success\",\"operator\":\"equals\",\"expected\":true,\"severity\":\"required\"},{\"id\":\"mp4_output\",\"type\":\"output_shape\",\"target\":\"result.artifacts[0]\",\"operator\":\"contains\",\"expected\":\".mp4\",\"severity\":\"required\"},{\"id\":\"video_linear_regression_content\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"linear regression\",\"severity\":\"required\"}]},{\"id\":\"step4_quiz\",\"agent\":\"quizzer\",\"title\":\"Create a quiz to assess understanding of linear regression. Include a mix of question types (multiple choice and short answer) covering: interpreting slope/intercept, cost/metric meanings (MSE/RMSE, R^2), assumptions (linearity, independence, homoscedasticity, normality of errors), train/test split, and diagnosing under/overfitting. Provide an answer key and brief explanations.\",\"dependencies\":[\"step2_slides\"],\"acceptance_criteria\":[{\"id\":\"quiz_has_questions\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"exists\",\"expected\":true,\"severity\":\"required\",\"evidence\":\"Quiz contains multiple questions with answers.\"},{\"id\":\"quiz_mentions_metrics\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"R^2\",\"severity\":\"required\"},{\"id\":\"quiz_mentions_mse\",\"type\":\"semantic\",\"target\":\"result.output\",\"operator\":\"contains\",\"expected\":\"MSE\",\"severity\":\"required\"}]}]}"
+          }
+        ]
+      },
+      "parsed_plan": {
+        "user_intent": "Create a complete lesson on linear regression including slides, an explanatory video, runnable code, and a quiz.",
+        "subtasks": [
+          {
+            "task_id": "step1_code",
+            "agent": "coder",
+            "instruction": "Create runnable Python code that demonstrates linear regression end-to-end: generate or load a simple dataset, fit a linear regression model, compute key metrics (MSE/RMSE and R^2), and visualize the fitted line vs data (and optionally residuals). Save outputs (plots) and include clear comments so it can be used in the lesson.",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "code_runs",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "mentions_linear_regression",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "linear regression",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "computes_r2_or_mse",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "Expect code to compute at least one standard regression metric (R^2 and/or MSE/RMSE) and show a fit/plot."
+              }
+            ]
+          },
+          {
+            "task_id": "step2_slides",
+            "agent": "presentation",
+            "instruction": "Create a slide deck teaching linear regression. Include: problem setup, hypothesis/model, cost function intuition, fitting (closed-form normal equation and/or gradient descent conceptually), evaluation metrics (R^2, MSE/RMSE), assumptions/limitations, overfitting and train/test split, and a walkthrough referencing the code from step1_code. Include at least one slide with a code snippet excerpt.",
+            "inputs": {},
+            "dependencies": [
+              "step1_code"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "slides_generated",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slide_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_snippets",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "covers_key_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "Slides include explanation of linear regression model, fitting, and evaluation metrics."
+              }
+            ]
+          },
+          {
+            "task_id": "step3_video",
+            "agent": "video",
+            "instruction": "Produce an MP4 lesson video explaining linear regression, aligned with the slide deck from step2_slides and using visuals (slide-like frames or rendered slides) plus brief on-screen math/model and code highlights. Include a narrative that introduces the model, shows fitting on the example dataset, interprets coefficients, and explains metrics.",
+            "inputs": {},
+            "dependencies": [
+              "step2_slides",
+              "step1_code"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "mp4_output",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_linear_regression_content",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "linear regression",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ]
+          },
+          {
+            "task_id": "step4_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a quiz to assess understanding of linear regression. Include a mix of question types (multiple choice and short answer) covering: interpreting slope/intercept, cost/metric meanings (MSE/RMSE, R^2), assumptions (linearity, independence, homoscedasticity, normality of errors), train/test split, and diagnosing under/overfitting. Provide an answer key and brief explanations.",
+            "inputs": {},
+            "dependencies": [
+              "step2_slides"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "quiz_has_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "Quiz contains multiple questions with answers."
+              },
+              {
+                "criterion_id": "quiz_mentions_metrics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "R^2",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "quiz_mentions_mse",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "MSE",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "Create a complete lesson on linear regression including slides, an explanatory video, runnable code, and a quiz.",
+    "subtasks": [
+      {
+        "task_id": "step1_code",
+        "agent": "coder",
+        "instruction": "Create runnable Python code that demonstrates linear regression end-to-end: generate or load a simple dataset, fit a linear regression model, compute key metrics (MSE/RMSE and R^2), and visualize the fitted line vs data (and optionally residuals). Save outputs (plots) and include clear comments so it can be used in the lesson.",
+        "inputs": {
+          "output_filename": "step1_code_20260113_1435.py",
+          "output_subdir": "run_047354394f8a4d37aff1ba7b898b9a0d"
+        },
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "code_runs",
+            "criterion_type": "output_shape",
+            "target": "result.output.validation.run_success",
+            "operator": "equals",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "no_stderr",
+            "criterion_type": "output_shape",
+            "target": "result.output.validation.stderr",
+            "operator": "equals",
+            "expected": "",
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "mentions_linear_regression",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "linear regression",
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "computes_r2_or_mse",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "Expect code to compute at least one standard regression metric (R^2 and/or MSE/RMSE) and show a fit/plot."
+          }
+        ]
+      },
+      {
+        "task_id": "step2_slides",
+        "agent": "presentation",
+        "instruction": "Create a slide deck teaching linear regression. Include: problem setup, hypothesis/model, cost function intuition, fitting (closed-form normal equation and/or gradient descent conceptually), evaluation metrics (R^2, MSE/RMSE), assumptions/limitations, overfitting and train/test split, and a walkthrough referencing the code from step1_code. Include at least one slide with a code snippet excerpt.",
+        "inputs": {
+          "output_filename": "step2_slides_20260113_1435.py",
+          "output_subdir": "run_047354394f8a4d37aff1ba7b898b9a0d"
+        },
+        "dependencies": [
+          "step1_code"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "slides_generated",
+            "criterion_type": "file_exists",
+            "target": "result.artifacts[0]",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "slide_count",
+            "criterion_type": "output_shape",
+            "target": "result.output.metrics.slide_count",
+            "operator": "gte",
+            "expected": 1,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "code_snippets",
+            "criterion_type": "output_shape",
+            "target": "result.output.metrics.code_snippets_count",
+            "operator": "gte",
+            "expected": 1,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "covers_key_topics",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "Slides include explanation of linear regression model, fitting, and evaluation metrics."
+          }
+        ]
+      },
+      {
+        "task_id": "step3_video",
+        "agent": "video",
+        "instruction": "Produce an MP4 lesson video explaining linear regression, aligned with the slide deck from step2_slides and using visuals (slide-like frames or rendered slides) plus brief on-screen math/model and code highlights. Include a narrative that introduces the model, shows fitting on the example dataset, interprets coefficients, and explains metrics.",
+        "inputs": {
+          "output_filename": "step3_video_20260113_1435.py",
+          "output_subdir": "run_047354394f8a4d37aff1ba7b898b9a0d"
+        },
+        "dependencies": [
+          "step2_slides",
+          "step1_code"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "video_success",
+            "criterion_type": "output_shape",
+            "target": "result.success",
+            "operator": "equals",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "mp4_output",
+            "criterion_type": "output_shape",
+            "target": "result.artifacts[0]",
+            "operator": "contains",
+            "expected": ".mp4",
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "video_linear_regression_content",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "linear regression",
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          }
+        ]
+      },
+      {
+        "task_id": "step4_quiz",
+        "agent": "quizzer",
+        "instruction": "Create a quiz to assess understanding of linear regression. Include a mix of question types (multiple choice and short answer) covering: interpreting slope/intercept, cost/metric meanings (MSE/RMSE, R^2), assumptions (linearity, independence, homoscedasticity, normality of errors), train/test split, and diagnosing under/overfitting. Provide an answer key and brief explanations.",
+        "inputs": {
+          "output_filename": "step4_quiz_20260113_1435.py",
+          "output_subdir": "run_047354394f8a4d37aff1ba7b898b9a0d"
+        },
+        "dependencies": [
+          "step2_slides"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "quiz_has_questions",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "exists",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": "Quiz contains multiple questions with answers."
+          },
+          {
+            "criterion_id": "quiz_mentions_metrics",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "R^2",
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          },
+          {
+            "criterion_id": "quiz_mentions_mse",
+            "criterion_type": "semantic",
+            "target": "result.output",
+            "operator": "contains",
+            "expected": "MSE",
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "pass",
+  "agent_results": {
+    "step1_code": {
+      "agent": "coder",
+      "success": true,
+      "output": {
+        "code": "import matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_squared_error, r2_score\nimport os\n\n# Ensure the output directory exists\noutput_dir = 'D:/L3/Individual_project/AI_Pedia_Local/archive/data/generated_code/assets'\nos.makedirs(output_dir, exist_ok=True)\n\n# Generate a simple dataset\nnp.random.seed(42)\nn_samples = 100\nX = np.random.randn(n_samples, 1) * 10\ny = 2.5 * X.flatten() + 3 + np.random.randn(n_samples) * 5\n\n# Create a DataFrame for easier handling\ndf = pd.DataFrame({'feature': X.flatten(), 'target': y})\n\n# Save the dataset to CSV\ndf.to_csv(f'{output_dir}/linear_regression_data.csv', index=False)\n\n# Prepare data for modeling\nX_train = df[['feature']]\ny_train = df['target']\n\n# Fit the linear regression model\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)\n\n# Make predictions\ny_pred = model.predict(X_train)\n\n# Calculate metrics\nmse = mean_squared_error(y_train, y_pred)\nrmse = np.sqrt(mse)\nr2 = r2_score(y_train, y_pred)\n\n# Print metrics\nprint(f\"Mean Squared Error: {mse:.2f}\")\nprint(f\"Root Mean Squared Error: {rmse:.2f}\")\nprint(f\"R-squared: {r2:.2f}\")\n\n# Create visualization of the fitted line vs data\nplt.figure(figsize=(10, 6))\nplt.scatter(X_train, y_train, alpha=0.7, color='blue', label='Data points')\nplt.plot(X_train, y_pred, color='red', linewidth=2, label='Fitted line')\nplt.xlabel('Feature')\nplt.ylabel('Target')\nplt.title('Linear Regression: Fitted Line vs Data Points')\nplt.legend()\nplt.grid(True, alpha=0.3)\nplt.savefig(f'{output_dir}/linear_regression_fitted_line.png')\nplt.close()\n\n# Create residual plot\nresiduals = y_train - y_pred\nplt.figure(figsize=(10, 6))\nplt.scatter(y_pred, residuals, alpha=0.7, color='green')\nplt.axhline(y=0, color='red', linestyle='--')\nplt.xlabel('Predicted Values')\nplt.ylabel('Residuals')\nplt.title('Residual Plot')\nplt.grid(True, alpha=0.3)\nplt.savefig(f'{output_dir}/linear_regression_residuals.png')\nplt.close()\n\n# Print model parameters\nprint(f\"Intercept: {model.intercept_:.2f}\")\nprint(f\"Coefficient: {model.coef_[0]:.2f}\")\n\n# Save model metrics to a text file\nwith open(f'{output_dir}/model_metrics.txt', 'w') as f:\n    f.write(f\"Linear Regression Model Metrics\\n\")\n    f.write(f\"================================\\n\")\n    f.write(f\"Mean Squared Error: {mse:.2f}\\n\")\n    f.write(f\"Root Mean Squared Error: {rmse:.2f}\\n\")\n    f.write(f\"R-squared: {r2:.2f}\\n\")\n    f.write(f\"Intercept: {model.intercept_:.2f}\\n\")\n    f.write(f\"Coefficient: {model.coef_[0]:.2f}\\n\")\n\nprint(\"Analysis complete. All outputs saved to:\", output_dir)\n",
+        "validation": {
+          "success": true,
+          "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\archive\\data\\generated_code\\scripts\\step1_code_20260113_1435.py",
+          "stdout": "Mean Squared Error: 22.09\nRoot Mean Squared Error: 4.70\nR-squared: 0.96\nIntercept: 3.04\nCoefficient: 2.43\nAnalysis complete. All outputs saved to: D:/L3/Individual_project/AI_Pedia_Local/archive/data/generated_code/assets\n",
+          "stderr": "",
+          "compile_success": true,
+          "run_success": true,
+          "compile_details": {
+            "success": true,
+            "returncode": 0,
+            "stdout": "",
+            "stderr": "",
+            "timed_out": false
+          },
+          "run_details": {
+            "success": true,
+            "returncode": 0,
+            "stdout": "Mean Squared Error: 22.09\nRoot Mean Squared Error: 4.70\nR-squared: 0.96\nIntercept: 3.04\nCoefficient: 2.43\nAnalysis complete. All outputs saved to: D:/L3/Individual_project/AI_Pedia_Local/archive/data/generated_code/assets\n",
+            "stderr": "",
+            "timed_out": false
+          }
+        },
+        "paths": {
+          "scripts": "D:\\L3\\Individual_project\\AI_Pedia_Local\\archive\\data\\generated_code\\scripts",
+          "assets": "D:\\L3\\Individual_project\\AI_Pedia_Local\\archive\\data\\generated_code\\assets"
+        }
+      },
+      "artifacts": [
+        "D:\\L3\\Individual_project\\AI_Pedia_Local\\archive\\data\\generated_code\\scripts\\step1_code_20260113_1435.py"
+      ],
+      "error": null,
+      "instruction": "Create runnable Python code that demonstrates linear regression end-to-end: generate or load a simple dataset, fit a linear regression model, compute key metrics (MSE/RMSE and R^2), and visualize the fitted line vs data (and optionally residuals). Save outputs (plots) and include clear comments so it can be used in the lesson.",
+      "attempts": 1,
+      "metadata": {
+        "model": "qwen3-coder-flash"
+      }
+    },
+    "step2_slides": {
+      "agent": "presentation",
+      "success": true,
+      "output": {
+        "text": "Slide 1: Introduction to Linear Regression\n\n\n\nSlide 2: Problem Setup\n\nQuestion: How can we predict the price of a pizza based on its size?\n- Linear Regression helps model the relationship between a dependent variable (e.g., price) and an independent variable (e.g., size).\n- Example scenario: Predicting pizza prices through simple linear regression using Scikit-Learn.\n\nSlide 3: Hypothesis/Model\n\n- Linear Regression Hypothesis: h(x) = \u03b80 + \u03b81x\n- Here, h(x) is the predicted value, \u03b80 is the intercept, and \u03b81 is the slope or weight that connects x and h(x).\n- Aim: Find the best fitting line represented by optimal \u03b80 and \u03b81 values.\n\nSlide 4: Cost Function Intuition\n\nQuote: \"The cost function quantifies the error between predicted values and actual data points.\"\n- Definition: Mean Squared Error (MSE) is the most commonly used cost function in linear regression.\n- Purpose: Minimize MSE to improve our model's accuracy.\n\nSlide 5: Fitting the Model\n\n- Two main approaches:\n  1. Gradient Descent: Iteratively updates parameters to minimize the cost function.\n  2. Normal Equation: Solves for parameters analytically using 'theta = (X^T X)^-1 X^T y'.\n\nSlide 6: Evaluation Metrics\n\n- R-squared (R\u00b2): Proportion of variance explained by the model.\n- Mean Squared Error (MSE) and Root Mean Squared Error (RMSE): Measure how close fitted line is to the data points.\n\nSlide 7: Assumptions and Limitations\n\nQuestions to consider:\n- Is the relationship between variables linear?\n- Are errors Gaussian with constant variance (homoscedasticity)?\n- Limitations: Sensitive to outliers, relies heavily on assumptions.\n\nSlide 8: Overfitting and Train/Test Split\n\n- Overfitting: Model captures noise instead of the underlying relationship.\n- Mitigation: Divide dataset into train and test subsets to validate model's performance on unseen data.\n- Quote: \"A model too complex may fit the training data too perfectly.\"",
+        "format": "pptx",
+        "storyboard": {
+          "slides": [
+            {
+              "layout_idx": 0,
+              "title": "Introduction to Linear Regression"
+            },
+            {
+              "layout_idx": 5,
+              "title": "Problem Setup",
+              "content": "Question: How can we predict the price of a pizza based on its size?\n- Linear Regression helps model the relationship between a dependent variable (e.g., price) and an independent variable (e.g., size).\n- Example scenario: Predicting pizza prices through simple linear regression using Scikit-Learn."
+            },
+            {
+              "layout_idx": 5,
+              "title": "Hypothesis/Model",
+              "content": "- Linear Regression Hypothesis: h(x) = \u03b80 + \u03b81x\n- Here, h(x) is the predicted value, \u03b80 is the intercept, and \u03b81 is the slope or weight that connects x and h(x).\n- Aim: Find the best fitting line represented by optimal \u03b80 and \u03b81 values."
+            },
+            {
+              "layout_idx": 5,
+              "title": "Cost Function Intuition",
+              "content": "Quote: \"The cost function quantifies the error between predicted values and actual data points.\"\n- Definition: Mean Squared Error (MSE) is the most commonly used cost function in linear regression.\n- Purpose: Minimize MSE to improve our model's accuracy."
+            },
+            {
+              "layout_idx": 6,
+              "title": "Fitting the Model",
+              "content": "- Two main approaches:\n  1. Gradient Descent: Iteratively updates parameters to minimize the cost function.\n  2. Normal Equation: Solves for parameters analytically using 'theta = (X^T X)^-1 X^T y'.",
+              "visual_assets": [
+                {
+                  "type": "code_snippet",
+                  "code": "from sklearn.linear_model import LinearRegression\nmodel = LinearRegression().fit(X, y)\npredictions = model.predict(new_X)",
+                  "language": "python",
+                  "caption": "Scikit-Learn Code for Linear Regression"
+                }
+              ]
+            },
+            {
+              "layout_idx": 5,
+              "title": "Evaluation Metrics",
+              "content": "- R-squared (R\u00b2): Proportion of variance explained by the model.\n- Mean Squared Error (MSE) and Root Mean Squared Error (RMSE): Measure how close fitted line is to the data points."
+            },
+            {
+              "layout_idx": 5,
+              "title": "Assumptions and Limitations",
+              "content": "Questions to consider:\n- Is the relationship between variables linear?\n- Are errors Gaussian with constant variance (homoscedasticity)?\n- Limitations: Sensitive to outliers, relies heavily on assumptions."
+            },
+            {
+              "layout_idx": 5,
+              "title": "Overfitting and Train/Test Split",
+              "content": "- Overfitting: Model captures noise instead of the underlying relationship.\n- Mitigation: Divide dataset into train and test subsets to validate model's performance on unseen data.\n- Quote: \"A model too complex may fit the training data too perfectly.\""
+            }
+          ]
+        },
+        "metrics": {
+          "slide_count": 8,
+          "code_snippets_count": 1,
+          "charts_count": 0,
+          "formulas_count": 0
+        }
+      },
+      "artifacts": [
+        "D:\\L3\\Individual_project\\AI_Pedia_Local\\archive\\data\\slides\\lesson_1768315085.pptx"
+      ],
+      "error": null,
+      "instruction": "Create a slide deck teaching linear regression. Include: problem setup, hypothesis/model, cost function intuition, fitting (closed-form normal equation and/or gradient descent conceptually), evaluation metrics (R^2, MSE/RMSE), assumptions/limitations, overfitting and train/test split, and a walkthrough referencing the code from step1_code. Include at least one slide with a code snippet excerpt.",
+      "attempts": 1,
+      "metadata": {}
+    },
+    "step4_quiz": {
+      "agent": "quizzer",
+      "success": true,
+      "output": {
+        "title": "Linear Regression: Check Your Understanding",
+        "questions": [
+          {
+            "id": 1,
+            "type": "multiple_choice",
+            "question": "What does R-squared (R\u00b2) represent in linear regression?",
+            "options": [
+              "The sum of squared errors.",
+              "The proportion of variance in the dependent variable that is explained by the independent variable(s).",
+              "The average distance between predicted and actual values.",
+              "The slope of the regression line."
+            ],
+            "correct_answer": "The proportion of variance in the dependent variable that is explained by the independent variable(s).",
+            "explanation": "R-squared indicates how well the model fits the data. A higher R-squared value suggests a better fit, meaning the model explains a larger proportion of the variance."
+          },
+          {
+            "id": 2,
+            "type": "fill_in_blank",
+            "question": "The Mean Squared Error (MSE) measures the average squared difference between the predicted and actual values. The square root of the MSE is called the _______.",
+            "correct_answer": "RMSE",
+            "explanation": "RMSE stands for Root Mean Squared Error. It's useful as it is in the same units as the dependent variable, making it easier to interpret."
+          },
+          {
+            "id": 3,
+            "type": "multiple_choice",
+            "question": "In the linear regression equation h(x) = \u03b80 + \u03b81x, what does \u03b80 represent?",
+            "options": [
+              "The slope of the regression line.",
+              "The y-intercept (the value of h(x) when x is 0).",
+              "The predicted value of h(x).",
+              "The error term."
+            ],
+            "correct_answer": "The y-intercept (the value of h(x) when x is 0).",
+            "explanation": "\u03b80 is the intercept. It represents the predicted value of the dependent variable when the independent variable is zero. In the pizza example, it might represent a base price even for a pizza of size zero (though this may not be practically meaningful)."
+          },
+          {
+            "id": 4,
+            "type": "multiple_choice",
+            "question": "Which of the following is NOT a key assumption of linear regression?",
+            "options": [
+              "Linearity: the relationship between the independent and dependent variables is linear.",
+              "Independence: the errors are independent of each other.",
+              "Homoscedasticity: the errors have constant variance.",
+              "Multicollinearity: the independent variables are highly correlated."
+            ],
+            "correct_answer": "Multicollinearity: the independent variables are highly correlated.",
+            "explanation": "While multicollinearity is a problem in multiple linear regression (with more than one independent variable), it's not a *core* assumption of linear regression itself. The other options (linearity, independence, and homoscedasticity) are fundamental assumptions."
+          },
+          {
+            "id": 5,
+            "type": "short_answer",
+            "question": "A linear regression model performs poorly on both the training and test datasets. This is likely an example of what, and what does it imply about the model?",
+            "correct_answer": "Underfitting, implying high bias.",
+            "explanation": "This scenario indicates underfitting. The model is too simple to capture the underlying relationship in the data, resulting in high bias and poor performance on both training and test sets."
+          }
+        ]
+      },
+      "artifacts": [
+        "D:\\L3\\Individual_project\\AI_Pedia_Local\\archive\\data\\generated_code\\run_047354394f8a4d37aff1ba7b898b9a0d\\output\\quiz.json"
+      ],
+      "error": null,
+      "instruction": "Add questions that explicitly mention and assess R^2 (and ideally explain its interpretation), include RMSE alongside MSE, and add coverage for interpreting the intercept. Include questions on all listed assumptions: linearity, independence, homoscedasticity, and normality of errors. Add at least one question diagnosing underfitting (high bias) in addition to overfitting. Ensure a mix of multiple choice and short-answer (not only fill-in-the-blank) and provide an answer key with brief explanations for all questions.",
+      "attempts": 2,
+      "metadata": {
+        "model": "google/gemini-2.0-flash-001"
+      }
+    },
+    "step3_video": {
+      "agent": "video",
+      "success": true,
+      "output": null,
+      "artifacts": [
+        "D:\\L3\\Individual_project\\AI_Pedia_Local\\archive\\data\\generated_code\\output\\lesson_1768315085_lecture.mp4"
+      ],
+      "error": null,
+      "instruction": "Produce an MP4 lesson video explaining linear regression, aligned with the slide deck from step2_slides and using visuals (slide-like frames or rendered slides) plus brief on-screen math/model and code highlights. Include a narrative that introduces the model, shows fitting on the example dataset, interprets coefficients, and explains metrics.",
+      "attempts": 1,
+      "metadata": {}
+    }
+  }
+}

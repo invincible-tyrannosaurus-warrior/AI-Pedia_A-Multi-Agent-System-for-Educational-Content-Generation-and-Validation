@@ -1,0 +1,2359 @@
+{
+  "run_id": "4e0de4b045b8464080e18579a218a398",
+  "started_at": "2026-01-05T06:08:28.865434+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete lesson explaining high-level operations and definitions of Python classes.",
+          "subtasks": [
+            {
+              "task_id": "lesson_outline",
+              "agent": "presentation",
+              "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_contains_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "code_examples",
+              "agent": "coder",
+              "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+              "inputs": {
+                "output_filename": "code_examples_20260105_0608.py",
+                "output_subdir": "run_4e0de4b045b8464080e18579a218a398"
+              },
+              "dependencies": [
+                "lesson_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "has_multiple_code_blocks",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "```python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_inheritance",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "class",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "lesson_narrative",
+              "agent": "text",
+              "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "code_examples"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "lesson_has_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "lesson_has_recap",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Recap",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "practice_and_quiz",
+              "agent": "quizzer",
+              "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_narrative"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_output_prediction",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "What is the output",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "lesson_outline": {
+            "agent": "presentation",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide result.output with a structured lesson outline on Python classes. Ensure it includes learning objectives, key terms, a short agenda, and covers all requested topics including __init__.",
+            "attempts": 3
+          },
+          "code_examples": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "# Class vs Instance Variables\nclass Person:\n    # Class variable - shared by all instances\n    species = \"Homo sapiens\"\n    \n    def __init__(self, name, age):\n        # Instance variables - unique to each instance\n        self.name = name\n        self.age = age\n\n# Create instances\nperson1 = Person(\"Alice\", 30)\nperson2 = Person(\"Bob\", 25)\n\nprint(f\"{person1.name} is {person1.species}\")\nprint(f\"{person2.name} is {person2.species}\")\n\n# Expected output:\n# Alice is Homo sapiens\n# Bob is Homo sapiens\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py"
+            ],
+            "instruction": "Your submission only demonstrates a single class (Person) and basic instance usage. Update the output to include multiple runnable Python code blocks (each fenced with ```python) and cover the full requested topics: (1) class vs instance variables, (2) @classmethod and @staticmethod examples, (3) @property (getter/setter) usage, (4) inheritance with method overriding (e.g., Employee(Person) overriding introduce), (5) dunder methods like __repr__ and __str__, and (6) simple composition (e.g., a Team class holding Person/Employee instances). For each code block, add brief explanation text and an 'Expected output' section matching what the code prints.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "lesson_narrative": {
+            "agent": "text",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide the drafted lesson text in result.output. Ensure it explicitly includes a section titled 'Learning objectives' and a section titled 'Recap', along with the requested intro motivation, concept explanations, walkthroughs, pitfalls, and recap.",
+            "attempts": 3
+          },
+          "practice_and_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "The submission is missing the requested practice exercises and a short quiz of 8\u201312 questions, and it lacks an answer key with brief explanations. Replace the 2-question placeholder with 8\u201312 questions covering: terminology (class/object), reading class code, predicting outputs, choosing between instance vs class methods, inheritance behavior, and properties. Provide a clearly labeled answer key and brief explanations for each question, and include at least one output-prediction question (e.g., 'What is the output?').",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_contains_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_outline",
+                  "agent": "presentation",
+                  "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_exists",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_contains_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_exists\",\"outline_contains_topics\"],\"fix_instructions\":\"Provide a non-empty structured lesson outline in result.output. Ensure the outline explicitly includes the topic \\\"__init__\\\" along with the other requested class concepts, plus learning objectives, key terms, and a short agenda.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "code_examples",
+            "agent": "coder",
+            "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+            "criteria": [
+              {
+                "criterion_id": "has_multiple_code_blocks",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_inheritance",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "class",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "script_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                "exists": true
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "code_examples",
+                  "agent": "coder",
+                  "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+                  "output": {
+                    "code": "# Class definition and basic operations\n\nclass Person:\n    # Class variable - shared by all instances\n    species = \"Homo sapiens\"\n    \n    def __init__(self, name, age):\n        # Instance variables - unique to each instance\n        self.name = name\n        self.age = age\n    \n    # Instance method\n    def introduce(self):\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Class method - can access class variables but not instance variables\n    @classmethod\n    def get_species(cls):\n        return cls.species\n    \n    # Static method - no access to class or instance\n    @staticmethod\n    def is_adult(age):\n        return age >= 18\n    \n    # Property - provides controlled access to an attribute\n    @property\n    def age(self):\n        return self._age\n    \n    @age.setter\n    def age(self, value):\n        if value < 0:\n            raise ValueError(\"Age cannot be negative\")\n        self._age = value\n    \n    # Dunder methods for string representation\n    def __str__(self):\n        return f\"{self.name} ({self.age} years old)\"\n    \n    def __repr__(self):\n        return f\"Person('{self.name}', {self.age})\"\n\n# Creating instances\nperson1 = Person(\"Alice\", 30)\nperson2 = Person(\"Bob\", 25)\n\nprint(\"=== Basic Operations ===\")\nprint(person1.introduce())  # Hi, I'm Alice, 30 years old.\nprint(person2.introduce())  # Hi, I'm Bob, 25 years old.\n\nprint(\"\\n=== Class vs Instance Variables ===\")\nprint(f\"Species: {Person.species}\")  # Homo sapiens\nprint(f\"Person1 species: {person1.species}\")  # Homo sapiens\nprint(f\"Person2 species: {person2.species}\")  # Homo sapiens\n\n# Modifying class variable affects all instances\nPerson.species = \"Homo sapien\"\nprint(f\"Updated species: {person1.species}\")  # Homo sapien\n\nprint(\"\\n=== Class Methods and Static Methods ===\")\nprint(Person.get_species())  # Homo sapien\nprint(Person.is_adult(20))   # True\nprint(Person.is_adult(16))   # False\n\nprint(\"\\n=== Properties ===\")\nprint(person1)  # Alice (30 years old)\ntry:\n    person1.age ...",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                      "stdout": "=== Basic Operations ===\nHi, I'm Alice, 30 years old.\nHi, I'm Bob, 25 years old.\n\n=== Class vs Instance Variables ===\nSpecies: Homo sapiens\nPerson1 species: Homo sapiens\nPerson2 species: Homo sapiens\nUpdated species: Homo sapien\n\n=== Class Methods and Static Methods ===\nHomo sapien\nTrue\nFalse\n\n=== Properties ===\nAlice (30 years old)\nError: Age cannot be negative\n\n=== Inheritance and Method Overriding ===\nI'm Charlie, a student with ID S12345\nCharlie is studying...\nCharlie (20 years old)\n\n=== Composition ===\nHi, I'm David, 35 years old. Lives at 123 Main St, New York\n\n=== Dunder Methods ===\nAlice (30 years old)\nPerson('Alice', 30)\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "=== Basic Operations ===\nHi, I'm Alice, 30 years old.\nHi, I'm Bob, 25 years old.\n\n=== Class vs Instance Variables ===\nSpecies: Homo sapiens\nPerson1 species: Homo sapiens\nPerson2 species: Homo sapiens\nUpdated species: Homo sapien\n\n=== Class Methods and Static Methods ===\nHomo sapien\nTrue\nFalse\n\n=== Properties ===\nAlice (30 years old)\nError: Age cannot be negative\n\n=== Inheritance and Method Overriding ===\nI'm Charlie, a student with ID S12345\nCharlie is studying...\nCharlie (20 years old)\n\n=== Composition ===\nHi, I'm David, 35 years old. Lives at 123 Main St, New York\n\n=== Dunder Methods ===\nAlice (30 years old)\nPerson('Alice', 30)\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "has_multiple_code_blocks",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "```python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_inheritance",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "class",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "script_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                      "exists": true
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"has_multiple_code_blocks\"],\"fix_instructions\":\"Wrap the runnable examples in markdown code fences (```python ... ```). The current output appears as plain code text and is truncated (ends at `person1.age ...`), so ensure the full script is included and presented as one or more complete code blocks with brief explanations and expected outputs.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "lesson_narrative",
+            "agent": "text",
+            "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+            "criteria": [
+              {
+                "criterion_id": "lesson_has_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "lesson_has_recap",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Recap",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_narrative",
+                  "agent": "text",
+                  "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "lesson_has_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "lesson_has_recap",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Recap",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"lesson_has_objectives\",\"lesson_has_recap\"],\"fix_instructions\":\"The provided output is empty and does not include the required sections. Generate the full lesson text and ensure it explicitly includes a 'Learning objectives' section and a 'Recap' section, along with intro motivation, concept explanations, step-by-step walkthroughs of examples, common pitfalls, and a recap.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "practice_and_quiz",
+            "agent": "quizzer",
+            "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_output_prediction",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "What is the output",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "practice_and_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_output_prediction",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "What is the output",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\"],\"fix_instructions\":\"Provide practice exercises and a short quiz with 8\u201312 questions (currently only 2). Include an explicit answer key with brief explanations. Ensure coverage includes: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Include at least one output-prediction question (e.g., phrased 'What is the output?').\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_contains_topics",
+              "outline_exists"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a non-empty structured lesson outline in result.output. Ensure the outline explicitly includes the topic \"__init__\" along with the other requested class concepts, plus learning objectives, key terms, and a short agenda."
+          },
+          {
+            "task_id": "code_examples",
+            "verdict": "fail",
+            "failed_criteria": [
+              "has_multiple_code_blocks"
+            ],
+            "evidence": {
+              "deterministic": {
+                "script_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                  "exists": true
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Wrap the runnable examples in markdown code fences (```python ... ```). The current output appears as plain code text and is truncated (ends at `person1.age ...`), so ensure the full script is included and presented as one or more complete code blocks with brief explanations and expected outputs."
+          },
+          {
+            "task_id": "lesson_narrative",
+            "verdict": "fail",
+            "failed_criteria": [
+              "lesson_has_objectives",
+              "lesson_has_recap"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The provided output is empty and does not include the required sections. Generate the full lesson text and ensure it explicitly includes a 'Learning objectives' section and a 'Recap' section, along with intro motivation, concept explanations, step-by-step walkthroughs of examples, common pitfalls, and a recap."
+          },
+          {
+            "task_id": "practice_and_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide practice exercises and a short quiz with 8\u201312 questions (currently only 2). Include an explicit answer key with brief explanations. Ensure coverage includes: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Include at least one output-prediction question (e.g., phrased 'What is the output?')."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete lesson explaining high-level operations and definitions of Python classes.",
+          "subtasks": [
+            {
+              "task_id": "lesson_outline",
+              "agent": "presentation",
+              "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_contains_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "code_examples",
+              "agent": "coder",
+              "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+              "inputs": {
+                "output_filename": "code_examples_20260105_0608.py",
+                "output_subdir": "run_4e0de4b045b8464080e18579a218a398"
+              },
+              "dependencies": [
+                "lesson_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "has_multiple_code_blocks",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "```python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_inheritance",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "class",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "lesson_narrative",
+              "agent": "text",
+              "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "code_examples"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "lesson_has_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "lesson_has_recap",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Recap",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "practice_and_quiz",
+              "agent": "quizzer",
+              "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_narrative"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_output_prediction",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "What is the output",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "lesson_outline": {
+            "agent": "presentation",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide result.output with a structured lesson outline on Python classes. Ensure it includes learning objectives, key terms, a short agenda, and covers all requested topics including __init__.",
+            "attempts": 3
+          },
+          "code_examples": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "# Class vs Instance Variables\nclass Person:\n    # Class variable - shared by all instances\n    species = \"Homo sapiens\"\n    \n    def __init__(self, name, age):\n        # Instance variables - unique to each instance\n        self.name = name\n        self.age = age\n\n# Create instances\nperson1 = Person(\"Alice\", 30)\nperson2 = Person(\"Bob\", 25)\n\nprint(f\"{person1.name} is {person1.species}\")\nprint(f\"{person2.name} is {person2.species}\")\n\n# Expected output:\n# Alice is Homo sapiens\n# Bob is Homo sapiens\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py"
+            ],
+            "instruction": "Your submission only demonstrates a single class (Person) and basic instance usage. Update the output to include multiple runnable Python code blocks (each fenced with ```python) and cover the full requested topics: (1) class vs instance variables, (2) @classmethod and @staticmethod examples, (3) @property (getter/setter) usage, (4) inheritance with method overriding (e.g., Employee(Person) overriding introduce), (5) dunder methods like __repr__ and __str__, and (6) simple composition (e.g., a Team class holding Person/Employee instances). For each code block, add brief explanation text and an 'Expected output' section matching what the code prints.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "lesson_narrative": {
+            "agent": "text",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide the drafted lesson text in result.output. Ensure it explicitly includes a section titled 'Learning objectives' and a section titled 'Recap', along with the requested intro motivation, concept explanations, walkthroughs, pitfalls, and recap.",
+            "attempts": 3
+          },
+          "practice_and_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "The submission is missing the requested practice exercises and a short quiz of 8\u201312 questions, and it lacks an answer key with brief explanations. Replace the 2-question placeholder with 8\u201312 questions covering: terminology (class/object), reading class code, predicting outputs, choosing between instance vs class methods, inheritance behavior, and properties. Provide a clearly labeled answer key and brief explanations for each question, and include at least one output-prediction question (e.g., 'What is the output?').",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_contains_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_outline",
+                  "agent": "presentation",
+                  "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_exists",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_contains_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_exists\",\"outline_contains_topics\"],\"fix_instructions\":\"Provide result.output with a structured lesson outline on Python classes. Ensure it includes learning objectives, key terms, a short agenda, and covers all requested topics including __init__.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "code_examples",
+            "agent": "coder",
+            "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+            "criteria": [
+              {
+                "criterion_id": "has_multiple_code_blocks",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_inheritance",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "class",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "script_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                "exists": true
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "code_examples",
+                  "agent": "coder",
+                  "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+                  "output": {
+                    "code": "class Person:\n    \"\"\"A simple class to represent a person with name and age.\"\"\"\n    \n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n    \n    def introduce(self):\n        \"\"\"Return a string introducing the person.\"\"\"\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    def have_birthday(self):\n        \"\"\"Increase the person's age by 1.\"\"\"\n        self.age += 1\n        return f\"Happy birthday! {self.name} is now {self.age} years old.\"\n\n# Create instances of the Person class\nperson1 = Person(\"Alice\", 30)\nperson2 = Person(\"Bob\", 25)\n\n# Demonstrate using the methods\nprint(person1.introduce())\nprint(person2.introduce())\n\n# Have a birthday for person1\nprint(person1.have_birthday())\n\n# Show that each instance maintains its own state\nprint(f\"{person1.name} is {person1.age} years old\")\nprint(f\"{person2.name} is {person2.age} years old\")\n\n# Expected Output:\n# Hi, I'm Alice, 30 years old.\n# Hi, I'm Bob, 25 years old.\n# Happy birthday! Alice is now 31 years old.\n# Alice is 31 years old\n# Bob is 25 years old\n",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                      "stdout": "Hi, I'm Alice, 30 years old.\nHi, I'm Bob, 25 years old.\nHappy birthday! Alice is now 31 years old.\nAlice is 31 years old\nBob is 25 years old\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "Hi, I'm Alice, 30 years old.\nHi, I'm Bob, 25 years old.\nHappy birthday! Alice is now 31 years old.\nAlice is 31 years old\nBob is 25 years old\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "has_multiple_code_blocks",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "```python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_inheritance",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "class",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "script_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                      "exists": true
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"has_multiple_code_blocks\",\"covers_inheritance\"],\"fix_instructions\":\"Your submission only demonstrates a single class (Person) and basic instance usage. Update the output to include multiple runnable Python code blocks (each fenced with ```python) and cover the full requested topics: (1) class vs instance variables, (2) @classmethod and @staticmethod examples, (3) @property (getter/setter) usage, (4) inheritance with method overriding (e.g., Employee(Person) overriding introduce), (5) dunder methods like __repr__ and __str__, and (6) simple composition (e.g., a Team class holding Person/Employee instances). For each code block, add brief explanation text and an 'Expected output' section matching what the code prints.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "lesson_narrative",
+            "agent": "text",
+            "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+            "criteria": [
+              {
+                "criterion_id": "lesson_has_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "lesson_has_recap",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Recap",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_narrative",
+                  "agent": "text",
+                  "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "lesson_has_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "lesson_has_recap",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Recap",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"lesson_has_objectives\",\"lesson_has_recap\"],\"fix_instructions\":\"Provide the drafted lesson text in result.output. Ensure it explicitly includes a section titled 'Learning objectives' and a section titled 'Recap', along with the requested intro motivation, concept explanations, walkthroughs, pitfalls, and recap.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "practice_and_quiz",
+            "agent": "quizzer",
+            "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_output_prediction",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "What is the output",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "practice_and_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_output_prediction",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "What is the output",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\"],\"fix_instructions\":\"The submission is missing the requested practice exercises and a short quiz of 8\u201312 questions, and it lacks an answer key with brief explanations. Replace the 2-question placeholder with 8\u201312 questions covering: terminology (class/object), reading class code, predicting outputs, choosing between instance vs class methods, inheritance behavior, and properties. Provide a clearly labeled answer key and brief explanations for each question, and include at least one output-prediction question (e.g., 'What is the output?').\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_contains_topics",
+              "outline_exists"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide result.output with a structured lesson outline on Python classes. Ensure it includes learning objectives, key terms, a short agenda, and covers all requested topics including __init__."
+          },
+          {
+            "task_id": "code_examples",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_inheritance",
+              "has_multiple_code_blocks"
+            ],
+            "evidence": {
+              "deterministic": {
+                "script_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                  "exists": true
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Your submission only demonstrates a single class (Person) and basic instance usage. Update the output to include multiple runnable Python code blocks (each fenced with ```python) and cover the full requested topics: (1) class vs instance variables, (2) @classmethod and @staticmethod examples, (3) @property (getter/setter) usage, (4) inheritance with method overriding (e.g., Employee(Person) overriding introduce), (5) dunder methods like __repr__ and __str__, and (6) simple composition (e.g., a Team class holding Person/Employee instances). For each code block, add brief explanation text and an 'Expected output' section matching what the code prints."
+          },
+          {
+            "task_id": "lesson_narrative",
+            "verdict": "fail",
+            "failed_criteria": [
+              "lesson_has_objectives",
+              "lesson_has_recap"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide the drafted lesson text in result.output. Ensure it explicitly includes a section titled 'Learning objectives' and a section titled 'Recap', along with the requested intro motivation, concept explanations, walkthroughs, pitfalls, and recap."
+          },
+          {
+            "task_id": "practice_and_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The submission is missing the requested practice exercises and a short quiz of 8\u201312 questions, and it lacks an answer key with brief explanations. Replace the 2-question placeholder with 8\u201312 questions covering: terminology (class/object), reading class code, predicting outputs, choosing between instance vs class methods, inheritance behavior, and properties. Provide a clearly labeled answer key and brief explanations for each question, and include at least one output-prediction question (e.g., 'What is the output?')."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete lesson explaining high-level operations and definitions of Python classes.",
+          "subtasks": [
+            {
+              "task_id": "lesson_outline",
+              "agent": "presentation",
+              "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_contains_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "code_examples",
+              "agent": "coder",
+              "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+              "inputs": {
+                "output_filename": "code_examples_20260105_0608.py",
+                "output_subdir": "run_4e0de4b045b8464080e18579a218a398"
+              },
+              "dependencies": [
+                "lesson_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "has_multiple_code_blocks",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "```python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_inheritance",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "class",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "lesson_narrative",
+              "agent": "text",
+              "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "code_examples"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "lesson_has_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "lesson_has_recap",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Recap",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "practice_and_quiz",
+              "agent": "quizzer",
+              "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_narrative"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_output_prediction",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "What is the output",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "lesson_outline": {
+            "agent": "presentation",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide result.output with a structured lesson outline on Python classes. Ensure it includes learning objectives, key terms, a short agenda, and covers all requested topics including __init__.",
+            "attempts": 3
+          },
+          "code_examples": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "# Class vs Instance Variables\nclass Person:\n    # Class variable - shared by all instances\n    species = \"Homo sapiens\"\n    \n    def __init__(self, name, age):\n        # Instance variables - unique to each instance\n        self.name = name\n        self.age = age\n\n# Create instances\nperson1 = Person(\"Alice\", 30)\nperson2 = Person(\"Bob\", 25)\n\nprint(f\"{person1.name} is {person1.species}\")\nprint(f\"{person2.name} is {person2.species}\")\n\n# Expected output:\n# Alice is Homo sapiens\n# Bob is Homo sapiens\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py"
+            ],
+            "instruction": "Your submission only demonstrates a single class (Person) and basic instance usage. Update the output to include multiple runnable Python code blocks (each fenced with ```python) and cover the full requested topics: (1) class vs instance variables, (2) @classmethod and @staticmethod examples, (3) @property (getter/setter) usage, (4) inheritance with method overriding (e.g., Employee(Person) overriding introduce), (5) dunder methods like __repr__ and __str__, and (6) simple composition (e.g., a Team class holding Person/Employee instances). For each code block, add brief explanation text and an 'Expected output' section matching what the code prints.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "lesson_narrative": {
+            "agent": "text",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "Provide the drafted lesson text in result.output. Ensure it explicitly includes a section titled 'Learning objectives' and a section titled 'Recap', along with the requested intro motivation, concept explanations, walkthroughs, pitfalls, and recap.",
+            "attempts": 3
+          },
+          "practice_and_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "The submission is missing the requested practice exercises and a short quiz of 8\u201312 questions, and it lacks an answer key with brief explanations. Replace the 2-question placeholder with 8\u201312 questions covering: terminology (class/object), reading class code, predicting outputs, choosing between instance vs class methods, inheritance behavior, and properties. Provide a clearly labeled answer key and brief explanations for each question, and include at least one output-prediction question (e.g., 'What is the output?').",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_contains_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_outline",
+                  "agent": "presentation",
+                  "instruction": "Create a structured lesson outline on Python classes: definitions, why classes, objects vs classes, attributes, methods, __init__, instance vs class variables, inheritance, polymorphism, encapsulation, special methods, and best practices. Include learning objectives, key terms, and a short agenda.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_exists",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_contains_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_exists\",\"outline_contains_topics\"],\"fix_instructions\":\"Provide a non-empty structured lesson outline in result.output. Ensure it explicitly covers required topics including __init__ and the other listed class concepts, plus learning objectives, key terms, and a short agenda.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "code_examples",
+            "agent": "coder",
+            "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+            "criteria": [
+              {
+                "criterion_id": "has_multiple_code_blocks",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_inheritance",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "class",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "script_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                "exists": true
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "code_examples",
+                  "agent": "coder",
+                  "instruction": "Write runnable Python examples demonstrating class definition and operations: creating instances, attribute access, method calls, class vs instance variables, @classmethod, @staticmethod, properties, inheritance and overriding, dunder methods (__repr__, __str__), and simple composition. Provide code blocks with brief explanations and expected outputs.",
+                  "output": {
+                    "code": "# Class vs Instance Variables\nclass Person:\n    # Class variable - shared by all instances\n    species = \"Homo sapiens\"\n    \n    def __init__(self, name, age):\n        # Instance variables - unique to each instance\n        self.name = name\n        self.age = age\n\n# Create instances\nperson1 = Person(\"Alice\", 30)\nperson2 = Person(\"Bob\", 25)\n\nprint(f\"{person1.name} is {person1.species}\")\nprint(f\"{person2.name} is {person2.species}\")\n\n# Expected output:\n# Alice is Homo sapiens\n# Bob is Homo sapiens\n",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                      "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "Alice is Homo sapiens\nBob is Homo sapiens\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "has_multiple_code_blocks",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "```python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_inheritance",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "class",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "script_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                      "exists": true
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"has_multiple_code_blocks\",\"covers_full_requested_topics\"],\"fix_instructions\":\"Output must include multiple runnable Python code blocks (using ```python fences) with brief explanations and expected outputs. Current output is a single snippet (not fenced) and only covers class/instance variables plus instance creation/attribute access. Add examples demonstrating: method calls; @classmethod; @staticmethod; @property; inheritance with overriding; dunder methods (__repr__, __str__); and simple composition. Ensure each block is runnable and include expected output comments for each.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "lesson_narrative",
+            "agent": "text",
+            "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+            "criteria": [
+              {
+                "criterion_id": "lesson_has_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "lesson_has_recap",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Recap",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_narrative",
+                  "agent": "text",
+                  "instruction": "Draft the full lesson in clear instructional prose using the outline and code examples. Include: intro motivation, concept explanations, step-by-step walkthrough of examples, common pitfalls, and a recap section. Keep it high-level but concrete, suitable for beginners with basic Python knowledge.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "lesson_has_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "lesson_has_recap",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Recap",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"lesson_has_objectives\",\"lesson_has_recap\"],\"fix_instructions\":\"The provided result.output is empty. Add a full lesson narrative that explicitly includes a section titled 'Learning objectives' and a section titled 'Recap', along with intro/motivation, concept explanations, step-by-step walkthroughs of examples, common pitfalls, and a recap.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "practice_and_quiz",
+            "agent": "quizzer",
+            "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_output_prediction",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "What is the output",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "practice_and_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create practice exercises and a short quiz (8\u201312 questions) covering: terminology (class/object), reading class code, predicting outputs, choosing between instance/class methods, inheritance behavior, and properties. Provide answer key and brief explanations.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_output_prediction",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "What is the output",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_question_count\"],\"fix_instructions\":\"The submission does not meet the required criteria. Provide practice exercises and a short quiz with 8\u201312 questions (currently only 2). Include an explicit answer key section with brief explanations. Ensure coverage of: terminology (class/object), reading class code, predicting outputs, choosing between instance vs class methods, inheritance behavior, and properties. Include at least one output-prediction prompt (e.g., 'What is the output?').\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_contains_topics",
+              "outline_exists"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a non-empty structured lesson outline in result.output. Ensure it explicitly covers required topics including __init__ and the other listed class concepts, plus learning objectives, key terms, and a short agenda."
+          },
+          {
+            "task_id": "code_examples",
+            "verdict": "fail",
+            "failed_criteria": [
+              "has_multiple_code_blocks"
+            ],
+            "evidence": {
+              "deterministic": {
+                "script_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_4e0de4b045b8464080e18579a218a398\\code_examples_20260105_0608.py",
+                  "exists": true
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Output must include multiple runnable Python code blocks (using ```python fences) with brief explanations and expected outputs. Current output is a single snippet (not fenced) and only covers class/instance variables plus instance creation/attribute access. Add examples demonstrating: method calls; @classmethod; @staticmethod; @property; inheritance with overriding; dunder methods (__repr__, __str__); and simple composition. Ensure each block is runnable and include expected output comments for each."
+          },
+          {
+            "task_id": "lesson_narrative",
+            "verdict": "fail",
+            "failed_criteria": [
+              "lesson_has_objectives",
+              "lesson_has_recap"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The provided result.output is empty. Add a full lesson narrative that explicitly includes a section titled 'Learning objectives' and a section titled 'Recap', along with intro/motivation, concept explanations, step-by-step walkthroughs of examples, common pitfalls, and a recap."
+          },
+          {
+            "task_id": "practice_and_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The submission does not meet the required criteria. Provide practice exercises and a short quiz with 8\u201312 questions (currently only 2). Include an explicit answer key section with brief explanations. Ensure coverage of: terminology (class/object), reading class code, predicting outputs, choosing between instance vs class methods, inheritance behavior, and properties. Include at least one output-prediction prompt (e.g., 'What is the output?')."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,2498 @@
+{
+  "run_id": "ae3955c06d0846c6b35740e053006caf",
+  "started_at": "2026-01-07T16:26:24.835744+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what machine learning is, and generate a PPTX slide deck for the lesson.",
+          "subtasks": [
+            {
+              "task_id": "outline_lesson",
+              "agent": "text",
+              "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_has_time_budget",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "20",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_covers_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Speaker notes",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "build_pptx",
+              "agent": "presentation",
+              "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_extension",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "create_quick_quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_6_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "6",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "quiz_includes_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "outline_lesson": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          },
+          "create_quick_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Update the output to include exactly 6 questions (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Add an explicit 'Answer key' section listing the correct answers for all 6 questions, each with a 1-line explanation.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "build_pptx": {
+            "agent": "presentation",
+            "success": true,
+            "output": {
+              "text": "Slide 1: Introduction to Machine Learning\n\nBeginner's Guide to Understanding ML\n\nNotes: Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.\n\nSlide 2: Agenda\n\n- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions\n\nNotes: Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.\n\nSlide 3: What is Machine Learning?\n\nMachine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.\n\nNotes: Machine Learning enables computers to learn from data and make decisions or predictions based on that data.\n\nSlide 4: ML vs. Traditional Programming\n\nDifferences between ML and Traditional Programming\n\nNotes: In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.\n\nSlide 5: Key Terms in ML\n\n- Data\n- Feature\n- Label\n- Model\n\nNotes: Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.\n\nSlide 6: Supervised Learning Example\n\nLearning with labeled data.\n\nNotes: In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.\n\nSlide 7: Unsupervised Learning Example\n\nFinding patterns without labels.\n\nNotes: Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.\n\nSlide 8: Reinforcement Learning Intuition\n\nLearning through trial and error.\n\nNotes: Reinforcement learning is about learning through interactions with an environment to maximize some notion of cumulative reward.",
+              "format": "pptx",
+              "storyboard": {
+                "theme_font": "Times New Roman",
+                "slides": [
+                  {
+                    "layout_idx": 0,
+                    "title": "Introduction to Machine Learning",
+                    "content": "Beginner's Guide to Understanding ML",
+                    "speaker_notes": "Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Agenda",
+                    "content": "- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions",
+                    "speaker_notes": "Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "What is Machine Learning?",
+                    "content": "Machine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.",
+                    "speaker_notes": "Machine Learning enables computers to learn from data and make decisions or predictions based on that data.",
+                    "visual_assets": [
+                      {
+                        "type": "code_snippet",
+                        "code": "# ML Concept\nfrom sklearn import datasets\nprint('Learn from Data')",
+                        "language": "python",
+                        "caption": "Basic ML Concept"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "ML vs. Traditional Programming",
+                    "content": "Differences between ML and Traditional Programming",
+                    "speaker_notes": "In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.",
+                    "visual_assets": [
+                      {
+                        "type": "chart_data",
+                        "data": {
+                          "x": [
+                            "Programming",
+                            "ML"
+                          ],
+                          "y": [
+                            1,
+                            2
+                          ]
+                        },
+                        "chart_type": "bar",
+                        "title": "ML vs Programming"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "Key Terms in ML",
+                    "content": "- Data\n- Feature\n- Label\n- Model",
+                    "speaker_notes": "Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Supervised Learning Example",
+                    "content": "Learning with labeled data.",
+                    "speaker_notes": "In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.",
+                    "visual_assets": [
+                      {
+                        "type": "formula_latex",
+                        "content": "y = f(x) + noise",
+                        "caption": "Supervised Learning Formula"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Unsupervised Learning Example",
+                    "content": "Finding patterns without labels.",
+                    "speaker_notes": "Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.",
+                    "visual_assets": [
+                      {
+                        "type": "chart_data",
+                        "data": {
+                          "x": [
+                            1,
+                            2,
+                            3,
+                            4
+                          ],
+                          "y": [
+                            4,
+                            3,
+                            2,
+                            1
+                          ]
+                        },
+                        "chart_type": "scatter",
+                        "title": "Clustering Example"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Reinforcement Learning Intuition",
+                    "content": "Learning through trial and error.",
+                    "speaker_notes": "Reinforcement learning is about learning through interactions with an environment to maximize some notion of cumulative reward.",
+                    "visual_assets": []
+                  }
+                ]
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767803356.pptx"
+            ],
+            "instruction": "1) Generate and provide an actual downloadable .pptx file (not just text/storyboard). Ensure the output includes a valid filename ending in .pptx and that the file is attached/created in the expected location.\n2) Rebuild the slide deck to match the requested beginner ML lesson (~20 minutes) with the suggested structure: title, agenda, what is ML, ML vs programming, key terms (data/feature/label/model), supervised example, unsupervised example, RL intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions.\n3) Use minimal text per slide, include simple visuals/icons/diagrams, and add speaker notes aligned to the outline for every slide.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "agent": "text",
+            "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+            "criteria": [
+              {
+                "criterion_id": "outline_has_time_budget",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "20",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_covers_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Speaker notes",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "outline_lesson",
+                  "agent": "text",
+                  "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+                  "output": {
+                    "text": "Generated text content based on: Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_time_budget",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "20",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_covers_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Speaker notes",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_has_time_budget\",\"outline_covers_core_topics\",\"outline_includes_speaker_notes\"],\"fix_instructions\":\"The output is just a placeholder sentence and does not include the required lesson outline content.\\n\\nTo fix:\\n1) Provide a slide-by-slide outline for a ~20-minute lesson on 'What is Machine Learning?'.\\n2) Include a time budget per section/slide that sums to approximately 20 minutes (show the total explicitly).\\n3) Cover core topics explicitly: learning objectives, key definitions, intuitive examples, ML workflow, types (supervised/unsupervised/reinforcement), applications, limitations & ethics, and a recap.\\n4) Add clearly labeled 'Speaker notes' for each slide.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "build_pptx",
+            "agent": "presentation",
+            "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_extension",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "pptx_extension": {
+                "value": null,
+                "expected": ".pptx",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "build_pptx",
+                  "agent": "presentation",
+                  "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+                  "output": {
+                    "text": "Slide 1: Introduction to Machine Learning\n\nLesson Plan for Beginners\n\nNotes: Welcome everyone to the Introduction to Machine Learning. Today's session is designed for beginners and will walk you through the fundamental concepts of Machine Learning.\n\nSlide 2: Agenda\n\n- What is Machine Learning?\n- ML vs Programming\n- Key Terms\n- Supervised Learning\n- Unsupervised Learning\n- Reinforcement Learning\n- Training & Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications & Limitations\n- Recap & Quick Questions\n\nNotes: Here's our agenda for today. We'll start by understanding what Machine Learning is and how it differs from traditional programming, then move on to key concepts and different types of learning.\n\nSlide 3: What is Machine Learning?\n\n- Ability for computers to learn from data\n- Improve performance over time\n\nNotes: Machine Learning is a field of AI that enables computers to learn from data and improve over time without being explicitly programmed for specific tasks.\n\nSlide 4: ML vs Programming\n\n- Programming: Predefined Instructions\n- ML: Learning from Data Patterns\n\nNotes: In traditional programming, the programmer gives a clear set of instructions, whereas, in Machine Learning, the system learns from data patterns.\n\nSlide 5: Key Terms in ML\n\n- Data: Raw information\n- Feature: Input variable\n- Label: Output variable\n- Model: Mathematical representation\n\nNotes: Understanding the basic terms such as data, feature, label, and model is crucial. They form the core components of any machine learning problem.\n\nSlide 6: Supervised Learning Example\n\n\n\nNotes: Let's look at an example of supervised learning. Here, we have labeled data, and the model learns from this to predict outcomes on unseen data.\n\nSlide 7: Unsupervised Learning Example\n\n\n\nNotes: In unsupervised learning, we're dealing with unlabeled data to find hidden patterns or groupings.\n\nSlide 8: Reinforcement Learning Intuition\n\n- Trial and error\n- Reward maximization\n\nNotes: Reinforcement Learning is abo...",
+                    "format": "pptx",
+                    "storyboard": {
+                      "theme_font": "Times New Roman",
+                      "slides": [
+                        {
+                          "layout_idx": 0,
+                          "title": "Introduction to Machine Learning",
+                          "content": "Lesson Plan for Beginners",
+                          "speaker_notes": "Welcome everyone to the Introduction to Machine Learning. Today's session is designed for beginners and will walk you through the fundamental concepts of Machine Learning."
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Agenda",
+                          "content": "- What is Machine Learning?\n- ML vs Programming\n- Key Terms\n- Supervised Learning\n- Unsupervised Learning\n- Reinforcement Learning\n- Training & Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications & Limitations\n- Recap & Quick Questions",
+                          "speaker_notes": "Here's our agenda for today. We'll start by understanding what Machine Learning is and how it differs from traditional programming, then move on to key concepts and different types of learning."
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "What is Machine Learning?",
+                          "content": "- Ability for computers to learn from data\n- Improve performance over time",
+                          "speaker_notes": "Machine Learning is a field of AI that enables computers to learn from data and improve over time without being explicitly programmed for specific tasks."
+                        },
+                        {
+                          "layout_idx": 3,
+                          "title": "ML vs Programming",
+                          "content": "- Programming: Predefined Instructions\n- ML: Learning from Data Patterns",
+                          "speaker_notes": "In traditional programming, the programmer gives a clear set of instructions, whereas, in Machine Learning, the system learns from data patterns.",
+                          "visual_assets": [
+                            {
+                              "type": "chart_data",
+                              "data": {
+                                "labels": [
+                                  "Programming",
+                                  "ML"
+                                ],
+                                "values": [
+                                  50,
+                                  75
+                                ]
+                              },
+                              "chart_type": "pie",
+                              "title": "Programming vs ML Complexity"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Key Terms in ML",
+                          "content": "- Data: Raw information\n- Feature: Input variable\n- Label: Output variable\n- Model: Mathematical representation",
+                          "speaker_notes": "Understanding the basic terms such as data, feature, label, and model is crucial. They form the core components of any machine learning problem."
+                        },
+                        {
+                          "layout_idx": 6,
+                          "title": "Supervised Learning Example",
+                          "content": "",
+                          "speaker_notes": "Let's look at an example of supervised learning. Here, we have labeled data, and the model learns from this to predict outcomes on unseen data.",
+                          "visual_assets": [
+                            {
+                              "type": "code_snippet",
+                              "code": "from sklearn.model_selection import train_test_split\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)",
+                              "language": "python",
+                              "caption": "Train-Test Split Example"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 6,
+                          "title": "Unsupervised Learning Example",
+                          "content": "",
+                          "speaker_notes": "In unsupervised learning, we're dealing with unlabeled data to find hidden patterns or groupings.",
+                          "visual_assets": [
+                            {
+                              "type": "chart_data",
+                              "data": {
+                                "x": [
+                                  1,
+                                  2,
+                                  3,
+                                  4
+                                ],
+                                "y": [
+                                  10,
+                                  11,
+                                  13,
+                                  15
+                                ]
+                              },
+                              "chart_type": "scatter",
+                              "title": "Cluster Distribution"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Reinforcement Learning Intuition",
+                          "content": "- Trial and error\n- Reward maximization",
+                          "speaker_notes": "Reinforcement Learning is about agents taking actions in an environment to maximize cumulative reward, using feedback from past actions."
+                        }
+                      ]
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_has_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists",
+                    "pptx_extension"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "pptx_extension": {
+                      "value": null,
+                      "expected": ".pptx",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_exists\",\"pptx_extension\"],\"fix_instructions\":\"Export and attach an actual .pptx file. Ensure the output includes a downloadable PPTX artifact (not just slide text/storyboard). Name the file with a .pptx extension (e.g., intro_to_ml_beginner.pptx) and verify it is present in the submission/package.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "create_quick_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_6_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "6",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "quiz_includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "create_quick_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_6_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "6",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "quiz_includes_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_6_questions\",\"quiz_includes_answer_key\"],\"fix_instructions\":\"Update result.output to include exactly 6 questions (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Add an explicit 'Answer key' section listing the correct option for each question plus a 1-line explanation per question.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_covers_core_topics",
+              "outline_has_time_budget",
+              "outline_includes_speaker_notes"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The output is just a placeholder sentence and does not include the required lesson outline content.\n\nTo fix:\n1) Provide a slide-by-slide outline for a ~20-minute lesson on 'What is Machine Learning?'.\n2) Include a time budget per section/slide that sums to approximately 20 minutes (show the total explicitly).\n3) Cover core topics explicitly: learning objectives, key definitions, intuitive examples, ML workflow, types (supervised/unsupervised/reinforcement), applications, limitations & ethics, and a recap.\n4) Add clearly labeled 'Speaker notes' for each slide."
+          },
+          {
+            "task_id": "build_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_extension",
+              "pptx_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "pptx_extension": {
+                  "value": null,
+                  "expected": ".pptx",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Export and attach an actual .pptx file. Ensure the output includes a downloadable PPTX artifact (not just slide text/storyboard). Name the file with a .pptx extension (e.g., intro_to_ml_beginner.pptx) and verify it is present in the submission/package."
+          },
+          {
+            "task_id": "create_quick_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_6_questions",
+              "quiz_includes_answer_key"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Update result.output to include exactly 6 questions (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Add an explicit 'Answer key' section listing the correct option for each question plus a 1-line explanation per question."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what machine learning is, and generate a PPTX slide deck for the lesson.",
+          "subtasks": [
+            {
+              "task_id": "outline_lesson",
+              "agent": "text",
+              "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_has_time_budget",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "20",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_covers_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Speaker notes",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "build_pptx",
+              "agent": "presentation",
+              "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_extension",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "create_quick_quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_6_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "6",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "quiz_includes_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "outline_lesson": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          },
+          "create_quick_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Update the output to include exactly 6 questions (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Add an explicit 'Answer key' section listing the correct answers for all 6 questions, each with a 1-line explanation.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "build_pptx": {
+            "agent": "presentation",
+            "success": true,
+            "output": {
+              "text": "Slide 1: Introduction to Machine Learning\n\nBeginner's Guide to Understanding ML\n\nNotes: Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.\n\nSlide 2: Agenda\n\n- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions\n\nNotes: Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.\n\nSlide 3: What is Machine Learning?\n\nMachine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.\n\nNotes: Machine Learning enables computers to learn from data and make decisions or predictions based on that data.\n\nSlide 4: ML vs. Traditional Programming\n\nDifferences between ML and Traditional Programming\n\nNotes: In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.\n\nSlide 5: Key Terms in ML\n\n- Data\n- Feature\n- Label\n- Model\n\nNotes: Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.\n\nSlide 6: Supervised Learning Example\n\nLearning with labeled data.\n\nNotes: In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.\n\nSlide 7: Unsupervised Learning Example\n\nFinding patterns without labels.\n\nNotes: Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.\n\nSlide 8: Reinforcement Learning Intuition\n\nLearning through trial and error.\n\nNotes: Reinforcement learning is about learning through interactions with an environment to maximize some notion of cumulative reward.",
+              "format": "pptx",
+              "storyboard": {
+                "theme_font": "Times New Roman",
+                "slides": [
+                  {
+                    "layout_idx": 0,
+                    "title": "Introduction to Machine Learning",
+                    "content": "Beginner's Guide to Understanding ML",
+                    "speaker_notes": "Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Agenda",
+                    "content": "- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions",
+                    "speaker_notes": "Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "What is Machine Learning?",
+                    "content": "Machine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.",
+                    "speaker_notes": "Machine Learning enables computers to learn from data and make decisions or predictions based on that data.",
+                    "visual_assets": [
+                      {
+                        "type": "code_snippet",
+                        "code": "# ML Concept\nfrom sklearn import datasets\nprint('Learn from Data')",
+                        "language": "python",
+                        "caption": "Basic ML Concept"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "ML vs. Traditional Programming",
+                    "content": "Differences between ML and Traditional Programming",
+                    "speaker_notes": "In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.",
+                    "visual_assets": [
+                      {
+                        "type": "chart_data",
+                        "data": {
+                          "x": [
+                            "Programming",
+                            "ML"
+                          ],
+                          "y": [
+                            1,
+                            2
+                          ]
+                        },
+                        "chart_type": "bar",
+                        "title": "ML vs Programming"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "Key Terms in ML",
+                    "content": "- Data\n- Feature\n- Label\n- Model",
+                    "speaker_notes": "Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Supervised Learning Example",
+                    "content": "Learning with labeled data.",
+                    "speaker_notes": "In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.",
+                    "visual_assets": [
+                      {
+                        "type": "formula_latex",
+                        "content": "y = f(x) + noise",
+                        "caption": "Supervised Learning Formula"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Unsupervised Learning Example",
+                    "content": "Finding patterns without labels.",
+                    "speaker_notes": "Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.",
+                    "visual_assets": [
+                      {
+                        "type": "chart_data",
+                        "data": {
+                          "x": [
+                            1,
+                            2,
+                            3,
+                            4
+                          ],
+                          "y": [
+                            4,
+                            3,
+                            2,
+                            1
+                          ]
+                        },
+                        "chart_type": "scatter",
+                        "title": "Clustering Example"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Reinforcement Learning Intuition",
+                    "content": "Learning through trial and error.",
+                    "speaker_notes": "Reinforcement learning is about learning through interactions with an environment to maximize some notion of cumulative reward.",
+                    "visual_assets": []
+                  }
+                ]
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767803356.pptx"
+            ],
+            "instruction": "1) Generate and provide an actual downloadable .pptx file (not just text/storyboard). Ensure the output includes a valid filename ending in .pptx and that the file is attached/created in the expected location.\n2) Rebuild the slide deck to match the requested beginner ML lesson (~20 minutes) with the suggested structure: title, agenda, what is ML, ML vs programming, key terms (data/feature/label/model), supervised example, unsupervised example, RL intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions.\n3) Use minimal text per slide, include simple visuals/icons/diagrams, and add speaker notes aligned to the outline for every slide.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "agent": "text",
+            "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+            "criteria": [
+              {
+                "criterion_id": "outline_has_time_budget",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "20",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_covers_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Speaker notes",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "outline_lesson",
+                  "agent": "text",
+                  "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+                  "output": {
+                    "text": "Generated text content based on: The output is just a placeholder sentence and does not include the required lesson outline content.\n\nTo fix:\n1) Provide a slide-by-slide outline for a ~20-minute lesson on 'What is Machine Learning?'.\n2) Include a time budget per section/slide that sums to approximately 20 minutes (show the total explicitly).\n3) Cover core topics explicitly: learning objectives, key definitions, intuitive examples, ML workflow, types (supervised/unsupervised/reinforcement), applications, limitations & ethics, and a recap.\n4) Add clearly labeled 'Speaker notes' for each slide.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_time_budget",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "20",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_covers_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Speaker notes",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_has_time_budget\",\"outline_covers_core_topics\",\"outline_includes_speaker_notes\"],\"fix_instructions\":\"The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\\n4) Clearly labeled 'Speaker notes' for every slide.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "build_pptx",
+            "agent": "presentation",
+            "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_extension",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "pptx_extension": {
+                "value": null,
+                "expected": ".pptx",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "build_pptx",
+                  "agent": "presentation",
+                  "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+                  "output": {
+                    "text": "Slide 1: Introduction to Exporting PowerPoint Presentations\n\nUnderstand how to create a downloadable PowerPoint presentation file.\n\nNotes: Welcome to the session on exporting and attaching PowerPoint presentations. Today, we will learn how to generate a .pptx file programmatically.\n\nSlide 2: Step 1: Creating the Slide Deck\n\nDefine slides layout and content\n- Use consistent font styles\n- Leverage visual aids\n\nNotes: Start by setting up the structure of your presentation. This includes choosing fonts and planning out the layout for clarity.\n\nSlide 3: Step 2: Adding Visual Assets\n\n- Use codes for diagrams\n- Incorporate charts when possible\n\nNotes: Encourage the use of code snippets for diagram generation, and choose the right type of chart to display data effectively.\n\nSlide 4: Step 3: Exporting as .pptx\n\nProgrammatically generate and save slide to .pptx\n- Ensure filename is descriptive\n- Verify the file format\n\nNotes: Discuss methodologies to save the constructed slides as .pptx files. Make sure the slide deck is downloadable and properly formatted.\n\nSlide 5: Best Practices\n\nConsistency\n- Uniform design and style\nVerification\n- Check for errors before exporting\n\nNotes: Once you've generated your presentation, review it thoroughly for any errors and ensure it follows standard presentation guidelines.\n\nSlide 6: Conclusion\n\nRecap of key steps in creating downloadable presentations.\n\nNotes: Summarize the lessons learned about exporting PowerPoint presentations. Encourage attendees to practice creating their own .pptx files.\n\nSlide 7: Q&A Session\n\nOpen floor for questions from the audience.\n\nNotes: Allow participants to ask clarifying questions or seek further guidance on specific steps.",
+                    "format": "pptx",
+                    "storyboard": {
+                      "theme_font": "Times New Roman",
+                      "slides": [
+                        {
+                          "layout_idx": 0,
+                          "title": "Introduction to Exporting PowerPoint Presentations",
+                          "content": "Understand how to create a downloadable PowerPoint presentation file.",
+                          "speaker_notes": "Welcome to the session on exporting and attaching PowerPoint presentations. Today, we will learn how to generate a .pptx file programmatically."
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Step 1: Creating the Slide Deck",
+                          "content": "Define slides layout and content\n- Use consistent font styles\n- Leverage visual aids",
+                          "speaker_notes": "Start by setting up the structure of your presentation. This includes choosing fonts and planning out the layout for clarity."
+                        },
+                        {
+                          "layout_idx": 3,
+                          "title": "Step 2: Adding Visual Assets",
+                          "content": "- Use codes for diagrams\n- Incorporate charts when possible",
+                          "speaker_notes": "Encourage the use of code snippets for diagram generation, and choose the right type of chart to display data effectively.",
+                          "visual_assets": [
+                            {
+                              "type": "code_snippet",
+                              "code": "print('Visualization Generation')",
+                              "language": "python",
+                              "caption": "Code Example to Generate Visuals"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 6,
+                          "title": "Step 3: Exporting as .pptx",
+                          "content": "Programmatically generate and save slide to .pptx\n- Ensure filename is descriptive\n- Verify the file format",
+                          "speaker_notes": "Discuss methodologies to save the constructed slides as .pptx files. Make sure the slide deck is downloadable and properly formatted.",
+                          "visual_assets": [
+                            {
+                              "type": "chart_data",
+                              "data": {
+                                "x": [
+                                  "Slide Creation",
+                                  "Exporting"
+                                ],
+                                "y": [
+                                  50,
+                                  80
+                                ]
+                              },
+                              "chart_type": "line",
+                              "title": "Export Efficiency"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Best Practices",
+                          "content": "Consistency\n- Uniform design and style\nVerification\n- Check for errors before exporting",
+                          "speaker_notes": "Once you've generated your presentation, review it thoroughly for any errors and ensure it follows standard presentation guidelines."
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Conclusion",
+                          "content": "Recap of key steps in creating downloadable presentations.",
+                          "speaker_notes": "Summarize the lessons learned about exporting PowerPoint presentations. Encourage attendees to practice creating their own .pptx files."
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Q&A Session",
+                          "content": "Open floor for questions from the audience.",
+                          "speaker_notes": "Allow participants to ask clarifying questions or seek further guidance on specific steps."
+                        }
+                      ]
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_has_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists",
+                    "pptx_extension"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "pptx_extension": {
+                      "value": null,
+                      "expected": ".pptx",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_exists\",\"pptx_extension\",\"Deck content does not match requested ML lesson outline/structure; slides are about exporting PowerPoint, not machine learning\"],\"fix_instructions\":\"1) Generate and provide an actual downloadable .pptx file (not just text/storyboard). Ensure the output includes a valid filename ending in .pptx and that the file is attached/created in the expected location.\\n2) Rebuild the slide deck to match the requested beginner ML lesson (~20 minutes) with the suggested structure: title, agenda, what is ML, ML vs programming, key terms (data/feature/label/model), supervised example, unsupervised example, RL intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions.\\n3) Use minimal text per slide, include simple visuals/icons/diagrams, and add speaker notes aligned to the outline for every slide.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "create_quick_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_6_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "6",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "quiz_includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "create_quick_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_6_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "6",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "quiz_includes_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_6_questions\",\"quiz_includes_answer_key\"],\"fix_instructions\":\"Update the output to include exactly 6 questions (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Add an explicit 'Answer key' section listing the correct answers for all 6 questions, each with a 1-line explanation.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_covers_core_topics",
+              "outline_has_time_budget",
+              "outline_includes_speaker_notes"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide."
+          },
+          {
+            "task_id": "build_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_extension",
+              "pptx_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "pptx_extension": {
+                  "value": null,
+                  "expected": ".pptx",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "1) Generate and provide an actual downloadable .pptx file (not just text/storyboard). Ensure the output includes a valid filename ending in .pptx and that the file is attached/created in the expected location.\n2) Rebuild the slide deck to match the requested beginner ML lesson (~20 minutes) with the suggested structure: title, agenda, what is ML, ML vs programming, key terms (data/feature/label/model), supervised example, unsupervised example, RL intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions.\n3) Use minimal text per slide, include simple visuals/icons/diagrams, and add speaker notes aligned to the outline for every slide."
+          },
+          {
+            "task_id": "create_quick_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_6_questions",
+              "quiz_includes_answer_key"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Update the output to include exactly 6 questions (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Add an explicit 'Answer key' section listing the correct answers for all 6 questions, each with a 1-line explanation."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level ~20-minute lesson explaining what machine learning is, and generate a PPTX slide deck for the lesson.",
+          "subtasks": [
+            {
+              "task_id": "outline_lesson",
+              "agent": "text",
+              "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_has_time_budget",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "20",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_covers_core_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Speaker notes",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "build_pptx",
+              "agent": "presentation",
+              "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "pptx_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_extension",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0].path",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "pptx_has_speaker_notes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "create_quick_quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+              "inputs": {},
+              "dependencies": [
+                "outline_lesson"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_6_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "6",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "quiz_includes_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "outline_lesson": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          },
+          "create_quick_quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Update the output to include exactly 6 questions (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Add an explicit 'Answer key' section listing the correct answers for all 6 questions, each with a 1-line explanation.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "build_pptx": {
+            "agent": "presentation",
+            "success": true,
+            "output": {
+              "text": "Slide 1: Introduction to Machine Learning\n\nBeginner's Guide to Understanding ML\n\nNotes: Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.\n\nSlide 2: Agenda\n\n- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions\n\nNotes: Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.\n\nSlide 3: What is Machine Learning?\n\nMachine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.\n\nNotes: Machine Learning enables computers to learn from data and make decisions or predictions based on that data.\n\nSlide 4: ML vs. Traditional Programming\n\nDifferences between ML and Traditional Programming\n\nNotes: In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.\n\nSlide 5: Key Terms in ML\n\n- Data\n- Feature\n- Label\n- Model\n\nNotes: Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.\n\nSlide 6: Supervised Learning Example\n\nLearning with labeled data.\n\nNotes: In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.\n\nSlide 7: Unsupervised Learning Example\n\nFinding patterns without labels.\n\nNotes: Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.\n\nSlide 8: Reinforcement Learning Intuition\n\nLearning through trial and error.\n\nNotes: Reinforcement learning is about learning through interactions with an environment to maximize some notion of cumulative reward.",
+              "format": "pptx",
+              "storyboard": {
+                "theme_font": "Times New Roman",
+                "slides": [
+                  {
+                    "layout_idx": 0,
+                    "title": "Introduction to Machine Learning",
+                    "content": "Beginner's Guide to Understanding ML",
+                    "speaker_notes": "Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Agenda",
+                    "content": "- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions",
+                    "speaker_notes": "Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "What is Machine Learning?",
+                    "content": "Machine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.",
+                    "speaker_notes": "Machine Learning enables computers to learn from data and make decisions or predictions based on that data.",
+                    "visual_assets": [
+                      {
+                        "type": "code_snippet",
+                        "code": "# ML Concept\nfrom sklearn import datasets\nprint('Learn from Data')",
+                        "language": "python",
+                        "caption": "Basic ML Concept"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "ML vs. Traditional Programming",
+                    "content": "Differences between ML and Traditional Programming",
+                    "speaker_notes": "In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.",
+                    "visual_assets": [
+                      {
+                        "type": "chart_data",
+                        "data": {
+                          "x": [
+                            "Programming",
+                            "ML"
+                          ],
+                          "y": [
+                            1,
+                            2
+                          ]
+                        },
+                        "chart_type": "bar",
+                        "title": "ML vs Programming"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 3,
+                    "title": "Key Terms in ML",
+                    "content": "- Data\n- Feature\n- Label\n- Model",
+                    "speaker_notes": "Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.",
+                    "visual_assets": []
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Supervised Learning Example",
+                    "content": "Learning with labeled data.",
+                    "speaker_notes": "In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.",
+                    "visual_assets": [
+                      {
+                        "type": "formula_latex",
+                        "content": "y = f(x) + noise",
+                        "caption": "Supervised Learning Formula"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Unsupervised Learning Example",
+                    "content": "Finding patterns without labels.",
+                    "speaker_notes": "Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.",
+                    "visual_assets": [
+                      {
+                        "type": "chart_data",
+                        "data": {
+                          "x": [
+                            1,
+                            2,
+                            3,
+                            4
+                          ],
+                          "y": [
+                            4,
+                            3,
+                            2,
+                            1
+                          ]
+                        },
+                        "chart_type": "scatter",
+                        "title": "Clustering Example"
+                      }
+                    ]
+                  },
+                  {
+                    "layout_idx": 1,
+                    "title": "Reinforcement Learning Intuition",
+                    "content": "Learning through trial and error.",
+                    "speaker_notes": "Reinforcement learning is about learning through interactions with an environment to maximize some notion of cumulative reward.",
+                    "visual_assets": []
+                  }
+                ]
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\slides\\lesson_1767803356.pptx"
+            ],
+            "instruction": "1) Generate and provide an actual downloadable .pptx file (not just text/storyboard). Ensure the output includes a valid filename ending in .pptx and that the file is attached/created in the expected location.\n2) Rebuild the slide deck to match the requested beginner ML lesson (~20 minutes) with the suggested structure: title, agenda, what is ML, ML vs programming, key terms (data/feature/label/model), supervised example, unsupervised example, RL intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions.\n3) Use minimal text per slide, include simple visuals/icons/diagrams, and add speaker notes aligned to the outline for every slide.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "agent": "text",
+            "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+            "criteria": [
+              {
+                "criterion_id": "outline_has_time_budget",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "20",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_covers_core_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Speaker notes",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "outline_lesson",
+                  "agent": "text",
+                  "instruction": "Draft a 20-minute beginner lesson outline on 'What is Machine Learning?': learning objectives, key definitions, intuitive examples, brief workflow, common types (supervised/unsupervised/reinforcement), real-world applications, limitations/ethics, and a short recap. Include a suggested time budget per section totaling ~20 minutes and speaker notes per slide.",
+                  "output": {
+                    "text": "Generated text content based on: The submission is a placeholder and does not satisfy the lesson-outline requirements. Revise the output to include:\n1) A slide-by-slide outline for a ~20-minute beginner lesson on 'What is Machine Learning?'.\n2) A per-slide/section time budget that sums to ~20 minutes (state the total explicitly).\n3) Explicit coverage of: learning objectives, key definitions, intuitive examples, an ML workflow overview, common types (supervised/unsupervised/reinforcement), real-world applications, limitations & ethics, and a recap.\n4) Clearly labeled 'Speaker notes' for every slide.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_has_time_budget",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "20",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_covers_core_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Speaker notes",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_has_time_budget\",\"outline_covers_core_topics\",\"outline_includes_speaker_notes\"],\"fix_instructions\":\"The output is a placeholder and does not provide the requested lesson outline. Revise to deliver a slide-by-slide (~8\u201312 slides) beginner lesson on \u201cWhat is Machine Learning?\u201d with:\\n- A clear time budget per slide/section that totals ~20 minutes and states the total explicitly.\\n- Explicit coverage of: learning objectives; key definitions (ML, model, features, labels, training/inference); intuitive examples; brief ML workflow; common types (supervised, unsupervised, reinforcement); real-world applications; limitations and ethics; and a short recap.\\n- Clearly labeled \u201cSpeaker notes\u201d for every slide, with what the instructor should say/do.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "build_pptx",
+            "agent": "presentation",
+            "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+            "criteria": [
+              {
+                "criterion_id": "pptx_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_extension",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0].path",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0].path"
+              },
+              {
+                "criterion_id": "pptx_has_speaker_notes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "pptx_file_exists": {
+                "value": null,
+                "exists": false
+              },
+              "pptx_extension": {
+                "value": null,
+                "expected": ".pptx",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "build_pptx",
+                  "agent": "presentation",
+                  "instruction": "Create a PPTX slide deck for the lesson (beginner, ~20 minutes). Use clear visuals (simple icons/diagrams), minimal text per slide, and include speaker notes aligned with the outline. Suggested structure: title, agenda, 'what is ML', ML vs programming, key terms (data/feature/label/model), supervised learning example, unsupervised example, reinforcement learning intuition, training/evaluation (train-test split, metrics), overfitting intuition, workflow, applications, limitations & bias, recap, quick check questions. Export as a .pptx file.",
+                  "output": {
+                    "text": "Slide 1: Introduction to Machine Learning\n\nBeginner's Guide to Understanding ML\n\nNotes: Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.\n\nSlide 2: Agenda\n\n- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions\n\nNotes: Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.\n\nSlide 3: What is Machine Learning?\n\nMachine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.\n\nNotes: Machine Learning enables computers to learn from data and make decisions or predictions based on that data.\n\nSlide 4: ML vs. Traditional Programming\n\nDifferences between ML and Traditional Programming\n\nNotes: In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.\n\nSlide 5: Key Terms in ML\n\n- Data\n- Feature\n- Label\n- Model\n\nNotes: Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.\n\nSlide 6: Supervised Learning Example\n\nLearning with labeled data.\n\nNotes: In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.\n\nSlide 7: Unsupervised Learning Example\n\nFinding patterns without labels.\n\nNotes: Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.\n\nSlide 8: Reinforcement Learning Intuition\n\nLearning through trial and error.\n\nNotes: Reinforcement learning is about learning through interactions with an environment to maximize som...",
+                    "format": "pptx",
+                    "storyboard": {
+                      "theme_font": "Times New Roman",
+                      "slides": [
+                        {
+                          "layout_idx": 0,
+                          "title": "Introduction to Machine Learning",
+                          "content": "Beginner's Guide to Understanding ML",
+                          "speaker_notes": "Welcome to our beginner's guide to Machine Learning. In this session, we will cover the basics and essential concepts needed to understand ML.",
+                          "visual_assets": []
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Agenda",
+                          "content": "- What is ML?\n- ML vs Programming\n- Key Terms\n- Supervised and Unsupervised Learning\n- Reinforcement Learning Intuition\n- Training and Evaluation\n- Overfitting Intuition\n- Workflow\n- Applications, Limitations & Bias\n- Recap\n- Quick Check Questions",
+                          "speaker_notes": "Here's a brief overview of what we will be covering today. This will provide you with a comprehensive introduction to machine learning.",
+                          "visual_assets": []
+                        },
+                        {
+                          "layout_idx": 3,
+                          "title": "What is Machine Learning?",
+                          "content": "Machine Learning is a field of study that gives computers the ability to learn without being explicitly programmed.",
+                          "speaker_notes": "Machine Learning enables computers to learn from data and make decisions or predictions based on that data.",
+                          "visual_assets": [
+                            {
+                              "type": "code_snippet",
+                              "code": "# ML Concept\nfrom sklearn import datasets\nprint('Learn from Data')",
+                              "language": "python",
+                              "caption": "Basic ML Concept"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 3,
+                          "title": "ML vs. Traditional Programming",
+                          "content": "Differences between ML and Traditional Programming",
+                          "speaker_notes": "In traditional programming, rules are defined for the computer to follow. In machine learning, the computer learns the rules based on data it receives.",
+                          "visual_assets": [
+                            {
+                              "type": "chart_data",
+                              "data": {
+                                "x": [
+                                  "Programming",
+                                  "ML"
+                                ],
+                                "y": [
+                                  1,
+                                  2
+                                ]
+                              },
+                              "chart_type": "bar",
+                              "title": "ML vs Programming"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 3,
+                          "title": "Key Terms in ML",
+                          "content": "- Data\n- Feature\n- Label\n- Model",
+                          "speaker_notes": "Understanding key ML terms is essential. Data is the fundamental asset, features are individual measurable properties, labels are the results, and models are systems that learn from data.",
+                          "visual_assets": []
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Supervised Learning Example",
+                          "content": "Learning with labeled data.",
+                          "speaker_notes": "In supervised learning, the model learns from labeled data, which means the data is already tagged with the correct answer.",
+                          "visual_assets": [
+                            {
+                              "type": "formula_latex",
+                              "content": "y = f(x) + noise",
+                              "caption": "Supervised Learning Formula"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Unsupervised Learning Example",
+                          "content": "Finding patterns without labels.",
+                          "speaker_notes": "Unsupervised learning involves finding structures within data without any labels. It's often used for clustering.",
+                          "visual_assets": [
+                            {
+                              "type": "chart_data",
+                              "data": {
+                                "x": [
+                                  1,
+                                  2,
+                                  3,
+                                  4
+                                ],
+                                "y": [
+                                  4,
+                                  3,
+                                  2,
+                                  1
+                                ]
+                              },
+                              "chart_type": "scatter",
+                              "title": "Clustering Example"
+                            }
+                          ]
+                        },
+                        {
+                          "layout_idx": 1,
+                          "title": "Reinforcement Learning Intuition",
+                          "content": "Learning through trial and error.",
+                          "speaker_notes": "Reinforcement learning is about learning through interactions with an environment to maximize some notion of cumulative reward.",
+                          "visual_assets": []
+                        }
+                      ]
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "pptx_has_speaker_notes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "pptx_file_exists",
+                    "pptx_extension"
+                  ],
+                  "deterministic_evidence": {
+                    "pptx_file_exists": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "pptx_extension": {
+                      "value": null,
+                      "expected": ".pptx",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"pptx_file_exists (deterministic failure)\",\"pptx_extension (deterministic failure)\"],\"fix_instructions\":\"Export and attach a real PowerPoint file (.pptx). Ensure the output includes an actual downloadable/attached PPTX artifact (not just slide text/storyboard). Name the file with a .pptx extension (e.g., lesson_ml_beginner.pptx) and include speaker notes in the PPTX slides.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "create_quick_quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_6_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "6",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "quiz_includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "create_quick_quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short 6-question beginner check-for-understanding quiz (mix of MCQ and true/false) covering: definition of ML, supervised vs unsupervised, labels, overfitting, train/test split, and one ethics/bias question. Provide answer key and 1-line explanations.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_6_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "6",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "quiz_includes_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_6_questions\",\"quiz_includes_answer_key\"],\"fix_instructions\":\"Update the output to include exactly 6 beginner-level questions (a mix of multiple-choice and true/false) covering: definition of ML, supervised vs. unsupervised learning, what labels are, overfitting, train/test split, and an ethics/bias question. Add a clearly labeled 'Answer key' section listing the correct answers for all 6 questions, each with a 1-line explanation.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "outline_lesson",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_covers_core_topics",
+              "outline_has_time_budget",
+              "outline_includes_speaker_notes"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The output is a placeholder and does not provide the requested lesson outline. Revise to deliver a slide-by-slide (~8\u201312 slides) beginner lesson on \u201cWhat is Machine Learning?\u201d with:\n- A clear time budget per slide/section that totals ~20 minutes and states the total explicitly.\n- Explicit coverage of: learning objectives; key definitions (ML, model, features, labels, training/inference); intuitive examples; brief ML workflow; common types (supervised, unsupervised, reinforcement); real-world applications; limitations and ethics; and a short recap.\n- Clearly labeled \u201cSpeaker notes\u201d for every slide, with what the instructor should say/do."
+          },
+          {
+            "task_id": "build_pptx",
+            "verdict": "fail",
+            "failed_criteria": [
+              "pptx_extension",
+              "pptx_file_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "pptx_file_exists": {
+                  "value": null,
+                  "exists": false
+                },
+                "pptx_extension": {
+                  "value": null,
+                  "expected": ".pptx",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Export and attach a real PowerPoint file (.pptx). Ensure the output includes an actual downloadable/attached PPTX artifact (not just slide text/storyboard). Name the file with a .pptx extension (e.g., lesson_ml_beginner.pptx) and include speaker notes in the PPTX slides."
+          },
+          {
+            "task_id": "create_quick_quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_6_questions",
+              "quiz_includes_answer_key"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Update the output to include exactly 6 beginner-level questions (a mix of multiple-choice and true/false) covering: definition of ML, supervised vs. unsupervised learning, what labels are, overfitting, train/test split, and an ethics/bias question. Add a clearly labeled 'Answer key' section listing the correct answers for all 6 questions, each with a 1-line explanation."
+          }
+        ]
+      }
+    }
+  ]
+}

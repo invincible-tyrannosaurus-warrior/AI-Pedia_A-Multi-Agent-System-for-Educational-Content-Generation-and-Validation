@@ -1,0 +1,2880 @@
+{
+  "run_id": "3fa685ef92c845868fd887f1a0c6573a",
+  "started_at": "2026-01-09T02:06:33.068016+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson on Python classes that includes slides, runnable code examples, and an accompanying video.",
+          "subtasks": [
+            {
+              "task_id": "t1_code_examples",
+              "agent": "coder",
+              "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+              "inputs": {
+                "output_filename": "t1_code_examples_20260109_0206.py",
+                "output_subdir": "run_3fa685ef92c845868fd887f1a0c6573a"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_run_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_includes_class_concepts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac4_includes_instantiation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "obj =",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t2_slides",
+              "agent": "presentation",
+              "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_slide_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_code_snippets_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_mentions_classes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "class",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac4_pptx_artifact",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "t3_video",
+              "agent": "video",
+              "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples",
+                "t2_slides"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_mp4_output",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_covers_requested_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t4_quiz_optional",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples",
+                "t2_slides"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac2_mentions_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "t1_code_examples": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "\"\"\"\nClass Lesson Demo - Beginner Friendly Examples\n\nThis script demonstrates fundamental concepts of Python classes:\n- Defining a class\n- __init__ method\n- Instance attributes\n- Methods\n- Creating objects\n- Simple project example (BankAccount)\n\"\"\"\n\n# 1. Defining a Basic Class\nclass Person:\n    \"\"\"A simple class to represent a person\"\"\"\n    \n    # Class attribute (shared by all instances)\n    species = \"Homo sapiens\"\n    \n    # Constructor method (__init__)\n    def __init__(self, name, age):\n        # Instance attributes (unique to each object)\n        self.name = name\n        self.age = age\n    \n    # Instance method\n    def introduce(self):\n        \"\"\"Returns a string introducing the person\"\"\"\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Another instance method\n    def have_birthday(self):\n        \"\"\"Increases the person's age by 1\"\"\"\n        self.age += 1\n        return f\"Happy birthday! {self.name} is now {self.age} years old.\"\n\n# 2. Creating Objects (Instances)\nprint(\"=== Creating Objects ===\")\n# Create two Person objects\nperson1 = Person(\"Alice\", 25)\nperson2 = Person(\"Bob\", 30)\n\n# Access instance attributes\nprint(f\"Person 1: {person1.name}, Age: {person1.age}\")\nprint(f\"Person 2: {person2.name}, Age: {person2.age}\")\n\n# Call instance methods\nprint(person1.introduce())\nprint(person2.have_birthday())\n\n# 3. Class Attribute Example\nprint(\"\\n=== Class Attributes ===\")\nprint(f\"All people are of species: {Person.species}\")\nprint(f\"Person 1 species: {person1.species}\")\nprint(f\"Person 2 species: {person2.species}\")\n\n# 4. Bank Account Project Example\nclass BankAccount:\n    \"\"\"A simple bank account class\"\"\"\n    \n    def __init__(self, owner, initial_balance=0):\n        \"\"\"Initialize a bank account with owner name and balance\"\"\"\n        self.owner = owner\n        self.balance = initial_balance\n    \n    def deposit(self, amount):\n        \"\"\"Add money to the account\"\"\"\n        if amount > 0:\n            self.balance += amount\n            return f\"Deposited ${amount}. New balance: ${self.balance}\"\n        else:\n            return \"Deposit amount must be positive\"\n    \n    def withdraw(self, amount):\n        \"\"\"Remove money from the account\"\"\"\n        if amount > 0 and amount <= self.balance:\n            self.balance -= amount\n            return f\"Withdrew ${amount}. New balance: ${self.balance}\"\n        elif amount > self.balance:\n            return \"Insufficient funds\"\n        else:\n            return \"Withdrawal amount must be positive\"\n    \n    def get_balance(self):\n        \"\"\"Return current balance\"\"\"\n        return f\"{self.owner}'s balance: ${self.balance}\"\n    \n    def __str__(self):\n        \"\"\"String representation of the account\"\"\"\n        return f\"Account owner: {self.owner}, Balance: ${self.balance}\"\n\n# 5. Using the BankAccount Class\nprint(\"\\n=== Bank Account Example ===\")\n# Create bank accounts\naccount1 = BankAccount(\"Alice\", 1000)\naccount2 = BankAccount(\"Bob\", 500)\n\n# Display initial balances\nprint(account1)\nprint(account2)\n\n# Perform transactions\nprint(\"\\n--- Transactions ---\")\nprint(account1.deposit(200))\nprint(account1.withdraw(150))\nprint(account2.withdraw(100))\nprint(account2.withdraw(1000))  # This should fail due to insufficient funds\n\n# Check final balances\nprint(\"\\n--- Final Balances ---\")\nprint(account1.get_balance())\nprint(account2.get_balance())\n\n# 6. Rectangle Class Example\nclass Rectangle:\n    \"\"\"A rectangle class with length and width\"\"\"\n    \n    def __init__(self, length, width):\n        \"\"\"Initialize rectangle with length and width\"\"\"\n        self.length = length\n        self.width = width\n    \n    def area(self):\n        \"\"\"Calculate and return the area\"\"\"\n        return self.length * self.width\n    \n    def perimeter(self):\n        \"\"\"Calculate and return the perimeter\"\"\"\n        return 2 * (self.length + self.width)\n    \n    def is_square(self):\n        \"\"\"Check if rectangle is a square\"\"\"\n        return self.length == self.width\n\n# 7. Using Rectangle Class\nprint(\"\\n=== Rectangle Example ===\")\nrect1 = Rectangle(5, 3)\nrect2 = Rectangle(4, 4)\n\nprint(f\"Rectangle 1 - Length: {rect1.length}, Width: {rect1.width}\")\nprint(f\"Area: {rect1.area()}\")\nprint(f\"Perimeter: {rect1.perimeter()}\")\nprint(f\"Is square? {rect1.is_square()}\")\n\nprint(f\"\\nRectangle 2 - Length: {rect2.length}, Width: {rect2.width}\")\nprint(f\"Area: {rect2.area()}\")\nprint(f\"Perimeter: {rect2.perimeter()}\")\nprint(f\"Is square? {rect2.is_square()}\")\n\nprint(\"\\n=== Summary ===\")\nprint(\"This demo showed:\")\nprint(\"1. How to define a class\")\nprint(\"2. How to use __init__ for initialization\")\nprint(\"3. Instance attributes and class attributes\")\nprint(\"4. Methods within classes\")\nprint(\"5. Creating and using objects\")\nprint(\"6. Practical examples with BankAccount and Rectangle classes\")\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py",
+                "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py"
+            ],
+            "error": null,
+            "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+            "attempts": 1,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "t2_slides": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "No slide deck output was provided and no .pptx artifact exists. Create and export a .pptx slide deck on Python classes with at least 1 slide and at least 1 code snippet, include content covering: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example, common beginner pitfalls, and speaker notes with brief narration cues. Ensure the delivered output includes a link or path to the .pptx file and that the text includes the word 'class'.",
+            "attempts": 3,
+            "metadata": {}
+          },
+          "t4_quiz_optional": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "Provide a beginner quiz on Python classes with 8\u201312 questions (mix of multiple choice and short answer). Include a clear answer key section that explicitly lists the answers for each question.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            }
+          },
+          "t3_video": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "No video artifact was produced: deterministic checks indicate video generation did not succeed and no .mp4 output path/filename is present (output is null). To fix: (1) generate and export the lesson as an MP4 file and return the file path/URL in result.output; (2) ensure the narration/visuals explicitly cover class/object definition, __init__, attributes vs methods, and include a walkthrough of the t1_code_examples while using the t2_slides deck; (3) verify the final MP4 includes audible, clear narration and that the script/voiceover includes the term \u201c__init__\u201d (and ideally shows it on-screen). Re-run the render and re-submit with the MP4 attached or linked.",
+            "attempts": 3,
+            "metadata": {}
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "t1_code_examples",
+            "agent": "coder",
+            "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_run_success",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_includes_class_concepts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac4_includes_instantiation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "obj =",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "ac1_run_success": {
+                "value": true,
+                "expected": true,
+                "operator": "equals"
+              },
+              "ac2_no_stderr": {
+                "value": "",
+                "expected": "",
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t1_code_examples",
+                  "agent": "coder",
+                  "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+                  "output": {
+                    "code": "\"\"\"\nClass Lesson Demo - Beginner Friendly Examples\n\nThis script demonstrates fundamental concepts of Python classes:\n- Defining a class\n- __init__ method\n- Instance attributes\n- Methods\n- Creating objects\n- Simple project example (BankAccount)\n\"\"\"\n\n# 1. Defining a Basic Class\nclass Person:\n    \"\"\"A simple class to represent a person\"\"\"\n    \n    # Class attribute (shared by all instances)\n    species = \"Homo sapiens\"\n    \n    # Constructor method (__init__)\n    def __init__(self, name, age):\n        # Instance attributes (unique to each object)\n        self.name = name\n        self.age = age\n    \n    # Instance method\n    def introduce(self):\n        \"\"\"Returns a string introducing the person\"\"\"\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Another instance method\n    def have_birthday(self):\n        \"\"\"Increases the person's age by 1\"\"\"\n        self.age += 1\n        return f\"Happy birthday! {self.name} is now {self.age} years old.\"\n\n# 2. Creating Objects (Instances)\nprint(\"=== Creating Objects ===\")\n# Create two Person objects\nperson1 = Person(\"Alice\", 25)\nperson2 = Person(\"Bob\", 30)\n\n# Access instance attributes\nprint(f\"Person 1: {person1.name}, Age: {person1.age}\")\nprint(f\"Person 2: {person2.name}, Age: {person2.age}\")\n\n# Call instance methods\nprint(person1.introduce())\nprint(person2.have_birthday())\n\n# 3. Class Attribute Example\nprint(\"\\n=== Class Attributes ===\")\nprint(f\"All people are of species: {Person.species}\")\nprint(f\"Person 1 species: {person1.species}\")\nprint(f\"Person 2 species: {person2.species}\")\n\n# 4. Bank Account Project Example\nclass BankAccount:\n    \"\"\"A simple bank account class\"\"\"\n    \n    def __init__(self, owner, initial_balance=0):\n        \"\"\"Initialize a bank account with owner name and balance\"\"\"\n        self.owner = owner\n        self.balance = initial_balance\n    \n    def deposit(self, amount):\n        \"\"\"Add money to the account\"\"\"\n        if amount > 0:\n            self.balance += amount\n            return f\"...",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py",
+                      "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_includes_class_concepts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "ac4_includes_instantiation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "obj =",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "ac1_run_success": {
+                      "value": true,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "ac2_no_stderr": {
+                      "value": "",
+                      "expected": "",
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"pass\",\"failed_criteria\":[\"ac4_includes_instantiation\"],\"fix_instructions\":\"Optional: include an explicit instantiation line matching the exact text pattern `obj =` (e.g., `obj = Person(\\\"Alice\\\", 25)`) to satisfy the optional criterion. Core requirements are already met: runnable script, __init__, attributes, methods, object creation, example project, comments, and output demo.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "t2_slides",
+            "agent": "presentation",
+            "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_slide_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_code_snippets_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_mentions_classes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "class",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac4_pptx_artifact",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "ac1_slide_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "ac2_code_snippets_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "ac4_pptx_artifact": {
+                "value": null,
+                "expected": ".pptx",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t2_slides",
+                  "agent": "presentation",
+                  "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_mentions_classes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "class",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "ac1_slide_count",
+                    "ac2_code_snippets_count",
+                    "ac4_pptx_artifact"
+                  ],
+                  "deterministic_evidence": {
+                    "ac1_slide_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "ac2_code_snippets_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "ac4_pptx_artifact": {
+                      "value": null,
+                      "expected": ".pptx",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_slide_count\",\"ac2_code_snippets_count\",\"ac4_pptx_artifact\",\"ac3_mentions_classes\"],\"fix_instructions\":\"No slide deck output or .pptx artifact was provided (output is null), so required deterministic checks fail (slide count, code snippets count, pptx artifact). Provide an actual .pptx file containing a beginner-level slide deck on Python classes. Include at least 1 slide (preferably multiple), at least 1 code snippet including the worked code example from t1_code_examples, and speaker notes with brief narration cues. Ensure the content explicitly mentions 'class' and covers: what a class is, objects/instances, __init__, attributes, methods, creating instances, and common beginner pitfalls. Export and attach/return the .pptx.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t3_video",
+            "agent": "video",
+            "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_mp4_output",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_covers_requested_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "ac1_video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "ac2_mp4_output": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t3_video",
+                  "agent": "video",
+                  "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_covers_requested_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "ac1_video_success",
+                    "ac2_mp4_output"
+                  ],
+                  "deterministic_evidence": {
+                    "ac1_video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "ac2_mp4_output": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_video_success\",\"ac2_mp4_output\",\"ac3_covers_requested_topics\"],\"fix_instructions\":\"Deterministic failures: no video output was produced and no .mp4 file was provided (output is null), so the task is currently failing.\\n\\nTo fix:\\n1) Generate and export the lesson as an MP4 file and provide the file path/URL in result.output.\\n2) Ensure the video includes clear audio narration and explicitly covers: definition of class/object, __init__, attributes vs methods, and a walkthrough of the t1_code_examples while using the t2_slides deck as the visual structure.\\n3) Verify the narration or on-screen text includes the string \u201c__init__\u201d (and ideally demonstrates it in code) to satisfy the semantic check.\\n4) Re-run validation to confirm ac1_video_success=true and that result.output contains \u201c.mp4\u201d.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t4_quiz_optional",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac2_mentions_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t4_quiz_optional",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac1_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "ac2_mentions_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_question_count\"],\"fix_instructions\":\"Provide a short beginner quiz with 8\u201312 questions on Python classes (mix of multiple choice and short answer) and include a clear answer key. Update total_questions accordingly.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "t1_code_examples",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {
+                "ac1_run_success": {
+                  "value": true,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "ac2_no_stderr": {
+                  "value": "",
+                  "expected": "",
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "t2_slides",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_slide_count",
+              "ac2_code_snippets_count",
+              "ac3_mentions_classes",
+              "ac4_pptx_artifact"
+            ],
+            "evidence": {
+              "deterministic": {
+                "ac1_slide_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "ac2_code_snippets_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "ac4_pptx_artifact": {
+                  "value": null,
+                  "expected": ".pptx",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No slide deck output or .pptx artifact was provided (output is null), so required deterministic checks fail (slide count, code snippets count, pptx artifact). Provide an actual .pptx file containing a beginner-level slide deck on Python classes. Include at least 1 slide (preferably multiple), at least 1 code snippet including the worked code example from t1_code_examples, and speaker notes with brief narration cues. Ensure the content explicitly mentions 'class' and covers: what a class is, objects/instances, __init__, attributes, methods, creating instances, and common beginner pitfalls. Export and attach/return the .pptx."
+          },
+          {
+            "task_id": "t3_video",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_video_success",
+              "ac2_mp4_output",
+              "ac3_covers_requested_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "ac1_video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "ac2_mp4_output": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failures: no video output was produced and no .mp4 file was provided (output is null), so the task is currently failing.\n\nTo fix:\n1) Generate and export the lesson as an MP4 file and provide the file path/URL in result.output.\n2) Ensure the video includes clear audio narration and explicitly covers: definition of class/object, __init__, attributes vs methods, and a walkthrough of the t1_code_examples while using the t2_slides deck as the visual structure.\n3) Verify the narration or on-screen text includes the string \u201c__init__\u201d (and ideally demonstrates it in code) to satisfy the semantic check.\n4) Re-run validation to confirm ac1_video_success=true and that result.output contains \u201c.mp4\u201d."
+          },
+          {
+            "task_id": "t4_quiz_optional",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a short beginner quiz with 8\u201312 questions on Python classes (mix of multiple choice and short answer) and include a clear answer key. Update total_questions accordingly."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson on Python classes that includes slides, runnable code examples, and an accompanying video.",
+          "subtasks": [
+            {
+              "task_id": "t1_code_examples",
+              "agent": "coder",
+              "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+              "inputs": {
+                "output_filename": "t1_code_examples_20260109_0206.py",
+                "output_subdir": "run_3fa685ef92c845868fd887f1a0c6573a"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_run_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_includes_class_concepts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac4_includes_instantiation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "obj =",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t2_slides",
+              "agent": "presentation",
+              "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_slide_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_code_snippets_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_mentions_classes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "class",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac4_pptx_artifact",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "t3_video",
+              "agent": "video",
+              "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples",
+                "t2_slides"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_mp4_output",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_covers_requested_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t4_quiz_optional",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples",
+                "t2_slides"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac2_mentions_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "t1_code_examples": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "\"\"\"\nClass Lesson Demo - Beginner Friendly Examples\n\nThis script demonstrates fundamental concepts of Python classes:\n- Defining a class\n- __init__ method\n- Instance attributes\n- Methods\n- Creating objects\n- Simple project example (BankAccount)\n\"\"\"\n\n# 1. Defining a Basic Class\nclass Person:\n    \"\"\"A simple class to represent a person\"\"\"\n    \n    # Class attribute (shared by all instances)\n    species = \"Homo sapiens\"\n    \n    # Constructor method (__init__)\n    def __init__(self, name, age):\n        # Instance attributes (unique to each object)\n        self.name = name\n        self.age = age\n    \n    # Instance method\n    def introduce(self):\n        \"\"\"Returns a string introducing the person\"\"\"\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Another instance method\n    def have_birthday(self):\n        \"\"\"Increases the person's age by 1\"\"\"\n        self.age += 1\n        return f\"Happy birthday! {self.name} is now {self.age} years old.\"\n\n# 2. Creating Objects (Instances)\nprint(\"=== Creating Objects ===\")\n# Create two Person objects\nperson1 = Person(\"Alice\", 25)\nperson2 = Person(\"Bob\", 30)\n\n# Access instance attributes\nprint(f\"Person 1: {person1.name}, Age: {person1.age}\")\nprint(f\"Person 2: {person2.name}, Age: {person2.age}\")\n\n# Call instance methods\nprint(person1.introduce())\nprint(person2.have_birthday())\n\n# 3. Class Attribute Example\nprint(\"\\n=== Class Attributes ===\")\nprint(f\"All people are of species: {Person.species}\")\nprint(f\"Person 1 species: {person1.species}\")\nprint(f\"Person 2 species: {person2.species}\")\n\n# 4. Bank Account Project Example\nclass BankAccount:\n    \"\"\"A simple bank account class\"\"\"\n    \n    def __init__(self, owner, initial_balance=0):\n        \"\"\"Initialize a bank account with owner name and balance\"\"\"\n        self.owner = owner\n        self.balance = initial_balance\n    \n    def deposit(self, amount):\n        \"\"\"Add money to the account\"\"\"\n        if amount > 0:\n            self.balance += amount\n            return f\"Deposited ${amount}. New balance: ${self.balance}\"\n        else:\n            return \"Deposit amount must be positive\"\n    \n    def withdraw(self, amount):\n        \"\"\"Remove money from the account\"\"\"\n        if amount > 0 and amount <= self.balance:\n            self.balance -= amount\n            return f\"Withdrew ${amount}. New balance: ${self.balance}\"\n        elif amount > self.balance:\n            return \"Insufficient funds\"\n        else:\n            return \"Withdrawal amount must be positive\"\n    \n    def get_balance(self):\n        \"\"\"Return current balance\"\"\"\n        return f\"{self.owner}'s balance: ${self.balance}\"\n    \n    def __str__(self):\n        \"\"\"String representation of the account\"\"\"\n        return f\"Account owner: {self.owner}, Balance: ${self.balance}\"\n\n# 5. Using the BankAccount Class\nprint(\"\\n=== Bank Account Example ===\")\n# Create bank accounts\naccount1 = BankAccount(\"Alice\", 1000)\naccount2 = BankAccount(\"Bob\", 500)\n\n# Display initial balances\nprint(account1)\nprint(account2)\n\n# Perform transactions\nprint(\"\\n--- Transactions ---\")\nprint(account1.deposit(200))\nprint(account1.withdraw(150))\nprint(account2.withdraw(100))\nprint(account2.withdraw(1000))  # This should fail due to insufficient funds\n\n# Check final balances\nprint(\"\\n--- Final Balances ---\")\nprint(account1.get_balance())\nprint(account2.get_balance())\n\n# 6. Rectangle Class Example\nclass Rectangle:\n    \"\"\"A rectangle class with length and width\"\"\"\n    \n    def __init__(self, length, width):\n        \"\"\"Initialize rectangle with length and width\"\"\"\n        self.length = length\n        self.width = width\n    \n    def area(self):\n        \"\"\"Calculate and return the area\"\"\"\n        return self.length * self.width\n    \n    def perimeter(self):\n        \"\"\"Calculate and return the perimeter\"\"\"\n        return 2 * (self.length + self.width)\n    \n    def is_square(self):\n        \"\"\"Check if rectangle is a square\"\"\"\n        return self.length == self.width\n\n# 7. Using Rectangle Class\nprint(\"\\n=== Rectangle Example ===\")\nrect1 = Rectangle(5, 3)\nrect2 = Rectangle(4, 4)\n\nprint(f\"Rectangle 1 - Length: {rect1.length}, Width: {rect1.width}\")\nprint(f\"Area: {rect1.area()}\")\nprint(f\"Perimeter: {rect1.perimeter()}\")\nprint(f\"Is square? {rect1.is_square()}\")\n\nprint(f\"\\nRectangle 2 - Length: {rect2.length}, Width: {rect2.width}\")\nprint(f\"Area: {rect2.area()}\")\nprint(f\"Perimeter: {rect2.perimeter()}\")\nprint(f\"Is square? {rect2.is_square()}\")\n\nprint(\"\\n=== Summary ===\")\nprint(\"This demo showed:\")\nprint(\"1. How to define a class\")\nprint(\"2. How to use __init__ for initialization\")\nprint(\"3. Instance attributes and class attributes\")\nprint(\"4. Methods within classes\")\nprint(\"5. Creating and using objects\")\nprint(\"6. Practical examples with BankAccount and Rectangle classes\")\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py",
+                "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py"
+            ],
+            "error": null,
+            "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+            "attempts": 1,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "t2_slides": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "No slide deck output was provided and no .pptx artifact exists. Create and export a .pptx slide deck on Python classes with at least 1 slide and at least 1 code snippet, include content covering: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example, common beginner pitfalls, and speaker notes with brief narration cues. Ensure the delivered output includes a link or path to the .pptx file and that the text includes the word 'class'.",
+            "attempts": 3,
+            "metadata": {}
+          },
+          "t4_quiz_optional": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "Provide a beginner quiz on Python classes with 8\u201312 questions (mix of multiple choice and short answer). Include a clear answer key section that explicitly lists the answers for each question.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            }
+          },
+          "t3_video": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "No video artifact was produced: deterministic checks indicate video generation did not succeed and no .mp4 output path/filename is present (output is null). To fix: (1) generate and export the lesson as an MP4 file and return the file path/URL in result.output; (2) ensure the narration/visuals explicitly cover class/object definition, __init__, attributes vs methods, and include a walkthrough of the t1_code_examples while using the t2_slides deck; (3) verify the final MP4 includes audible, clear narration and that the script/voiceover includes the term \u201c__init__\u201d (and ideally shows it on-screen). Re-run the render and re-submit with the MP4 attached or linked.",
+            "attempts": 3,
+            "metadata": {}
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "t1_code_examples",
+            "agent": "coder",
+            "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_run_success",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_includes_class_concepts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac4_includes_instantiation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "obj =",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "ac1_run_success": {
+                "value": true,
+                "expected": true,
+                "operator": "equals"
+              },
+              "ac2_no_stderr": {
+                "value": "",
+                "expected": "",
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t1_code_examples",
+                  "agent": "coder",
+                  "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+                  "output": {
+                    "code": "\"\"\"\nClass Lesson Demo - Beginner Friendly Examples\n\nThis script demonstrates fundamental concepts of Python classes:\n- Defining a class\n- __init__ method\n- Instance attributes\n- Methods\n- Creating objects\n- Simple project example (BankAccount)\n\"\"\"\n\n# 1. Defining a Basic Class\nclass Person:\n    \"\"\"A simple class to represent a person\"\"\"\n    \n    # Class attribute (shared by all instances)\n    species = \"Homo sapiens\"\n    \n    # Constructor method (__init__)\n    def __init__(self, name, age):\n        # Instance attributes (unique to each object)\n        self.name = name\n        self.age = age\n    \n    # Instance method\n    def introduce(self):\n        \"\"\"Returns a string introducing the person\"\"\"\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Another instance method\n    def have_birthday(self):\n        \"\"\"Increases the person's age by 1\"\"\"\n        self.age += 1\n        return f\"Happy birthday! {self.name} is now {self.age} years old.\"\n\n# 2. Creating Objects (Instances)\nprint(\"=== Creating Objects ===\")\n# Create two Person objects\nperson1 = Person(\"Alice\", 25)\nperson2 = Person(\"Bob\", 30)\n\n# Access instance attributes\nprint(f\"Person 1: {person1.name}, Age: {person1.age}\")\nprint(f\"Person 2: {person2.name}, Age: {person2.age}\")\n\n# Call instance methods\nprint(person1.introduce())\nprint(person2.have_birthday())\n\n# 3. Class Attribute Example\nprint(\"\\n=== Class Attributes ===\")\nprint(f\"All people are of species: {Person.species}\")\nprint(f\"Person 1 species: {person1.species}\")\nprint(f\"Person 2 species: {person2.species}\")\n\n# 4. Bank Account Project Example\nclass BankAccount:\n    \"\"\"A simple bank account class\"\"\"\n    \n    def __init__(self, owner, initial_balance=0):\n        \"\"\"Initialize a bank account with owner name and balance\"\"\"\n        self.owner = owner\n        self.balance = initial_balance\n    \n    def deposit(self, amount):\n        \"\"\"Add money to the account\"\"\"\n        if amount > 0:\n            self.balance += amount\n            return f\"...",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py",
+                      "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_includes_class_concepts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "ac4_includes_instantiation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "obj =",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "ac1_run_success": {
+                      "value": true,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "ac2_no_stderr": {
+                      "value": "",
+                      "expected": "",
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"pass\",\"failed_criteria\":[],\"fix_instructions\":\"\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "t2_slides",
+            "agent": "presentation",
+            "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_slide_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_code_snippets_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_mentions_classes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "class",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac4_pptx_artifact",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "ac1_slide_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "ac2_code_snippets_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "ac4_pptx_artifact": {
+                "value": null,
+                "expected": ".pptx",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t2_slides",
+                  "agent": "presentation",
+                  "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_mentions_classes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "class",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "ac1_slide_count",
+                    "ac2_code_snippets_count",
+                    "ac4_pptx_artifact"
+                  ],
+                  "deterministic_evidence": {
+                    "ac1_slide_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "ac2_code_snippets_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "ac4_pptx_artifact": {
+                      "value": null,
+                      "expected": ".pptx",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_slide_count\",\"ac2_code_snippets_count\",\"ac4_pptx_artifact\",\"ac3_mentions_classes\"],\"fix_instructions\":\"No slide deck output was provided and no .pptx artifact exists. Create and export a .pptx slide deck on Python classes with at least 1 slide and at least 1 code snippet, include content covering: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example, common beginner pitfalls, and speaker notes with brief narration cues. Ensure the delivered output includes a link or path to the .pptx file and that the text includes the word 'class'.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t3_video",
+            "agent": "video",
+            "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_mp4_output",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_covers_requested_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "ac1_video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "ac2_mp4_output": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t3_video",
+                  "agent": "video",
+                  "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_covers_requested_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "ac1_video_success",
+                    "ac2_mp4_output"
+                  ],
+                  "deterministic_evidence": {
+                    "ac1_video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "ac2_mp4_output": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_video_success\",\"ac2_mp4_output\",\"ac3_covers_requested_topics\"],\"fix_instructions\":\"No video artifact was produced: deterministic checks indicate video generation did not succeed and no .mp4 output path/filename is present (output is null). To fix: (1) generate and export the lesson as an MP4 file and return the file path/URL in result.output; (2) ensure the narration/visuals explicitly cover class/object definition, __init__, attributes vs methods, and include a walkthrough of the t1_code_examples while using the t2_slides deck; (3) verify the final MP4 includes audible, clear narration and that the script/voiceover includes the term \u201c__init__\u201d (and ideally shows it on-screen). Re-run the render and re-submit with the MP4 attached or linked.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t4_quiz_optional",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac2_mentions_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t4_quiz_optional",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac1_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "ac2_mentions_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_question_count\",\"ac2_mentions_answer_key\"],\"fix_instructions\":\"Provide a beginner quiz on Python classes with 8\u201312 questions (mix of multiple choice and short answer). Include a clear answer key section that explicitly lists the answers for each question.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "t1_code_examples",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {
+                "ac1_run_success": {
+                  "value": true,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "ac2_no_stderr": {
+                  "value": "",
+                  "expected": "",
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "t2_slides",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_slide_count",
+              "ac2_code_snippets_count",
+              "ac3_mentions_classes",
+              "ac4_pptx_artifact"
+            ],
+            "evidence": {
+              "deterministic": {
+                "ac1_slide_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "ac2_code_snippets_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "ac4_pptx_artifact": {
+                  "value": null,
+                  "expected": ".pptx",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No slide deck output was provided and no .pptx artifact exists. Create and export a .pptx slide deck on Python classes with at least 1 slide and at least 1 code snippet, include content covering: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example, common beginner pitfalls, and speaker notes with brief narration cues. Ensure the delivered output includes a link or path to the .pptx file and that the text includes the word 'class'."
+          },
+          {
+            "task_id": "t3_video",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_video_success",
+              "ac2_mp4_output",
+              "ac3_covers_requested_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "ac1_video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "ac2_mp4_output": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No video artifact was produced: deterministic checks indicate video generation did not succeed and no .mp4 output path/filename is present (output is null). To fix: (1) generate and export the lesson as an MP4 file and return the file path/URL in result.output; (2) ensure the narration/visuals explicitly cover class/object definition, __init__, attributes vs methods, and include a walkthrough of the t1_code_examples while using the t2_slides deck; (3) verify the final MP4 includes audible, clear narration and that the script/voiceover includes the term \u201c__init__\u201d (and ideally shows it on-screen). Re-run the render and re-submit with the MP4 attached or linked."
+          },
+          {
+            "task_id": "t4_quiz_optional",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide a beginner quiz on Python classes with 8\u201312 questions (mix of multiple choice and short answer). Include a clear answer key section that explicitly lists the answers for each question."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-level lesson on Python classes that includes slides, runnable code examples, and an accompanying video.",
+          "subtasks": [
+            {
+              "task_id": "t1_code_examples",
+              "agent": "coder",
+              "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+              "inputs": {
+                "output_filename": "t1_code_examples_20260109_0206.py",
+                "output_subdir": "run_3fa685ef92c845868fd887f1a0c6573a"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_run_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_includes_class_concepts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac4_includes_instantiation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "obj =",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t2_slides",
+              "agent": "presentation",
+              "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_slide_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_code_snippets_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_mentions_classes",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "class",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac4_pptx_artifact",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "t3_video",
+              "agent": "video",
+              "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples",
+                "t2_slides"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac2_mp4_output",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "ac3_covers_requested_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "__init__",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "t4_quiz_optional",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+              "inputs": {},
+              "dependencies": [
+                "t1_code_examples",
+                "t2_slides"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "ac1_question_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "ac2_mentions_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "t1_code_examples": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "\"\"\"\nClass Lesson Demo - Beginner Friendly Examples\n\nThis script demonstrates fundamental concepts of Python classes:\n- Defining a class\n- __init__ method\n- Instance attributes\n- Methods\n- Creating objects\n- Simple project example (BankAccount)\n\"\"\"\n\n# 1. Defining a Basic Class\nclass Person:\n    \"\"\"A simple class to represent a person\"\"\"\n    \n    # Class attribute (shared by all instances)\n    species = \"Homo sapiens\"\n    \n    # Constructor method (__init__)\n    def __init__(self, name, age):\n        # Instance attributes (unique to each object)\n        self.name = name\n        self.age = age\n    \n    # Instance method\n    def introduce(self):\n        \"\"\"Returns a string introducing the person\"\"\"\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Another instance method\n    def have_birthday(self):\n        \"\"\"Increases the person's age by 1\"\"\"\n        self.age += 1\n        return f\"Happy birthday! {self.name} is now {self.age} years old.\"\n\n# 2. Creating Objects (Instances)\nprint(\"=== Creating Objects ===\")\n# Create two Person objects\nperson1 = Person(\"Alice\", 25)\nperson2 = Person(\"Bob\", 30)\n\n# Access instance attributes\nprint(f\"Person 1: {person1.name}, Age: {person1.age}\")\nprint(f\"Person 2: {person2.name}, Age: {person2.age}\")\n\n# Call instance methods\nprint(person1.introduce())\nprint(person2.have_birthday())\n\n# 3. Class Attribute Example\nprint(\"\\n=== Class Attributes ===\")\nprint(f\"All people are of species: {Person.species}\")\nprint(f\"Person 1 species: {person1.species}\")\nprint(f\"Person 2 species: {person2.species}\")\n\n# 4. Bank Account Project Example\nclass BankAccount:\n    \"\"\"A simple bank account class\"\"\"\n    \n    def __init__(self, owner, initial_balance=0):\n        \"\"\"Initialize a bank account with owner name and balance\"\"\"\n        self.owner = owner\n        self.balance = initial_balance\n    \n    def deposit(self, amount):\n        \"\"\"Add money to the account\"\"\"\n        if amount > 0:\n            self.balance += amount\n            return f\"Deposited ${amount}. New balance: ${self.balance}\"\n        else:\n            return \"Deposit amount must be positive\"\n    \n    def withdraw(self, amount):\n        \"\"\"Remove money from the account\"\"\"\n        if amount > 0 and amount <= self.balance:\n            self.balance -= amount\n            return f\"Withdrew ${amount}. New balance: ${self.balance}\"\n        elif amount > self.balance:\n            return \"Insufficient funds\"\n        else:\n            return \"Withdrawal amount must be positive\"\n    \n    def get_balance(self):\n        \"\"\"Return current balance\"\"\"\n        return f\"{self.owner}'s balance: ${self.balance}\"\n    \n    def __str__(self):\n        \"\"\"String representation of the account\"\"\"\n        return f\"Account owner: {self.owner}, Balance: ${self.balance}\"\n\n# 5. Using the BankAccount Class\nprint(\"\\n=== Bank Account Example ===\")\n# Create bank accounts\naccount1 = BankAccount(\"Alice\", 1000)\naccount2 = BankAccount(\"Bob\", 500)\n\n# Display initial balances\nprint(account1)\nprint(account2)\n\n# Perform transactions\nprint(\"\\n--- Transactions ---\")\nprint(account1.deposit(200))\nprint(account1.withdraw(150))\nprint(account2.withdraw(100))\nprint(account2.withdraw(1000))  # This should fail due to insufficient funds\n\n# Check final balances\nprint(\"\\n--- Final Balances ---\")\nprint(account1.get_balance())\nprint(account2.get_balance())\n\n# 6. Rectangle Class Example\nclass Rectangle:\n    \"\"\"A rectangle class with length and width\"\"\"\n    \n    def __init__(self, length, width):\n        \"\"\"Initialize rectangle with length and width\"\"\"\n        self.length = length\n        self.width = width\n    \n    def area(self):\n        \"\"\"Calculate and return the area\"\"\"\n        return self.length * self.width\n    \n    def perimeter(self):\n        \"\"\"Calculate and return the perimeter\"\"\"\n        return 2 * (self.length + self.width)\n    \n    def is_square(self):\n        \"\"\"Check if rectangle is a square\"\"\"\n        return self.length == self.width\n\n# 7. Using Rectangle Class\nprint(\"\\n=== Rectangle Example ===\")\nrect1 = Rectangle(5, 3)\nrect2 = Rectangle(4, 4)\n\nprint(f\"Rectangle 1 - Length: {rect1.length}, Width: {rect1.width}\")\nprint(f\"Area: {rect1.area()}\")\nprint(f\"Perimeter: {rect1.perimeter()}\")\nprint(f\"Is square? {rect1.is_square()}\")\n\nprint(f\"\\nRectangle 2 - Length: {rect2.length}, Width: {rect2.width}\")\nprint(f\"Area: {rect2.area()}\")\nprint(f\"Perimeter: {rect2.perimeter()}\")\nprint(f\"Is square? {rect2.is_square()}\")\n\nprint(\"\\n=== Summary ===\")\nprint(\"This demo showed:\")\nprint(\"1. How to define a class\")\nprint(\"2. How to use __init__ for initialization\")\nprint(\"3. Instance attributes and class attributes\")\nprint(\"4. Methods within classes\")\nprint(\"5. Creating and using objects\")\nprint(\"6. Practical examples with BankAccount and Rectangle classes\")\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py",
+                "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py"
+            ],
+            "error": null,
+            "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+            "attempts": 1,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            }
+          },
+          "t2_slides": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "No slide deck output was provided and no .pptx artifact exists. Create and export a .pptx slide deck on Python classes with at least 1 slide and at least 1 code snippet, include content covering: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example, common beginner pitfalls, and speaker notes with brief narration cues. Ensure the delivered output includes a link or path to the .pptx file and that the text includes the word 'class'.",
+            "attempts": 3,
+            "metadata": {}
+          },
+          "t4_quiz_optional": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "Provide a beginner quiz on Python classes with 8\u201312 questions (mix of multiple choice and short answer). Include a clear answer key section that explicitly lists the answers for each question.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            }
+          },
+          "t3_video": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "error": "Max retries exceeded.",
+            "instruction": "No video artifact was produced: deterministic checks indicate video generation did not succeed and no .mp4 output path/filename is present (output is null). To fix: (1) generate and export the lesson as an MP4 file and return the file path/URL in result.output; (2) ensure the narration/visuals explicitly cover class/object definition, __init__, attributes vs methods, and include a walkthrough of the t1_code_examples while using the t2_slides deck; (3) verify the final MP4 includes audible, clear narration and that the script/voiceover includes the term \u201c__init__\u201d (and ideally shows it on-screen). Re-run the render and re-submit with the MP4 attached or linked.",
+            "attempts": 3,
+            "metadata": {}
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "t1_code_examples",
+            "agent": "coder",
+            "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_run_success",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_includes_class_concepts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac4_includes_instantiation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "obj =",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "ac1_run_success": {
+                "value": true,
+                "expected": true,
+                "operator": "equals"
+              },
+              "ac2_no_stderr": {
+                "value": "",
+                "expected": "",
+                "operator": "equals"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t1_code_examples",
+                  "agent": "coder",
+                  "instruction": "Create beginner-friendly runnable Python code examples demonstrating classes: defining a class, __init__, instance attributes, methods, creating objects, and a simple example project (e.g., BankAccount or Rectangle). Include inline comments and a short text output demonstration. Provide as a single script (e.g., class_lesson_demo.py) and also include a brief README-style explanation in the output.",
+                  "output": {
+                    "code": "\"\"\"\nClass Lesson Demo - Beginner Friendly Examples\n\nThis script demonstrates fundamental concepts of Python classes:\n- Defining a class\n- __init__ method\n- Instance attributes\n- Methods\n- Creating objects\n- Simple project example (BankAccount)\n\"\"\"\n\n# 1. Defining a Basic Class\nclass Person:\n    \"\"\"A simple class to represent a person\"\"\"\n    \n    # Class attribute (shared by all instances)\n    species = \"Homo sapiens\"\n    \n    # Constructor method (__init__)\n    def __init__(self, name, age):\n        # Instance attributes (unique to each object)\n        self.name = name\n        self.age = age\n    \n    # Instance method\n    def introduce(self):\n        \"\"\"Returns a string introducing the person\"\"\"\n        return f\"Hi, I'm {self.name}, {self.age} years old.\"\n    \n    # Another instance method\n    def have_birthday(self):\n        \"\"\"Increases the person's age by 1\"\"\"\n        self.age += 1\n        return f\"Happy birthday! {self.name} is now {self.age} years old.\"\n\n# 2. Creating Objects (Instances)\nprint(\"=== Creating Objects ===\")\n# Create two Person objects\nperson1 = Person(\"Alice\", 25)\nperson2 = Person(\"Bob\", 30)\n\n# Access instance attributes\nprint(f\"Person 1: {person1.name}, Age: {person1.age}\")\nprint(f\"Person 2: {person2.name}, Age: {person2.age}\")\n\n# Call instance methods\nprint(person1.introduce())\nprint(person2.have_birthday())\n\n# 3. Class Attribute Example\nprint(\"\\n=== Class Attributes ===\")\nprint(f\"All people are of species: {Person.species}\")\nprint(f\"Person 1 species: {person1.species}\")\nprint(f\"Person 2 species: {person2.species}\")\n\n# 4. Bank Account Project Example\nclass BankAccount:\n    \"\"\"A simple bank account class\"\"\"\n    \n    def __init__(self, owner, initial_balance=0):\n        \"\"\"Initialize a bank account with owner name and balance\"\"\"\n        self.owner = owner\n        self.balance = initial_balance\n    \n    def deposit(self, amount):\n        \"\"\"Add money to the account\"\"\"\n        if amount > 0:\n            self.balance += amount\n            return f\"...",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_3fa685ef92c845868fd887f1a0c6573a\\t1_code_examples_20260109_0206.py",
+                      "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "=== Creating Objects ===\nPerson 1: Alice, Age: 25\nPerson 2: Bob, Age: 30\nHi, I'm Alice, 25 years old.\nHappy birthday! Bob is now 31 years old.\n\n=== Class Attributes ===\nAll people are of species: Homo sapiens\nPerson 1 species: Homo sapiens\nPerson 2 species: Homo sapiens\n\n=== Bank Account Example ===\nAccount owner: Alice, Balance: $1000\nAccount owner: Bob, Balance: $500\n\n--- Transactions ---\nDeposited $200. New balance: $1200\nWithdrew $150. New balance: $1050\nWithdrew $100. New balance: $400\nInsufficient funds\n\n--- Final Balances ---\nAlice's balance: $1050\nBob's balance: $400\n\n=== Rectangle Example ===\nRectangle 1 - Length: 5, Width: 3\nArea: 15\nPerimeter: 16\nIs square? False\n\nRectangle 2 - Length: 4, Width: 4\nArea: 16\nPerimeter: 16\nIs square? True\n\n=== Summary ===\nThis demo showed:\n1. How to define a class\n2. How to use __init__ for initialization\n3. Instance attributes and class attributes\n4. Methods within classes\n5. Creating and using objects\n6. Practical examples with BankAccount and Rectangle classes\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_includes_class_concepts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "ac4_includes_instantiation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "obj =",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "ac1_run_success": {
+                      "value": true,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "ac2_no_stderr": {
+                      "value": "",
+                      "expected": "",
+                      "operator": "equals"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"pass\",\"failed_criteria\":[\"ac4_includes_instantiation\"],\"fix_instructions\":\"Optional: use an explicit variable name pattern like `obj = ClassName(...)` somewhere (e.g., `obj = Person(\\\"Alice\\\", 25)`) to satisfy the optional instantiation string check. Core requirements are met: runnable single script, demonstrates class definition, __init__, attributes, methods, object creation, includes beginner-friendly comments, includes simple project (BankAccount) plus Rectangle, and shows sample output and README-style header.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "t2_slides",
+            "agent": "presentation",
+            "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_slide_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_code_snippets_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_mentions_classes",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "class",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac4_pptx_artifact",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "ac1_slide_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "ac2_code_snippets_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "ac4_pptx_artifact": {
+                "value": null,
+                "expected": ".pptx",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t2_slides",
+                  "agent": "presentation",
+                  "instruction": "Generate a beginner-level slide deck on Python classes. Must include: what a class is, objects/instances, __init__, attributes, methods, creating instances, a worked code example (from t1_code_examples), and common beginner pitfalls. Include speaker notes with brief narration cues. Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_mentions_classes",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "class",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "ac1_slide_count",
+                    "ac2_code_snippets_count",
+                    "ac4_pptx_artifact"
+                  ],
+                  "deterministic_evidence": {
+                    "ac1_slide_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "ac2_code_snippets_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "ac4_pptx_artifact": {
+                      "value": null,
+                      "expected": ".pptx",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_slide_count\",\"ac2_code_snippets_count\",\"ac4_pptx_artifact\",\"ac3_mentions_classes\"],\"fix_instructions\":\"No slide deck output was provided and no .pptx artifact exists. Create and export a beginner-level Python classes slide deck as a .pptx with at least 1 slide, include at least one code snippet including a worked example, ensure the content explicitly mentions 'class', and add speaker notes with brief narration cues. Provide the .pptx file path or attach the artifact.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t3_video",
+            "agent": "video",
+            "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac2_mp4_output",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "ac3_covers_requested_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "__init__",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "ac1_video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "ac2_mp4_output": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t3_video",
+                  "agent": "video",
+                  "instruction": "Create a short beginner-friendly video lesson explaining Python classes using the slide deck from t2_slides and referencing/running through the code from t1_code_examples. Include: definition of class/object, __init__, attributes vs methods, and a walkthrough of the example. Export as MP4 with clear audio narration.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac3_covers_requested_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "__init__",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "ac1_video_success",
+                    "ac2_mp4_output"
+                  ],
+                  "deterministic_evidence": {
+                    "ac1_video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "ac2_mp4_output": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_video_success\",\"ac2_mp4_output\",\"ac3_covers_requested_topics\"],\"fix_instructions\":\"The task output is missing: no MP4 file was produced (output is null) and the video generation is marked unsuccessful. To fix:\\n1) Generate and export the lesson as an .mp4 file and provide the file path/URL in result.output.\\n2) Ensure the narration clearly covers: definition of class vs object, __init__, attributes vs methods, and a walkthrough of the t1_code_examples while following the t2_slides deck.\\n3) Re-run the render/export pipeline and confirm success flags are true and the output filename ends with .mp4.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "t4_quiz_optional",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+            "criteria": [
+              {
+                "criterion_id": "ac1_question_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "ac2_mentions_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "t4_quiz_optional",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner quiz (8\u201312 questions) on Python classes aligned to the lesson. Include a mix of multiple choice and short answer, and provide an answer key.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "ac1_question_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "exists",
+                      "expected": true,
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "ac2_mentions_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"ac1_question_count\"],\"fix_instructions\":\"Output must be a short beginner quiz with 8\u201312 questions on Python classes and include an answer key. Current output has only 2 questions. Expand to 8\u201312 questions with a mix of multiple choice and short answer, and provide a clear answer key (e.g., numbered answers).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "t1_code_examples",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {
+                "ac1_run_success": {
+                  "value": true,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "ac2_no_stderr": {
+                  "value": "",
+                  "expected": "",
+                  "operator": "equals"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "t2_slides",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_slide_count",
+              "ac2_code_snippets_count",
+              "ac3_mentions_classes",
+              "ac4_pptx_artifact"
+            ],
+            "evidence": {
+              "deterministic": {
+                "ac1_slide_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "ac2_code_snippets_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "ac4_pptx_artifact": {
+                  "value": null,
+                  "expected": ".pptx",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No slide deck output was provided and no .pptx artifact exists. Create and export a beginner-level Python classes slide deck as a .pptx with at least 1 slide, include at least one code snippet including a worked example, ensure the content explicitly mentions 'class', and add speaker notes with brief narration cues. Provide the .pptx file path or attach the artifact."
+          },
+          {
+            "task_id": "t3_video",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_video_success",
+              "ac2_mp4_output",
+              "ac3_covers_requested_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "ac1_video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "ac2_mp4_output": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The task output is missing: no MP4 file was produced (output is null) and the video generation is marked unsuccessful. To fix:\n1) Generate and export the lesson as an .mp4 file and provide the file path/URL in result.output.\n2) Ensure the narration clearly covers: definition of class vs object, __init__, attributes vs methods, and a walkthrough of the t1_code_examples while following the t2_slides deck.\n3) Re-run the render/export pipeline and confirm success flags are true and the output filename ends with .mp4."
+          },
+          {
+            "task_id": "t4_quiz_optional",
+            "verdict": "fail",
+            "failed_criteria": [
+              "ac1_question_count"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Output must be a short beginner quiz with 8\u201312 questions on Python classes and include an answer key. Current output has only 2 questions. Expand to 8\u201312 questions with a mix of multiple choice and short answer, and provide a clear answer key (e.g., numbered answers)."
+          }
+        ]
+      }
+    }
+  ]
+}

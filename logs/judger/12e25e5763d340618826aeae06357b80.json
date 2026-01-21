@@ -1,0 +1,3525 @@
+{
+  "run_id": "12e25e5763d340618826aeae06357b80",
+  "started_at": "2026-01-07T14:46:02.465500+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-friendly lesson on Machine Learning with clear structure, examples, practice, and an assessment.",
+          "subtasks": [
+            {
+              "task_id": "lesson_outline",
+              "agent": "presentation",
+              "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_vocab",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Vocabulary",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "minutes",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "hands_on_demo_code",
+              "agent": "coder",
+              "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+              "inputs": {
+                "output_filename": "hands_on_demo_code_20260107_1446.py",
+                "output_subdir": "run_12e25e5763d340618826aeae06357b80"
+              },
+              "dependencies": [
+                "lesson_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_present",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.code",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "uses_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "mentions_confusion_matrix",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "confusion_matrix",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "lesson_script",
+              "agent": "presentation",
+              "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "hands_on_demo_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "script_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_supervised_unsupervised",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_overfitting",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "overfitting",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_activities",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Activity",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_script"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_10_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "10",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_mcq",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "A)",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "final_packaging",
+              "agent": "presentation",
+              "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "hands_on_demo_code",
+                "lesson_script",
+                "quiz"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "markdown_structure",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_code_block",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "```python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_quiz_section",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Quiz",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_resources",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Further resources",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "lesson_outline": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No lesson outline output was provided (output is null), so required sections cannot be verified. Provide a non-empty lesson outline that explicitly includes headings/sections labeled \"Learning objectives\" and \"Vocabulary\", plus a 45\u201360 minute lesson flow with suggested timing per section (include the word \"minutes\" in timing lines to satisfy the optional criterion).",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "hands_on_demo_code": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "No code was provided in result.output (code_present is null). Provide a single runnable Python script that includes: loading Iris, using train_test_split, training a classifier, computing accuracy, and (optionally) confusion_matrix. Ensure the output text contains the literal strings 'train_test_split', 'accuracy', and ideally 'confusion_matrix'.",
+            "attempts": 3
+          },
+          "lesson_script": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No lesson script output was provided and the required script file/output does not exist. Provide the full lesson text/script in result.output (or create the expected script file), ensuring it explicitly includes: the terms \"supervised\" and \"unsupervised\", an explanation of \"overfitting\", and at least two in-lesson sections labeled \"Activity\" with expected answers. Also integrate the demo from the prior code step by describing what it does and how learners run/interpret it.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Revise the output to include exactly 10 beginner ML quiz questions with a clear mix of formats: multiple-choice (include options labeled A) B) C) etc.), true/false, and exactly 2 short-answer questions. Add a clearly labeled \"Answer key\" section listing answers for all 10 questions, and provide a brief explanation for each answer. Ensure the final output explicitly indicates there are 10 total questions (e.g., total_questions: 10).",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "final_packaging": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No packaged Markdown lesson was provided because result.output is null. Provide the full beginner lesson deliverable in Markdown and ensure it contains: (1) a '## Learning objectives' section, (2) at least one Python code block fenced with ```python, and (3) a '## Quiz' section with an answer key. Include '## Further resources' if possible.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_vocab",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Vocabulary",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_timing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "minutes",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "outline_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_outline",
+                  "agent": "presentation",
+                  "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_includes_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_vocab",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Vocabulary",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "minutes",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "outline_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "outline_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_exists\",\"outline_includes_objectives\",\"outline_includes_vocab\"],\"fix_instructions\":\"The provided result.output is null, so the outline does not exist and cannot contain required sections. Generate a Machine Learning beginner lesson outline that explicitly includes headings or text containing 'Learning objectives' and 'Vocabulary', plus a 45\u201360 minute flow with suggested timing (include the word 'minutes').\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "hands_on_demo_code",
+            "agent": "coder",
+            "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+            "criteria": [
+              {
+                "criterion_id": "code_present",
+                "criterion_type": "output_shape",
+                "target": "result.output.code",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "uses_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_confusion_matrix",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "confusion_matrix",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "code_present": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "hands_on_demo_code",
+                  "agent": "coder",
+                  "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "uses_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "mentions_confusion_matrix",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "confusion_matrix",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_present"
+                  ],
+                  "deterministic_evidence": {
+                    "code_present": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_present\",\"uses_train_test_split\",\"includes_evaluation\"],\"fix_instructions\":\"No script output was provided (code_present is null). Provide a single runnable Python script that includes: importing Iris dataset, using train_test_split, training a classifier (e.g., LogisticRegression/RandomForest), printing accuracy, and optionally printing a confusion_matrix. Ensure the output contains the strings 'train_test_split' and 'accuracy' (and ideally 'confusion_matrix').\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "lesson_script",
+            "agent": "presentation",
+            "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+            "criteria": [
+              {
+                "criterion_id": "script_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_supervised_unsupervised",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_overfitting",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "overfitting",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_activities",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Activity",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "script_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_script",
+                  "agent": "presentation",
+                  "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "covers_supervised_unsupervised",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_overfitting",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "overfitting",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_activities",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Activity",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "script_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "script_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"script_exists\",\"covers_supervised_unsupervised\",\"covers_overfitting\",\"includes_activities\"],\"fix_instructions\":\"Deterministic failure: no lesson script output was provided (result.output is null), so the required script file/content does not exist. Provide the full lesson text/script in plain language. Ensure it explicitly mentions: (1) supervised and unsupervised learning, (2) overfitting, and (3) includes at least two labeled in-lesson activities/exercises containing the word 'Activity' plus expected answers. Also cover features/labels, training vs inference, evaluation, real-world examples, and integrate the referenced code-step demo.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_10_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "10",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_mcq",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "A)",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_10_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "10",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_mcq",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "A)",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_10_questions\",\"includes_answer_key\",\"includes_mcq\"],\"fix_instructions\":\"Your output only contains 2 questions and does not include a clearly labeled \\\"Answer key\\\" section with brief explanations. Revise to include exactly 10 beginner ML questions with a mix of multiple choice (use options like A), B), C), D)), true/false, and exactly 2 short-answer questions. Then add an \\\"Answer key\\\" that lists the correct answer for each question along with a brief explanation.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "final_packaging",
+            "agent": "presentation",
+            "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+            "criteria": [
+              {
+                "criterion_id": "markdown_structure",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_code_block",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_quiz_section",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_resources",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Further resources",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "final_packaging",
+                  "agent": "presentation",
+                  "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "markdown_structure",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_code_block",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "```python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_quiz_section",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Quiz",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_resources",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Further resources",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"markdown_structure\",\"includes_code_block\",\"includes_quiz_section\",\"includes_resources\"],\"fix_instructions\":\"No deliverable content was provided because result.output is null. Provide the full Markdown lesson package including sections: title, objectives (must include heading '## Learning objectives'), agenda, vocabulary, main content, step-by-step demo with at least one Python code block fenced as ```python, activities, recap, further resources (optional but recommended), and a quiz section with heading '## Quiz' plus an answer key.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_exists",
+              "outline_includes_objectives",
+              "outline_includes_vocab"
+            ],
+            "evidence": {
+              "deterministic": {
+                "outline_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The provided result.output is null, so the outline does not exist and cannot contain required sections. Generate a Machine Learning beginner lesson outline that explicitly includes headings or text containing 'Learning objectives' and 'Vocabulary', plus a 45\u201360 minute flow with suggested timing (include the word 'minutes')."
+          },
+          {
+            "task_id": "hands_on_demo_code",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_present",
+              "includes_evaluation",
+              "uses_train_test_split"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_present": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No script output was provided (code_present is null). Provide a single runnable Python script that includes: importing Iris dataset, using train_test_split, training a classifier (e.g., LogisticRegression/RandomForest), printing accuracy, and optionally printing a confusion_matrix. Ensure the output contains the strings 'train_test_split' and 'accuracy' (and ideally 'confusion_matrix')."
+          },
+          {
+            "task_id": "lesson_script",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_overfitting",
+              "covers_supervised_unsupervised",
+              "includes_activities",
+              "script_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "script_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no lesson script output was provided (result.output is null), so the required script file/content does not exist. Provide the full lesson text/script in plain language. Ensure it explicitly mentions: (1) supervised and unsupervised learning, (2) overfitting, and (3) includes at least two labeled in-lesson activities/exercises containing the word 'Activity' plus expected answers. Also cover features/labels, training vs inference, evaluation, real-world examples, and integrate the referenced code-step demo."
+          },
+          {
+            "task_id": "quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_answer_key"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Your output only contains 2 questions and does not include a clearly labeled \"Answer key\" section with brief explanations. Revise to include exactly 10 beginner ML questions with a mix of multiple choice (use options like A), B), C), D)), true/false, and exactly 2 short-answer questions. Then add an \"Answer key\" that lists the correct answer for each question along with a brief explanation."
+          },
+          {
+            "task_id": "final_packaging",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_code_block",
+              "includes_quiz_section",
+              "markdown_structure"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "No deliverable content was provided because result.output is null. Provide the full Markdown lesson package including sections: title, objectives (must include heading '## Learning objectives'), agenda, vocabulary, main content, step-by-step demo with at least one Python code block fenced as ```python, activities, recap, further resources (optional but recommended), and a quiz section with heading '## Quiz' plus an answer key."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-friendly lesson on Machine Learning with clear structure, examples, practice, and an assessment.",
+          "subtasks": [
+            {
+              "task_id": "lesson_outline",
+              "agent": "presentation",
+              "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_vocab",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Vocabulary",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "minutes",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "hands_on_demo_code",
+              "agent": "coder",
+              "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+              "inputs": {
+                "output_filename": "hands_on_demo_code_20260107_1446.py",
+                "output_subdir": "run_12e25e5763d340618826aeae06357b80"
+              },
+              "dependencies": [
+                "lesson_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_present",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.code",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "uses_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "mentions_confusion_matrix",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "confusion_matrix",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "lesson_script",
+              "agent": "presentation",
+              "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "hands_on_demo_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "script_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_supervised_unsupervised",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_overfitting",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "overfitting",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_activities",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Activity",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_script"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_10_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "10",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_mcq",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "A)",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "final_packaging",
+              "agent": "presentation",
+              "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "hands_on_demo_code",
+                "lesson_script",
+                "quiz"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "markdown_structure",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_code_block",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "```python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_quiz_section",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Quiz",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_resources",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Further resources",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "lesson_outline": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No lesson outline output was provided (output is null), so required sections cannot be verified. Provide a non-empty lesson outline that explicitly includes headings/sections labeled \"Learning objectives\" and \"Vocabulary\", plus a 45\u201360 minute lesson flow with suggested timing per section (include the word \"minutes\" in timing lines to satisfy the optional criterion).",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "hands_on_demo_code": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "No code was provided in result.output (code_present is null). Provide a single runnable Python script that includes: loading Iris, using train_test_split, training a classifier, computing accuracy, and (optionally) confusion_matrix. Ensure the output text contains the literal strings 'train_test_split', 'accuracy', and ideally 'confusion_matrix'.",
+            "attempts": 3
+          },
+          "lesson_script": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No lesson script output was provided and the required script file/output does not exist. Provide the full lesson text/script in result.output (or create the expected script file), ensuring it explicitly includes: the terms \"supervised\" and \"unsupervised\", an explanation of \"overfitting\", and at least two in-lesson sections labeled \"Activity\" with expected answers. Also integrate the demo from the prior code step by describing what it does and how learners run/interpret it.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Revise the output to include exactly 10 beginner ML quiz questions with a clear mix of formats: multiple-choice (include options labeled A) B) C) etc.), true/false, and exactly 2 short-answer questions. Add a clearly labeled \"Answer key\" section listing answers for all 10 questions, and provide a brief explanation for each answer. Ensure the final output explicitly indicates there are 10 total questions (e.g., total_questions: 10).",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "final_packaging": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No packaged Markdown lesson was provided because result.output is null. Provide the full beginner lesson deliverable in Markdown and ensure it contains: (1) a '## Learning objectives' section, (2) at least one Python code block fenced with ```python, and (3) a '## Quiz' section with an answer key. Include '## Further resources' if possible.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_vocab",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Vocabulary",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_timing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "minutes",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "outline_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_outline",
+                  "agent": "presentation",
+                  "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_includes_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_vocab",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Vocabulary",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "minutes",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "outline_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "outline_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_exists\",\"outline_includes_objectives\",\"outline_includes_vocab\"],\"fix_instructions\":\"No lesson outline output was provided (output is null), so required sections cannot be verified. Provide a non-empty lesson outline that explicitly includes headings/sections labeled \\\"Learning objectives\\\" and \\\"Vocabulary\\\", plus a 45\u201360 minute lesson flow with suggested timing per section (include the word \\\"minutes\\\" in timing lines to satisfy the optional criterion).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "hands_on_demo_code",
+            "agent": "coder",
+            "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+            "criteria": [
+              {
+                "criterion_id": "code_present",
+                "criterion_type": "output_shape",
+                "target": "result.output.code",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "uses_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_confusion_matrix",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "confusion_matrix",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "code_present": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "hands_on_demo_code",
+                  "agent": "coder",
+                  "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "uses_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "mentions_confusion_matrix",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "confusion_matrix",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_present"
+                  ],
+                  "deterministic_evidence": {
+                    "code_present": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_present\",\"uses_train_test_split\",\"includes_evaluation\"],\"fix_instructions\":\"No code was provided in result.output (code_present is null). Provide a single runnable Python script that includes: loading Iris, using train_test_split, training a classifier, computing accuracy, and (optionally) confusion_matrix. Ensure the output text contains the literal strings 'train_test_split', 'accuracy', and ideally 'confusion_matrix'.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "lesson_script",
+            "agent": "presentation",
+            "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+            "criteria": [
+              {
+                "criterion_id": "script_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_supervised_unsupervised",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_overfitting",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "overfitting",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_activities",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Activity",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "script_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_script",
+                  "agent": "presentation",
+                  "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "covers_supervised_unsupervised",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_overfitting",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "overfitting",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_activities",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Activity",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "script_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "script_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"script_exists\",\"covers_supervised_unsupervised\",\"covers_overfitting\",\"includes_activities\"],\"fix_instructions\":\"No lesson script output was provided and the required script file/output does not exist. Provide the full lesson text/script in result.output (or create the expected script file), ensuring it explicitly includes: the terms \\\"supervised\\\" and \\\"unsupervised\\\", an explanation of \\\"overfitting\\\", and at least two in-lesson sections labeled \\\"Activity\\\" with expected answers. Also integrate the demo from the prior code step by describing what it does and how learners run/interpret it.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_10_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "10",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_mcq",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "A)",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_10_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "10",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_mcq",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "A)",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_10_questions\",\"includes_answer_key\",\"includes_mcq\"],\"fix_instructions\":\"Revise the output to include exactly 10 beginner ML quiz questions with a clear mix of formats: multiple-choice (include options labeled A) B) C) etc.), true/false, and exactly 2 short-answer questions. Add a clearly labeled \\\"Answer key\\\" section listing answers for all 10 questions, and provide a brief explanation for each answer. Ensure the final output explicitly indicates there are 10 total questions (e.g., total_questions: 10).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "final_packaging",
+            "agent": "presentation",
+            "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+            "criteria": [
+              {
+                "criterion_id": "markdown_structure",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_code_block",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_quiz_section",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_resources",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Further resources",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "final_packaging",
+                  "agent": "presentation",
+                  "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "markdown_structure",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_code_block",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "```python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_quiz_section",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Quiz",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_resources",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Further resources",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"markdown_structure\",\"includes_code_block\",\"includes_quiz_section\"],\"fix_instructions\":\"No packaged Markdown lesson was provided because result.output is null. Provide the full beginner lesson deliverable in Markdown and ensure it contains: (1) a '## Learning objectives' section, (2) at least one Python code block fenced with ```python, and (3) a '## Quiz' section with an answer key. Include '## Further resources' if possible.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_exists",
+              "outline_includes_objectives",
+              "outline_includes_vocab"
+            ],
+            "evidence": {
+              "deterministic": {
+                "outline_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No lesson outline output was provided (output is null), so required sections cannot be verified. Provide a non-empty lesson outline that explicitly includes headings/sections labeled \"Learning objectives\" and \"Vocabulary\", plus a 45\u201360 minute lesson flow with suggested timing per section (include the word \"minutes\" in timing lines to satisfy the optional criterion)."
+          },
+          {
+            "task_id": "hands_on_demo_code",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_present",
+              "includes_evaluation",
+              "uses_train_test_split"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_present": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No code was provided in result.output (code_present is null). Provide a single runnable Python script that includes: loading Iris, using train_test_split, training a classifier, computing accuracy, and (optionally) confusion_matrix. Ensure the output text contains the literal strings 'train_test_split', 'accuracy', and ideally 'confusion_matrix'."
+          },
+          {
+            "task_id": "lesson_script",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_overfitting",
+              "covers_supervised_unsupervised",
+              "includes_activities",
+              "script_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "script_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No lesson script output was provided and the required script file/output does not exist. Provide the full lesson text/script in result.output (or create the expected script file), ensuring it explicitly includes: the terms \"supervised\" and \"unsupervised\", an explanation of \"overfitting\", and at least two in-lesson sections labeled \"Activity\" with expected answers. Also integrate the demo from the prior code step by describing what it does and how learners run/interpret it."
+          },
+          {
+            "task_id": "quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_answer_key"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Revise the output to include exactly 10 beginner ML quiz questions with a clear mix of formats: multiple-choice (include options labeled A) B) C) etc.), true/false, and exactly 2 short-answer questions. Add a clearly labeled \"Answer key\" section listing answers for all 10 questions, and provide a brief explanation for each answer. Ensure the final output explicitly indicates there are 10 total questions (e.g., total_questions: 10)."
+          },
+          {
+            "task_id": "final_packaging",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_code_block",
+              "includes_quiz_section",
+              "markdown_structure"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "No packaged Markdown lesson was provided because result.output is null. Provide the full beginner lesson deliverable in Markdown and ensure it contains: (1) a '## Learning objectives' section, (2) at least one Python code block fenced with ```python, and (3) a '## Quiz' section with an answer key. Include '## Further resources' if possible."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a beginner-friendly lesson on Machine Learning with clear structure, examples, practice, and an assessment.",
+          "subtasks": [
+            {
+              "task_id": "lesson_outline",
+              "agent": "presentation",
+              "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "outline_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_objectives",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_vocab",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Vocabulary",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "outline_includes_timing",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "minutes",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "hands_on_demo_code",
+              "agent": "coder",
+              "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+              "inputs": {
+                "output_filename": "hands_on_demo_code_20260107_1446.py",
+                "output_subdir": "run_12e25e5763d340618826aeae06357b80"
+              },
+              "dependencies": [
+                "lesson_outline"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_present",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.code",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "uses_train_test_split",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "train_test_split",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_evaluation",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "accuracy",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "mentions_confusion_matrix",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "confusion_matrix",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "lesson_script",
+              "agent": "presentation",
+              "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "hands_on_demo_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "script_exists",
+                  "criterion_type": "output_shape",
+                  "target": "result.output",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_supervised_unsupervised",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "supervised",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "covers_overfitting",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "overfitting",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_activities",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Activity",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz",
+              "agent": "quizzer",
+              "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_script"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_10_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "10",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_answer_key",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_mcq",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "A)",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            },
+            {
+              "task_id": "final_packaging",
+              "agent": "presentation",
+              "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+              "inputs": {},
+              "dependencies": [
+                "lesson_outline",
+                "hands_on_demo_code",
+                "lesson_script",
+                "quiz"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "markdown_structure",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Learning objectives",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_code_block",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "```python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_quiz_section",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Quiz",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.output"
+                },
+                {
+                  "criterion_id": "includes_resources",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "## Further resources",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "lesson_outline": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No lesson outline output was provided (output is null), so required sections cannot be verified. Provide a non-empty lesson outline that explicitly includes headings/sections labeled \"Learning objectives\" and \"Vocabulary\", plus a 45\u201360 minute lesson flow with suggested timing per section (include the word \"minutes\" in timing lines to satisfy the optional criterion).",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "hands_on_demo_code": {
+            "agent": "coder",
+            "success": false,
+            "error": "Max retries exceeded.",
+            "instruction": "No code was provided in result.output (code_present is null). Provide a single runnable Python script that includes: loading Iris, using train_test_split, training a classifier, computing accuracy, and (optionally) confusion_matrix. Ensure the output text contains the literal strings 'train_test_split', 'accuracy', and ideally 'confusion_matrix'.",
+            "attempts": 3
+          },
+          "lesson_script": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No lesson script output was provided and the required script file/output does not exist. Provide the full lesson text/script in result.output (or create the expected script file), ensuring it explicitly includes: the terms \"supervised\" and \"unsupervised\", an explanation of \"overfitting\", and at least two in-lesson sections labeled \"Activity\" with expected answers. Also integrate the demo from the prior code step by describing what it does and how learners run/interpret it.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "quiz": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Revise the output to include exactly 10 beginner ML quiz questions with a clear mix of formats: multiple-choice (include options labeled A) B) C) etc.), true/false, and exactly 2 short-answer questions. Add a clearly labeled \"Answer key\" section listing answers for all 10 questions, and provide a brief explanation for each answer. Ensure the final output explicitly indicates there are 10 total questions (e.g., total_questions: 10).",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "final_packaging": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No packaged Markdown lesson was provided because result.output is null. Provide the full beginner lesson deliverable in Markdown and ensure it contains: (1) a '## Learning objectives' section, (2) at least one Python code block fenced with ```python, and (3) a '## Quiz' section with an answer key. Include '## Further resources' if possible.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "agent": "presentation",
+            "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+            "criteria": [
+              {
+                "criterion_id": "outline_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_objectives",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_vocab",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Vocabulary",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "outline_includes_timing",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "minutes",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "outline_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_outline",
+                  "agent": "presentation",
+                  "instruction": "Draft a beginner Machine Learning lesson outline: learning objectives, prerequisites, key vocabulary, and a 45\u201360 min flow (intro, concepts, demo, practice, recap). Include suggested timing per section.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "outline_includes_objectives",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_vocab",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Vocabulary",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "outline_includes_timing",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "minutes",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "outline_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "outline_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"outline_exists\",\"outline_includes_objectives\",\"outline_includes_vocab\"],\"fix_instructions\":\"No lesson outline output was provided (output is null), so required content cannot be verified. Provide a non-empty lesson outline that explicitly includes sections titled or containing the phrases \\\"Learning objectives\\\" and \\\"Vocabulary\\\". Also include a 45\u201360 minute lesson flow with suggested timing per section (e.g., include \\\"minutes\\\" for each segment).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "hands_on_demo_code",
+            "agent": "coder",
+            "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+            "criteria": [
+              {
+                "criterion_id": "code_present",
+                "criterion_type": "output_shape",
+                "target": "result.output.code",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "uses_train_test_split",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "train_test_split",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_evaluation",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "accuracy",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "mentions_confusion_matrix",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "confusion_matrix",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "code_present": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "hands_on_demo_code",
+                  "agent": "coder",
+                  "instruction": "Create a simple, runnable Python beginner demo for ML using scikit-learn: load a small dataset (e.g., Iris), split train/test, train a classifier, evaluate accuracy, and show confusion matrix. Include comments explaining each step and how it connects to ML concepts. Provide as a single script and optionally a notebook-style sectioned format.",
+                  "output": {},
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "uses_train_test_split",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "train_test_split",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_evaluation",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "accuracy",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "mentions_confusion_matrix",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "confusion_matrix",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_present"
+                  ],
+                  "deterministic_evidence": {
+                    "code_present": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_present\",\"uses_train_test_split\",\"includes_evaluation\"],\"fix_instructions\":\"No code output was provided in result.output (code_present is null). Provide a single runnable Python script that includes: (1) importing and using train_test_split from sklearn.model_selection, (2) training a classifier on a dataset like Iris, (3) evaluating with accuracy (e.g., accuracy_score) and printing it, and (4) optionally computing/printing a confusion_matrix. Ensure the response contains the literal strings 'train_test_split' and 'accuracy' and includes actual executable code.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "lesson_script",
+            "agent": "presentation",
+            "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+            "criteria": [
+              {
+                "criterion_id": "script_exists",
+                "criterion_type": "output_shape",
+                "target": "result.output",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_supervised_unsupervised",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "supervised",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "covers_overfitting",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "overfitting",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_activities",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Activity",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {
+              "script_exists": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "lesson_script",
+                  "agent": "presentation",
+                  "instruction": "Write the full lesson text/script for a beginner audience (plain language). Cover: what ML is, supervised vs unsupervised, features/labels, training vs inference, overfitting, evaluation, and common real-world examples. Integrate the demo from the code step and include 2 short in-lesson activities/exercises with expected answers.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "covers_supervised_unsupervised",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "supervised",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "covers_overfitting",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "overfitting",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_activities",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Activity",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "script_exists"
+                  ],
+                  "deterministic_evidence": {
+                    "script_exists": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"script_exists\",\"covers_supervised_unsupervised\",\"covers_overfitting\",\"includes_activities\"],\"fix_instructions\":\"Deterministic failure: no script output provided (script_exists evidence is null). Provide the full lesson script text. Ensure it explicitly includes the words/sections on \u201csupervised\u201d and \u201cunsupervised\u201d, explains \u201coverfitting\u201d, and contains at least two labeled in-lesson items starting with \u201cActivity\u201d plus expected answers. Also integrate the referenced code/demo step by describing the demo workflow and what learners observe.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz",
+            "agent": "quizzer",
+            "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_10_questions",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "10",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_answer_key",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_mcq",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "A)",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz",
+                  "agent": "quizzer",
+                  "instruction": "Create a short beginner ML quiz: 10 questions (mix of multiple choice, true/false, and 2 short-answer). Provide an answer key and brief explanations for each answer.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_10_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "10",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_answer_key",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_mcq",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "A)",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_10_questions\",\"includes_answer_key\",\"includes_mcq\"],\"fix_instructions\":\"Your output only contains 2 questions and does not include a labeled Answer Key with explanations. Revise to include exactly 10 beginner ML questions with a mix of formats: multiple choice (with options labeled A) B) C) D)), true/false, and exactly 2 short-answer questions. Then add an 'Answer Key' section that lists each question number, the correct answer, and a brief explanation.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "final_packaging",
+            "agent": "presentation",
+            "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+            "criteria": [
+              {
+                "criterion_id": "markdown_structure",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Learning objectives",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_code_block",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "```python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_quiz_section",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.output"
+              },
+              {
+                "criterion_id": "includes_resources",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "## Further resources",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "final_packaging",
+                  "agent": "presentation",
+                  "instruction": "Package everything into a cohesive beginner lesson deliverable in Markdown: title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (including code), activities, recap, further resources, and the quiz with answer key.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "markdown_structure",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Learning objectives",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_code_block",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "```python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_quiz_section",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Quiz",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.output"
+                    },
+                    {
+                      "criterion_id": "includes_resources",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "## Further resources",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"markdown_structure\",\"includes_code_block\",\"includes_quiz_section\"],\"fix_instructions\":\"The provided result.output is null/empty, so it cannot be evaluated against the required Markdown lesson structure. Provide a complete Markdown lesson deliverable that includes at minimum:\\n1) A section heading exactly like \\\"## Learning objectives\\\".\\n2) At least one Python code block fenced with ```python.\\n3) A \\\"## Quiz\\\" section and an answer key.\\nOptionally include \\\"## Further resources\\\".\\nEnsure the full lesson includes title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (with code), activities, recap, resources, and quiz with answer key.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "lesson_outline",
+            "verdict": "fail",
+            "failed_criteria": [
+              "outline_exists",
+              "outline_includes_objectives",
+              "outline_includes_vocab"
+            ],
+            "evidence": {
+              "deterministic": {
+                "outline_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No lesson outline output was provided (output is null), so required content cannot be verified. Provide a non-empty lesson outline that explicitly includes sections titled or containing the phrases \"Learning objectives\" and \"Vocabulary\". Also include a 45\u201360 minute lesson flow with suggested timing per section (e.g., include \"minutes\" for each segment)."
+          },
+          {
+            "task_id": "hands_on_demo_code",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_present",
+              "includes_evaluation",
+              "uses_train_test_split"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_present": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No code output was provided in result.output (code_present is null). Provide a single runnable Python script that includes: (1) importing and using train_test_split from sklearn.model_selection, (2) training a classifier on a dataset like Iris, (3) evaluating with accuracy (e.g., accuracy_score) and printing it, and (4) optionally computing/printing a confusion_matrix. Ensure the response contains the literal strings 'train_test_split' and 'accuracy' and includes actual executable code."
+          },
+          {
+            "task_id": "lesson_script",
+            "verdict": "fail",
+            "failed_criteria": [
+              "covers_overfitting",
+              "covers_supervised_unsupervised",
+              "includes_activities",
+              "script_exists"
+            ],
+            "evidence": {
+              "deterministic": {
+                "script_exists": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "Deterministic failure: no script output provided (script_exists evidence is null). Provide the full lesson script text. Ensure it explicitly includes the words/sections on \u201csupervised\u201d and \u201cunsupervised\u201d, explains \u201coverfitting\u201d, and contains at least two labeled in-lesson items starting with \u201cActivity\u201d plus expected answers. Also integrate the referenced code/demo step by describing the demo workflow and what learners observe."
+          },
+          {
+            "task_id": "quiz",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_answer_key"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Your output only contains 2 questions and does not include a labeled Answer Key with explanations. Revise to include exactly 10 beginner ML questions with a mix of formats: multiple choice (with options labeled A) B) C) D)), true/false, and exactly 2 short-answer questions. Then add an 'Answer Key' section that lists each question number, the correct answer, and a brief explanation."
+          },
+          {
+            "task_id": "final_packaging",
+            "verdict": "fail",
+            "failed_criteria": [
+              "includes_code_block",
+              "includes_quiz_section",
+              "markdown_structure"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The provided result.output is null/empty, so it cannot be evaluated against the required Markdown lesson structure. Provide a complete Markdown lesson deliverable that includes at minimum:\n1) A section heading exactly like \"## Learning objectives\".\n2) At least one Python code block fenced with ```python.\n3) A \"## Quiz\" section and an answer key.\nOptionally include \"## Further resources\".\nEnsure the full lesson includes title, objectives, agenda, vocabulary, main content, step-by-step demo instructions (with code), activities, recap, resources, and quiz with answer key."
+          }
+        ]
+      }
+    }
+  ]
+}

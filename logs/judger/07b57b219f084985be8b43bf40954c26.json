@@ -1,0 +1,2907 @@
+{
+  "run_id": "07b57b219f084985be8b43bf40954c26",
+  "started_at": "2026-01-05T02:43:46.374529+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete beginner-friendly lesson on Python dictionaries including runnable Python file, textual explanations, and quiz questions/examples.",
+          "subtasks": [
+            {
+              "task_id": "text_lesson_notes",
+              "agent": "text",
+              "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "notes_has_sections",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "##",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                },
+                {
+                  "criterion_id": "notes_mentions_key_value",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                },
+                {
+                  "criterion_id": "notes_includes_iteration",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "iterate",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                }
+              ]
+            },
+            {
+              "task_id": "code_runnable_demo",
+              "agent": "coder",
+              "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+              "inputs": {
+                "output_filename": "code_runnable_demo_20260105_0244.py",
+                "output_subdir": "run_07b57b219f084985be8b43bf40954c26"
+              },
+              "dependencies": [
+                "text_lesson_notes"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "file_path_provided",
+                  "criterion_type": "output_shape",
+                  "target": "result.code_runnable_demo.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "script_has_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.code_runnable_demo.output",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.output"
+                },
+                {
+                  "criterion_id": "script_demonstrates_items",
+                  "criterion_type": "semantic",
+                  "target": "result.code_runnable_demo.output",
+                  "operator": "contains",
+                  "expected": ".items()",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.output"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                },
+                {
+                  "criterion_id": "is_python_file",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz_questions",
+              "agent": "quizzer",
+              "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+              "inputs": {},
+              "dependencies": [
+                "text_lesson_notes",
+                "code_runnable_demo"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_min_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                },
+                {
+                  "criterion_id": "quiz_mentions_get",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": ".get",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                },
+                {
+                  "criterion_id": "quiz_mentions_items",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": ".items",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                }
+              ]
+            },
+            {
+              "task_id": "package_final_response",
+              "agent": "text",
+              "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+              "inputs": {},
+              "dependencies": [
+                "text_lesson_notes",
+                "code_runnable_demo",
+                "quiz_questions"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "final_includes_run_instructions",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                },
+                {
+                  "criterion_id": "final_includes_filename",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "lesson_dictionaries.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                },
+                {
+                  "criterion_id": "final_includes_quiz",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "Quiz",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "text_lesson_notes": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            }
+          },
+          "code_runnable_demo": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "def main():\n    print(\"=== Dictionary Concepts Walkthrough ===\\n\")\n    \n    # 1. Creating a dictionary\n    print(\"1. Creating Dictionaries\")\n    print(\"-\" * 20)\n    empty_dict = {}\n    student = {\"name\": \"Alice\", \"age\": 20, \"grade\": \"A\"}\n    print(f\"Empty dictionary: {empty_dict}\")\n    print(f\"Student dictionary: {student}\\n\")\n    \n    # 2. Accessing values with []\n    print(\"2. Accessing Values with []\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student['name']}\")\n    print(f\"Student age: {student['age']}\")\n    # This would raise KeyError: print(student['height'])\n    print(\"Note: Accessing non-existent keys raises KeyError\\n\")\n    \n    # 3. Accessing values with get()\n    print(\"3. Accessing Values with get()\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student.get('name')}\")\n    print(f\"Student height: {student.get('height', 'Not specified')}\")\n    print(f\"Student grade: {student.get('grade', 'Unknown')}\\n\")\n    \n    # 4. Adding and updating values\n    print(\"4. Adding and Updating Values\")\n    print(\"-\" * 20)\n    student[\"height\"] = 165  # Add new key-value pair\n    student[\"age\"] = 21      # Update existing value\n    print(f\"After adding height and updating age: {student}\\n\")\n    \n    # 5. Deleting items with del and pop\n    print(\"5. Deleting Items\")\n    print(\"-\" * 20)\n    del student[\"grade\"]     # Delete using del\n    removed_height = student.pop(\"height\")  # Remove and return value\n    print(f\"After deleting grade and popping height: {student}\")\n    print(f\"Removed height value: {removed_height}\\n\")\n    \n    # 6. Membership testing with 'in'\n    print(\"6. Membership Testing\")\n    print(\"-\" * 20)\n    print(f\"'name' in student: {'name' in student}\")\n    print(f\"'grade' in student: {'grade' in student}\")\n    print(f\"'Alice' in student: {'Alice' in student}\")  # Checks keys only\n    print()\n    \n    # 7. Iterating through dictionaries\n    print(\"7. Iterating Through Dictionaries\")\n    print(\"-\" * 20)\n    print(\"Keys:\")\n    for key in student:\n        print(f\"  {key}\")\n    \n    print(\"\\nValues:\")\n    for value in student.values():\n        print(f\"  {value}\")\n    \n    print(\"\\nKey-Value pairs:\")\n    for key, value in student.items():\n        print(f\"  {key}: {value}\")\n    print()\n    \n    # 8. Nested dictionaries\n    print(\"8. Nested Dictionaries\")\n    print(\"-\" * 20)\n    class_roster = {\n        \"student1\": {\"name\": \"Alice\", \"age\": 20},\n        \"student2\": {\"name\": \"Bob\", \"age\": 22}\n    }\n    print(f\"Class roster: {class_roster}\")\n    print(f\"Alice's age: {class_roster['student1']['age']}\")\n    print()\n    \n    # 9. Mini Practice Section\n    print(\"9. Mini Practice Section\")\n    print(\"-\" * 20)\n    \n    # TODO: Create a dictionary called 'book' with keys 'title', 'author', and 'year'\n    book = {\"title\": \"1984\", \"author\": \"George Orwell\", \"year\": 1948}\n    print(\"Book dictionary created:\", book)\n    \n    # TODO: Add a new key 'genre' with value 'Dystopian Fiction'\n    book[\"genre\"] = \"Dystopian Fiction\"\n    print(\"After adding genre:\", book)\n    \n    # TODO: Update the year to 1949\n    book[\"year\"] = 1949\n    print(\"After updating year:\", book)\n    \n    # TODO: Remove the author key\n    del book[\"author\"]\n    print(\"After removing author:\", book)\n    \n    # TODO: Check if 'title' is in the dictionary\n    has_title = \"title\" in book\n    print(\"Does book have 'title' key?\", has_title)\n    \n    # TODO: Print all keys using a loop\n    print(\"All keys:\")\n    for key in book:\n        print(f\"  {key}\")\n    \n    # TODO: Print all values using a loop\n    print(\"All values:\")\n    for value in book.values():\n        print(f\"  {value}\")\n    \n    # TODO: Print all key-value pairs\n    print(\"All key-value pairs:\")\n    for key, value in book.items():\n        print(f\"  {key}: {value}\")\n\nif __name__ == '__main__':\n    main()\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py"
+            ],
+            "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "quiz_questions": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output must include at least 8 beginner dictionary quiz questions (mix of multiple choice, true/false, short answer) plus an 'Answer Key' section with brief explanations. Ensure at least 2 questions cover .get() vs [] and at least 2 cover iteration using .items(). Include the strings '.get' and '.items' explicitly in the content. Current output has only 2 questions and lacks the required topics and answer key.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "package_final_response": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "text_lesson_notes",
+            "agent": "text",
+            "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+            "criteria": [
+              {
+                "criterion_id": "notes_has_sections",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "##",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              },
+              {
+                "criterion_id": "notes_mentions_key_value",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              },
+              {
+                "criterion_id": "notes_includes_iteration",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "iterate",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "text_lesson_notes",
+                  "agent": "text",
+                  "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+                  "output": {
+                    "text": "Generated text content based on: Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "notes_has_sections",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "##",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    },
+                    {
+                      "criterion_id": "notes_mentions_key_value",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    },
+                    {
+                      "criterion_id": "notes_includes_iteration",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "iterate",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"notes_has_sections\",\"notes_mentions_key_value\",\"notes_includes_iteration\"],\"fix_instructions\":\"The output is placeholder text and does not include the required Markdown lesson content.\\n\\nFix by replacing the placeholder with a real beginner-friendly Markdown lesson that includes:\\n- Multiple section headings using '##' (e.g., '## What is a dictionary?').\\n- Explicit explanation of key/value pairs, uniqueness of keys, and mutability.\\n- Common operations with short runnable Python snippets: create, access (including .get), add/update, delete (del/pop), iterate (for k/v/items), and nesting examples.\\n- A brief 'Common pitfalls' section (e.g., KeyError, mutable default values, using unhashable keys).\\nEnsure the text contains the words 'key' and 'iterate' (or 'iteration/iterating') and that code snippets are consistent and correct Python.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "code_runnable_demo",
+            "agent": "coder",
+            "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+            "criteria": [
+              {
+                "criterion_id": "file_path_provided",
+                "criterion_type": "output_shape",
+                "target": "result.code_runnable_demo.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.artifacts[0].path"
+              },
+              {
+                "criterion_id": "script_has_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.code_runnable_demo.output",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.output"
+              },
+              {
+                "criterion_id": "script_demonstrates_items",
+                "criterion_type": "semantic",
+                "target": "result.code_runnable_demo.output",
+                "operator": "contains",
+                "expected": ".items()",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.output"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              },
+              {
+                "criterion_id": "is_python_file",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "file_path_provided": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              },
+              "script_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "exists": true
+              },
+              "is_python_file": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "expected": ".py",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "code_runnable_demo",
+                  "agent": "coder",
+                  "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+                  "output": {
+                    "code": "def main():\n    print(\"=== Dictionary Concepts Walkthrough ===\\n\")\n    \n    # 1. Creating a dictionary\n    print(\"1. Creating Dictionaries\")\n    print(\"-\" * 20)\n    empty_dict = {}\n    student = {\"name\": \"Alice\", \"age\": 20, \"grade\": \"A\"}\n    print(f\"Empty dictionary: {empty_dict}\")\n    print(f\"Student dictionary: {student}\\n\")\n    \n    # 2. Accessing values with []\n    print(\"2. Accessing Values with []\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student['name']}\")\n    print(f\"Student age: {student['age']}\")\n    # This would raise KeyError: print(student['height'])\n    print(\"Note: Using [] raises KeyError for missing keys\\n\")\n    \n    # 3. Accessing values with get()\n    print(\"3. Accessing Values with get()\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student.get('name')}\")\n    print(f\"Student height: {student.get('height')}\")  # Returns None\n    print(f\"Student height with default: {student.get('height', 'Not specified')}\\n\")\n    \n    # 4. Adding and updating values\n    print(\"4. Adding and Updating Values\")\n    print(\"-\" * 20)\n    student[\"height\"] = 165  # Add new key-value pair\n    student[\"age\"] = 21      # Update existing value\n    print(f\"After adding height and updating age: {student}\\n\")\n    \n    # 5. Deleting items with del and pop()\n    print(\"5. Deleting Items\")\n    print(\"-\" * 20)\n    del student[\"grade\"]     # Remove key-value pair\n    removed_height = student.pop(\"height\")  # Remove and return value\n    print(f\"After deletion: {student}\")\n    print(f\"Removed height: {removed_height}\\n\")\n    \n    # 6. Membership testing with 'in'\n    print(\"6. Membership Testing\")\n    print(\"-\" * 20)\n    print(f\"'name' in student: {'name' in student}\")\n    print(f\"'grade' in student: {'grade' in student}\\n\")\n    \n    # 7. Iterating through dictionaries\n    print(\"7. Iterating Through Dictionaries\")\n    print(\"-\" * 20)\n    print(\"Keys:\")\n    for key in student:\n        print(f\"  {key}\")\n    \n    print(\"\\nValues:\")\n    for value in student.values():\n       ...",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Using [] raises KeyError for missing keys\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: None\nStudent height with default: Not specified\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deletion: {'name': 'Alice', 'age': 21}\nRemoved height: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClassroom: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nRemoved year: 1949\nAfter removing year: {'title': '1984', 'author': 'George Orwell', 'genre': 'Dystopian Fiction'}\nHas author key: True\nAll keys:\n  title\n  author\n  genre\nAll values:\n  1984\n  George Orwell\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  author: George Orwell\n  genre: Dystopian Fiction\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Using [] raises KeyError for missing keys\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: None\nStudent height with default: Not specified\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deletion: {'name': 'Alice', 'age': 21}\nRemoved height: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClassroom: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nRemoved year: 1949\nAfter removing year: {'title': '1984', 'author': 'George Orwell', 'genre': 'Dystopian Fiction'}\nHas author key: True\nAll keys:\n  title\n  author\n  genre\nAll values:\n  1984\n  George Orwell\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  author: George Orwell\n  genre: Dystopian Fiction\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "script_has_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.code_runnable_demo.output",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.code_runnable_demo.output"
+                    },
+                    {
+                      "criterion_id": "script_demonstrates_items",
+                      "criterion_type": "semantic",
+                      "target": "result.code_runnable_demo.output",
+                      "operator": "contains",
+                      "expected": ".items()",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.code_runnable_demo.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "file_path_provided",
+                    "is_python_file"
+                  ],
+                  "deterministic_evidence": {
+                    "file_path_provided": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    },
+                    "script_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "exists": true
+                    },
+                    "is_python_file": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "expected": ".py",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz_questions",
+            "agent": "quizzer",
+            "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_min_questions",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              },
+              {
+                "criterion_id": "quiz_mentions_get",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": ".get",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              },
+              {
+                "criterion_id": "quiz_mentions_items",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": ".items",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz_questions",
+                  "agent": "quizzer",
+                  "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_min_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    },
+                    {
+                      "criterion_id": "quiz_mentions_get",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": ".get",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    },
+                    {
+                      "criterion_id": "quiz_mentions_items",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": ".items",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_min_questions\",\"quiz_mentions_get\",\"quiz_mentions_items\"],\"fix_instructions\":\"Provide at least 8 beginner quiz questions about Python dictionaries with a mix of multiple choice, true/false, and short answer. Include an explicit 'Answer Key' section with brief explanations. Ensure at least two questions specifically address .get() vs [] access (including missing-key behavior/defaults) and at least two questions cover iteration using .items() (key/value pairs) and how it differs from .keys()/.values() or iterating a dict directly.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "package_final_response",
+            "agent": "text",
+            "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+            "criteria": [
+              {
+                "criterion_id": "final_includes_run_instructions",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              },
+              {
+                "criterion_id": "final_includes_filename",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "lesson_dictionaries.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              },
+              {
+                "criterion_id": "final_includes_quiz",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "package_final_response",
+                  "agent": "text",
+                  "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+                  "output": {
+                    "text": "Generated text content based on: Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "final_includes_run_instructions",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    },
+                    {
+                      "criterion_id": "final_includes_filename",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "lesson_dictionaries.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    },
+                    {
+                      "criterion_id": "final_includes_quiz",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "Quiz",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"final_includes_run_instructions\",\"final_includes_filename\",\"final_includes_quiz\"],\"fix_instructions\":\"Update the final packaged Markdown to include: (1) explicit run instructions containing the word 'python' and the command `python lesson_dictionaries.py`, (2) the filename `lesson_dictionaries.py` shown with the runnable script content, and (3) a clearly labeled `Quiz` section. Ensure the lesson snippets match the script.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "text_lesson_notes",
+            "verdict": "fail",
+            "failed_criteria": [
+              "notes_has_sections",
+              "notes_mentions_key_value"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "The output is placeholder text and does not include the required Markdown lesson content.\n\nFix by replacing the placeholder with a real beginner-friendly Markdown lesson that includes:\n- Multiple section headings using '##' (e.g., '## What is a dictionary?').\n- Explicit explanation of key/value pairs, uniqueness of keys, and mutability.\n- Common operations with short runnable Python snippets: create, access (including .get), add/update, delete (del/pop), iterate (for k/v/items), and nesting examples.\n- A brief 'Common pitfalls' section (e.g., KeyError, mutable default values, using unhashable keys).\nEnsure the text contains the words 'key' and 'iterate' (or 'iteration/iterating') and that code snippets are consistent and correct Python."
+          },
+          {
+            "task_id": "code_runnable_demo",
+            "verdict": "fail",
+            "failed_criteria": [
+              "file_path_provided",
+              "is_python_file"
+            ],
+            "evidence": {
+              "deterministic": {
+                "file_path_provided": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                },
+                "script_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                  "exists": true
+                },
+                "is_python_file": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                  "expected": ".py",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {
+                "error": "Object of type WindowsPath is not JSON serializable"
+              }
+            },
+            "fix_instructions": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main()."
+          },
+          {
+            "task_id": "quiz_questions",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_min_questions",
+              "quiz_mentions_get",
+              "quiz_mentions_items"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide at least 8 beginner quiz questions about Python dictionaries with a mix of multiple choice, true/false, and short answer. Include an explicit 'Answer Key' section with brief explanations. Ensure at least two questions specifically address .get() vs [] access (including missing-key behavior/defaults) and at least two questions cover iteration using .items() (key/value pairs) and how it differs from .keys()/.values() or iterating a dict directly."
+          },
+          {
+            "task_id": "package_final_response",
+            "verdict": "fail",
+            "failed_criteria": [
+              "final_includes_filename",
+              "final_includes_quiz",
+              "final_includes_run_instructions"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Update the final packaged Markdown to include: (1) explicit run instructions containing the word 'python' and the command `python lesson_dictionaries.py`, (2) the filename `lesson_dictionaries.py` shown with the runnable script content, and (3) a clearly labeled `Quiz` section. Ensure the lesson snippets match the script."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete beginner-friendly lesson on Python dictionaries including runnable Python file, textual explanations, and quiz questions/examples.",
+          "subtasks": [
+            {
+              "task_id": "text_lesson_notes",
+              "agent": "text",
+              "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "notes_has_sections",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "##",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                },
+                {
+                  "criterion_id": "notes_mentions_key_value",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                },
+                {
+                  "criterion_id": "notes_includes_iteration",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "iterate",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                }
+              ]
+            },
+            {
+              "task_id": "code_runnable_demo",
+              "agent": "coder",
+              "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+              "inputs": {
+                "output_filename": "code_runnable_demo_20260105_0244.py",
+                "output_subdir": "run_07b57b219f084985be8b43bf40954c26"
+              },
+              "dependencies": [
+                "text_lesson_notes"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "file_path_provided",
+                  "criterion_type": "output_shape",
+                  "target": "result.code_runnable_demo.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "script_has_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.code_runnable_demo.output",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.output"
+                },
+                {
+                  "criterion_id": "script_demonstrates_items",
+                  "criterion_type": "semantic",
+                  "target": "result.code_runnable_demo.output",
+                  "operator": "contains",
+                  "expected": ".items()",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.output"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                },
+                {
+                  "criterion_id": "is_python_file",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz_questions",
+              "agent": "quizzer",
+              "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+              "inputs": {},
+              "dependencies": [
+                "text_lesson_notes",
+                "code_runnable_demo"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_min_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                },
+                {
+                  "criterion_id": "quiz_mentions_get",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": ".get",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                },
+                {
+                  "criterion_id": "quiz_mentions_items",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": ".items",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                }
+              ]
+            },
+            {
+              "task_id": "package_final_response",
+              "agent": "text",
+              "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+              "inputs": {},
+              "dependencies": [
+                "text_lesson_notes",
+                "code_runnable_demo",
+                "quiz_questions"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "final_includes_run_instructions",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                },
+                {
+                  "criterion_id": "final_includes_filename",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "lesson_dictionaries.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                },
+                {
+                  "criterion_id": "final_includes_quiz",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "Quiz",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "text_lesson_notes": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            }
+          },
+          "code_runnable_demo": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "def main():\n    print(\"=== Dictionary Concepts Walkthrough ===\\n\")\n    \n    # 1. Creating a dictionary\n    print(\"1. Creating Dictionaries\")\n    print(\"-\" * 20)\n    empty_dict = {}\n    student = {\"name\": \"Alice\", \"age\": 20, \"grade\": \"A\"}\n    print(f\"Empty dictionary: {empty_dict}\")\n    print(f\"Student dictionary: {student}\\n\")\n    \n    # 2. Accessing values with []\n    print(\"2. Accessing Values with []\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student['name']}\")\n    print(f\"Student age: {student['age']}\")\n    # This would raise KeyError: print(student['height'])\n    print(\"Note: Accessing non-existent keys raises KeyError\\n\")\n    \n    # 3. Accessing values with get()\n    print(\"3. Accessing Values with get()\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student.get('name')}\")\n    print(f\"Student height: {student.get('height', 'Not specified')}\")\n    print(f\"Student grade: {student.get('grade', 'Unknown')}\\n\")\n    \n    # 4. Adding and updating values\n    print(\"4. Adding and Updating Values\")\n    print(\"-\" * 20)\n    student[\"height\"] = 165  # Add new key-value pair\n    student[\"age\"] = 21      # Update existing value\n    print(f\"After adding height and updating age: {student}\\n\")\n    \n    # 5. Deleting items with del and pop\n    print(\"5. Deleting Items\")\n    print(\"-\" * 20)\n    del student[\"grade\"]     # Delete using del\n    removed_height = student.pop(\"height\")  # Remove and return value\n    print(f\"After deleting grade and popping height: {student}\")\n    print(f\"Removed height value: {removed_height}\\n\")\n    \n    # 6. Membership testing with 'in'\n    print(\"6. Membership Testing\")\n    print(\"-\" * 20)\n    print(f\"'name' in student: {'name' in student}\")\n    print(f\"'grade' in student: {'grade' in student}\")\n    print(f\"'Alice' in student: {'Alice' in student}\")  # Checks keys only\n    print()\n    \n    # 7. Iterating through dictionaries\n    print(\"7. Iterating Through Dictionaries\")\n    print(\"-\" * 20)\n    print(\"Keys:\")\n    for key in student:\n        print(f\"  {key}\")\n    \n    print(\"\\nValues:\")\n    for value in student.values():\n        print(f\"  {value}\")\n    \n    print(\"\\nKey-Value pairs:\")\n    for key, value in student.items():\n        print(f\"  {key}: {value}\")\n    print()\n    \n    # 8. Nested dictionaries\n    print(\"8. Nested Dictionaries\")\n    print(\"-\" * 20)\n    class_roster = {\n        \"student1\": {\"name\": \"Alice\", \"age\": 20},\n        \"student2\": {\"name\": \"Bob\", \"age\": 22}\n    }\n    print(f\"Class roster: {class_roster}\")\n    print(f\"Alice's age: {class_roster['student1']['age']}\")\n    print()\n    \n    # 9. Mini Practice Section\n    print(\"9. Mini Practice Section\")\n    print(\"-\" * 20)\n    \n    # TODO: Create a dictionary called 'book' with keys 'title', 'author', and 'year'\n    book = {\"title\": \"1984\", \"author\": \"George Orwell\", \"year\": 1948}\n    print(\"Book dictionary created:\", book)\n    \n    # TODO: Add a new key 'genre' with value 'Dystopian Fiction'\n    book[\"genre\"] = \"Dystopian Fiction\"\n    print(\"After adding genre:\", book)\n    \n    # TODO: Update the year to 1949\n    book[\"year\"] = 1949\n    print(\"After updating year:\", book)\n    \n    # TODO: Remove the author key\n    del book[\"author\"]\n    print(\"After removing author:\", book)\n    \n    # TODO: Check if 'title' is in the dictionary\n    has_title = \"title\" in book\n    print(\"Does book have 'title' key?\", has_title)\n    \n    # TODO: Print all keys using a loop\n    print(\"All keys:\")\n    for key in book:\n        print(f\"  {key}\")\n    \n    # TODO: Print all values using a loop\n    print(\"All values:\")\n    for value in book.values():\n        print(f\"  {value}\")\n    \n    # TODO: Print all key-value pairs\n    print(\"All key-value pairs:\")\n    for key, value in book.items():\n        print(f\"  {key}: {value}\")\n\nif __name__ == '__main__':\n    main()\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py"
+            ],
+            "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "quiz_questions": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output must include at least 8 beginner dictionary quiz questions (mix of multiple choice, true/false, short answer) plus an 'Answer Key' section with brief explanations. Ensure at least 2 questions cover .get() vs [] and at least 2 cover iteration using .items(). Include the strings '.get' and '.items' explicitly in the content. Current output has only 2 questions and lacks the required topics and answer key.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "package_final_response": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "text_lesson_notes",
+            "agent": "text",
+            "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+            "criteria": [
+              {
+                "criterion_id": "notes_has_sections",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "##",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              },
+              {
+                "criterion_id": "notes_mentions_key_value",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              },
+              {
+                "criterion_id": "notes_includes_iteration",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "iterate",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "text_lesson_notes",
+                  "agent": "text",
+                  "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+                  "output": {
+                    "text": "Generated text content based on: The output is placeholder text and does not include the required Markdown lesson content.\n\nFix by replacing the placeholder with a real beginner-friendly Markdown lesson that includes:\n- Multiple section headings using '##' (e.g., '## What is a dictionary?').\n- Explicit explanation of key/value pairs, uniqueness of keys, and mutability.\n- Common operations with short runnable Python snippets: create, access (including .get), add/update, delete (del/pop), iterate (for k/v/items), and nesting examples.\n- A brief 'Common pitfalls' section (e.g., KeyError, mutable default values, using unhashable keys).\nEnsure the text contains the words 'key' and 'iterate' (or 'iteration/iterating') and that code snippets are consistent and correct Python.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "notes_has_sections",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "##",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    },
+                    {
+                      "criterion_id": "notes_mentions_key_value",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    },
+                    {
+                      "criterion_id": "notes_includes_iteration",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "iterate",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"notes_has_sections\",\"notes_mentions_key_value\"],\"fix_instructions\":\"Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "code_runnable_demo",
+            "agent": "coder",
+            "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+            "criteria": [
+              {
+                "criterion_id": "file_path_provided",
+                "criterion_type": "output_shape",
+                "target": "result.code_runnable_demo.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.artifacts[0].path"
+              },
+              {
+                "criterion_id": "script_has_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.code_runnable_demo.output",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.output"
+              },
+              {
+                "criterion_id": "script_demonstrates_items",
+                "criterion_type": "semantic",
+                "target": "result.code_runnable_demo.output",
+                "operator": "contains",
+                "expected": ".items()",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.output"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              },
+              {
+                "criterion_id": "is_python_file",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "file_path_provided": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              },
+              "script_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "exists": true
+              },
+              "is_python_file": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "expected": ".py",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "code_runnable_demo",
+                  "agent": "coder",
+                  "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+                  "output": {
+                    "code": "def main():\n    print(\"=== Dictionary Concepts Walkthrough ===\\n\")\n    \n    # 1. Creating a dictionary\n    print(\"1. Creating Dictionaries\")\n    print(\"-\" * 20)\n    empty_dict = {}\n    student = {\"name\": \"Alice\", \"age\": 20, \"grade\": \"A\"}\n    print(f\"Empty dictionary: {empty_dict}\")\n    print(f\"Student dictionary: {student}\\n\")\n    \n    # 2. Accessing values with []\n    print(\"2. Accessing Values with []\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student['name']}\")\n    print(f\"Student age: {student['age']}\")\n    # This would raise KeyError: print(student['height'])  # Uncomment to see error\n    \n    # 3. Accessing values with get()\n    print(\"\\n3. Accessing Values with get()\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student.get('name')}\")\n    print(f\"Student height: {student.get('height', 'Not specified')}\")\n    print(f\"Student grade: {student.get('grade', 'No grade')}\")\n    \n    # 4. Adding and updating values\n    print(\"\\n4. Adding and Updating Values\")\n    print(\"-\" * 20)\n    student[\"major\"] = \"Computer Science\"  # Add new key-value\n    print(f\"After adding major: {student}\")\n    \n    student[\"age\"] = 21  # Update existing value\n    print(f\"After updating age: {student}\")\n    \n    # 5. Deleting items with del and pop\n    print(\"\\n5. Deleting Items\")\n    print(\"-\" * 20)\n    del student[\"grade\"]  # Remove key-value pair\n    print(f\"After deleting grade: {student}\")\n    \n    # Using pop() - removes and returns value\n    major = student.pop(\"major\")\n    print(f\"Popped major: {major}\")\n    print(f\"After popping major: {student}\")\n    \n    # 6. Membership testing with 'in'\n    print(\"\\n6. Membership Testing\")\n    print(\"-\" * 20)\n    print(f\"'name' in student: {'name' in student}\")\n    print(f\"'grade' in student: {'grade' in student}\")\n    print(f\"'Alice' in student: {'Alice' in student}\")  # Checks keys only\n    \n    # 7. Iterating through dictionaries\n    print(\"\\n7. Iterating Through Dictionaries\")\n    print(\"-\" * 20)\n    \n    print(\"Keys only:\")\n    ...",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding major: {'name': 'Alice', 'age': 20, 'grade': 'A', 'major': 'Computer Science'}\nAfter updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'major': 'Computer Science'}\n\n5. Deleting Items\n--------------------\nAfter deleting grade: {'name': 'Alice', 'age': 21, 'major': 'Computer Science'}\nPopped major: Computer Science\nAfter popping major: {'name': 'Alice', 'age': 21}\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys only:\n  name\n  age\n\nValues only:\n  Alice\n  21\n\nKey-value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n=== Mini Practice Section ===\nComplete the following tasks:\nBook dictionary: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter adding pages: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction', 'pages': 328}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction', 'pages': 328}\nRemoved genre: Dystopian Fiction\nAfter removing genre: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'pages': 328}\nHas author key: True\nAll keys:\n  title\n  author\n  year\n  pages\nAll values:\n  1984\n  George Orwell\n  1949\n  328\nAll key-value pairs:\n  title: 1984\n  author: George Orwell\n  year: 1949\n  pages: 328\n\n=== Solutions Ref...",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding major: {'name': 'Alice', 'age': 20, 'grade': 'A', 'major': 'Computer Science'}\nAfter updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'major': 'Computer Science'}\n\n5. Deleting Items\n--------------------\nAfter deleting grade: {'name': 'Alice', 'age': 21, 'major': 'Computer Science'}\nPopped major: Computer Science\nAfter popping major: {'name': 'Alice', 'age': 21}\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys only:\n  name\n  age\n\nValues only:\n  Alice\n  21\n\nKey-value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n=== Mini Practice Section ===\nComplete the following tasks:\nBook dictionary: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter adding pages: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction', 'pages': 328}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction', 'pages': 328}\nRemoved genre: Dystopian Fiction\nAfter removing genre: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'pages': 328}\nHas author key: True\nAll keys:\n  title\n  author\n  year\n  pages\nAll values:\n  1984\n  George Orwell\n  1949\n  328\nAll key-value pairs:\n  title: 1984\n  author: George Orwell\n  year: 1949\n  pages: 328\n\n=== Solutions Ref...",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "script_has_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.code_runnable_demo.output",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.code_runnable_demo.output"
+                    },
+                    {
+                      "criterion_id": "script_demonstrates_items",
+                      "criterion_type": "semantic",
+                      "target": "result.code_runnable_demo.output",
+                      "operator": "contains",
+                      "expected": ".items()",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.code_runnable_demo.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "file_path_provided",
+                    "is_python_file"
+                  ],
+                  "deterministic_evidence": {
+                    "file_path_provided": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    },
+                    "script_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "exists": true
+                    },
+                    "is_python_file": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "expected": ".py",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz_questions",
+            "agent": "quizzer",
+            "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_min_questions",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              },
+              {
+                "criterion_id": "quiz_mentions_get",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": ".get",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              },
+              {
+                "criterion_id": "quiz_mentions_items",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": ".items",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz_questions",
+                  "agent": "quizzer",
+                  "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_min_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    },
+                    {
+                      "criterion_id": "quiz_mentions_get",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": ".get",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    },
+                    {
+                      "criterion_id": "quiz_mentions_items",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": ".items",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_min_questions\",\"quiz_mentions_get\",\"quiz_mentions_items\"],\"fix_instructions\":\"Output must include at least 8 beginner dictionary quiz questions (mix of multiple choice, true/false, short answer) plus an 'Answer Key' section with brief explanations. Ensure at least 2 questions cover .get() vs [] and at least 2 cover iteration using .items(). Include the strings '.get' and '.items' explicitly in the content. Current output has only 2 questions and lacks the required topics and answer key.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "package_final_response",
+            "agent": "text",
+            "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+            "criteria": [
+              {
+                "criterion_id": "final_includes_run_instructions",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              },
+              {
+                "criterion_id": "final_includes_filename",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "lesson_dictionaries.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              },
+              {
+                "criterion_id": "final_includes_quiz",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "package_final_response",
+                  "agent": "text",
+                  "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+                  "output": {
+                    "text": "Generated text content based on: Update the final packaged Markdown to include: (1) explicit run instructions containing the word 'python' and the command `python lesson_dictionaries.py`, (2) the filename `lesson_dictionaries.py` shown with the runnable script content, and (3) a clearly labeled `Quiz` section. Ensure the lesson snippets match the script.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "final_includes_run_instructions",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    },
+                    {
+                      "criterion_id": "final_includes_filename",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "lesson_dictionaries.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    },
+                    {
+                      "criterion_id": "final_includes_quiz",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "Quiz",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"final_includes_run_instructions\",\"final_includes_filename\",\"final_includes_quiz\"],\"fix_instructions\":\"Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "text_lesson_notes",
+            "verdict": "fail",
+            "failed_criteria": [
+              "notes_has_sections",
+              "notes_mentions_key_value"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'."
+          },
+          {
+            "task_id": "code_runnable_demo",
+            "verdict": "fail",
+            "failed_criteria": [
+              "file_path_provided",
+              "is_python_file"
+            ],
+            "evidence": {
+              "deterministic": {
+                "file_path_provided": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                },
+                "script_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                  "exists": true
+                },
+                "is_python_file": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                  "expected": ".py",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {
+                "error": "Object of type WindowsPath is not JSON serializable"
+              }
+            },
+            "fix_instructions": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main()."
+          },
+          {
+            "task_id": "quiz_questions",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_min_questions",
+              "quiz_mentions_get",
+              "quiz_mentions_items"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Output must include at least 8 beginner dictionary quiz questions (mix of multiple choice, true/false, short answer) plus an 'Answer Key' section with brief explanations. Ensure at least 2 questions cover .get() vs [] and at least 2 cover iteration using .items(). Include the strings '.get' and '.items' explicitly in the content. Current output has only 2 questions and lacks the required topics and answer key."
+          },
+          {
+            "task_id": "package_final_response",
+            "verdict": "fail",
+            "failed_criteria": [
+              "final_includes_filename",
+              "final_includes_quiz",
+              "final_includes_run_instructions"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete beginner-friendly lesson on Python dictionaries including runnable Python file, textual explanations, and quiz questions/examples.",
+          "subtasks": [
+            {
+              "task_id": "text_lesson_notes",
+              "agent": "text",
+              "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "notes_has_sections",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "##",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                },
+                {
+                  "criterion_id": "notes_mentions_key_value",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                },
+                {
+                  "criterion_id": "notes_includes_iteration",
+                  "criterion_type": "semantic",
+                  "target": "result.text_lesson_notes.output",
+                  "operator": "contains",
+                  "expected": "iterate",
+                  "severity": "optional",
+                  "tool": null,
+                  "evidence": "result.text_lesson_notes.output"
+                }
+              ]
+            },
+            {
+              "task_id": "code_runnable_demo",
+              "agent": "coder",
+              "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+              "inputs": {
+                "output_filename": "code_runnable_demo_20260105_0244.py",
+                "output_subdir": "run_07b57b219f084985be8b43bf40954c26"
+              },
+              "dependencies": [
+                "text_lesson_notes"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "file_path_provided",
+                  "criterion_type": "output_shape",
+                  "target": "result.code_runnable_demo.artifacts[0].path",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.artifacts[0].path"
+                },
+                {
+                  "criterion_id": "script_has_main_guard",
+                  "criterion_type": "semantic",
+                  "target": "result.code_runnable_demo.output",
+                  "operator": "contains",
+                  "expected": "if __name__ == \"__main__\"",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.output"
+                },
+                {
+                  "criterion_id": "script_demonstrates_items",
+                  "criterion_type": "semantic",
+                  "target": "result.code_runnable_demo.output",
+                  "operator": "contains",
+                  "expected": ".items()",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.code_runnable_demo.output"
+                },
+                {
+                  "criterion_id": "script_file_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                },
+                {
+                  "criterion_id": "is_python_file",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.artifacts[0]"
+                }
+              ]
+            },
+            {
+              "task_id": "quiz_questions",
+              "agent": "quizzer",
+              "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+              "inputs": {},
+              "dependencies": [
+                "text_lesson_notes",
+                "code_runnable_demo"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "quiz_has_min_questions",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                },
+                {
+                  "criterion_id": "quiz_mentions_get",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": ".get",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                },
+                {
+                  "criterion_id": "quiz_mentions_items",
+                  "criterion_type": "semantic",
+                  "target": "result.quiz_questions.output",
+                  "operator": "contains",
+                  "expected": ".items",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.quiz_questions.output"
+                }
+              ]
+            },
+            {
+              "task_id": "package_final_response",
+              "agent": "text",
+              "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+              "inputs": {},
+              "dependencies": [
+                "text_lesson_notes",
+                "code_runnable_demo",
+                "quiz_questions"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "final_includes_run_instructions",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "python",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                },
+                {
+                  "criterion_id": "final_includes_filename",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "lesson_dictionaries.py",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                },
+                {
+                  "criterion_id": "final_includes_quiz",
+                  "criterion_type": "semantic",
+                  "target": "result.package_final_response.output",
+                  "operator": "contains",
+                  "expected": "Quiz",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": "result.package_final_response.output"
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "text_lesson_notes": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            }
+          },
+          "code_runnable_demo": {
+            "agent": "coder",
+            "success": true,
+            "output": {
+              "code": "def main():\n    print(\"=== Dictionary Concepts Walkthrough ===\\n\")\n    \n    # 1. Creating a dictionary\n    print(\"1. Creating Dictionaries\")\n    print(\"-\" * 20)\n    empty_dict = {}\n    student = {\"name\": \"Alice\", \"age\": 20, \"grade\": \"A\"}\n    print(f\"Empty dictionary: {empty_dict}\")\n    print(f\"Student dictionary: {student}\\n\")\n    \n    # 2. Accessing values with []\n    print(\"2. Accessing Values with []\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student['name']}\")\n    print(f\"Student age: {student['age']}\")\n    # This would raise KeyError: print(student['height'])\n    print(\"Note: Accessing non-existent keys raises KeyError\\n\")\n    \n    # 3. Accessing values with get()\n    print(\"3. Accessing Values with get()\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student.get('name')}\")\n    print(f\"Student height: {student.get('height', 'Not specified')}\")\n    print(f\"Student grade: {student.get('grade', 'Unknown')}\\n\")\n    \n    # 4. Adding and updating values\n    print(\"4. Adding and Updating Values\")\n    print(\"-\" * 20)\n    student[\"height\"] = 165  # Add new key-value pair\n    student[\"age\"] = 21      # Update existing value\n    print(f\"After adding height and updating age: {student}\\n\")\n    \n    # 5. Deleting items with del and pop\n    print(\"5. Deleting Items\")\n    print(\"-\" * 20)\n    del student[\"grade\"]     # Delete using del\n    removed_height = student.pop(\"height\")  # Remove and return value\n    print(f\"After deleting grade and popping height: {student}\")\n    print(f\"Removed height value: {removed_height}\\n\")\n    \n    # 6. Membership testing with 'in'\n    print(\"6. Membership Testing\")\n    print(\"-\" * 20)\n    print(f\"'name' in student: {'name' in student}\")\n    print(f\"'grade' in student: {'grade' in student}\")\n    print(f\"'Alice' in student: {'Alice' in student}\")  # Checks keys only\n    print()\n    \n    # 7. Iterating through dictionaries\n    print(\"7. Iterating Through Dictionaries\")\n    print(\"-\" * 20)\n    print(\"Keys:\")\n    for key in student:\n        print(f\"  {key}\")\n    \n    print(\"\\nValues:\")\n    for value in student.values():\n        print(f\"  {value}\")\n    \n    print(\"\\nKey-Value pairs:\")\n    for key, value in student.items():\n        print(f\"  {key}: {value}\")\n    print()\n    \n    # 8. Nested dictionaries\n    print(\"8. Nested Dictionaries\")\n    print(\"-\" * 20)\n    class_roster = {\n        \"student1\": {\"name\": \"Alice\", \"age\": 20},\n        \"student2\": {\"name\": \"Bob\", \"age\": 22}\n    }\n    print(f\"Class roster: {class_roster}\")\n    print(f\"Alice's age: {class_roster['student1']['age']}\")\n    print()\n    \n    # 9. Mini Practice Section\n    print(\"9. Mini Practice Section\")\n    print(\"-\" * 20)\n    \n    # TODO: Create a dictionary called 'book' with keys 'title', 'author', and 'year'\n    book = {\"title\": \"1984\", \"author\": \"George Orwell\", \"year\": 1948}\n    print(\"Book dictionary created:\", book)\n    \n    # TODO: Add a new key 'genre' with value 'Dystopian Fiction'\n    book[\"genre\"] = \"Dystopian Fiction\"\n    print(\"After adding genre:\", book)\n    \n    # TODO: Update the year to 1949\n    book[\"year\"] = 1949\n    print(\"After updating year:\", book)\n    \n    # TODO: Remove the author key\n    del book[\"author\"]\n    print(\"After removing author:\", book)\n    \n    # TODO: Check if 'title' is in the dictionary\n    has_title = \"title\" in book\n    print(\"Does book have 'title' key?\", has_title)\n    \n    # TODO: Print all keys using a loop\n    print(\"All keys:\")\n    for key in book:\n        print(f\"  {key}\")\n    \n    # TODO: Print all values using a loop\n    print(\"All values:\")\n    for value in book.values():\n        print(f\"  {value}\")\n    \n    # TODO: Print all key-value pairs\n    print(\"All key-value pairs:\")\n    for key, value in book.items():\n        print(f\"  {key}: {value}\")\n\nif __name__ == '__main__':\n    main()\n",
+              "validation": {
+                "success": true,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                "stderr": "",
+                "compile_success": true,
+                "run_success": true,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                  "stderr": "",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py"
+            ],
+            "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "quiz_questions": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output must include at least 8 beginner dictionary quiz questions (mix of multiple choice, true/false, short answer) plus an 'Answer Key' section with brief explanations. Ensure at least 2 questions cover .get() vs [] and at least 2 cover iteration using .items(). Include the strings '.get' and '.items' explicitly in the content. Current output has only 2 questions and lacks the required topics and answer key.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "package_final_response": {
+            "agent": "text",
+            "success": true,
+            "output": {
+              "text": "Generated text content based on: Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.",
+              "format": "markdown"
+            },
+            "artifacts": [],
+            "instruction": "Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4o"
+            },
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "text_lesson_notes",
+            "agent": "text",
+            "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+            "criteria": [
+              {
+                "criterion_id": "notes_has_sections",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "##",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              },
+              {
+                "criterion_id": "notes_mentions_key_value",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              },
+              {
+                "criterion_id": "notes_includes_iteration",
+                "criterion_type": "semantic",
+                "target": "result.text_lesson_notes.output",
+                "operator": "contains",
+                "expected": "iterate",
+                "severity": "optional",
+                "tool": null,
+                "evidence": "result.text_lesson_notes.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "text_lesson_notes",
+                  "agent": "text",
+                  "instruction": "Write a concise beginner lesson in Markdown explaining what a Python dictionary is, key concepts (key/value, uniqueness of keys, mutability), common operations (create, access, add/update, delete, iterate), nesting, and common pitfalls. Include short code snippets aligned with the runnable file.",
+                  "output": {
+                    "text": "Generated text content based on: Replace the placeholder text with an actual beginner-friendly Markdown lesson. Must include multiple section headings using '##'. Explicitly explain dictionaries as key/value pairs, that keys are unique, and that dicts are mutable. Add short runnable Python snippets showing: create, access (including .get), add/update, delete (del and/or pop), iterate (keys/values/items), and nesting. Include a 'Common pitfalls' section (KeyError, unhashable keys, mutable values/defaults). Ensure the text contains the word 'key' and ideally 'iterate'.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "notes_has_sections",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "##",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    },
+                    {
+                      "criterion_id": "notes_mentions_key_value",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    },
+                    {
+                      "criterion_id": "notes_includes_iteration",
+                      "criterion_type": "semantic",
+                      "target": "result.text_lesson_notes.output",
+                      "operator": "contains",
+                      "expected": "iterate",
+                      "severity": "optional",
+                      "tool": null,
+                      "evidence": "result.text_lesson_notes.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"pass\",\"failed_criteria\":[],\"fix_instructions\":\"\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "pass"
+          },
+          {
+            "task_id": "code_runnable_demo",
+            "agent": "coder",
+            "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+            "criteria": [
+              {
+                "criterion_id": "file_path_provided",
+                "criterion_type": "output_shape",
+                "target": "result.code_runnable_demo.artifacts[0].path",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.artifacts[0].path"
+              },
+              {
+                "criterion_id": "script_has_main_guard",
+                "criterion_type": "semantic",
+                "target": "result.code_runnable_demo.output",
+                "operator": "contains",
+                "expected": "if __name__ == \"__main__\"",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.output"
+              },
+              {
+                "criterion_id": "script_demonstrates_items",
+                "criterion_type": "semantic",
+                "target": "result.code_runnable_demo.output",
+                "operator": "contains",
+                "expected": ".items()",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.code_runnable_demo.output"
+              },
+              {
+                "criterion_id": "script_file_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              },
+              {
+                "criterion_id": "is_python_file",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.artifacts[0]"
+              }
+            ],
+            "deterministic": {
+              "file_path_provided": {
+                "value": null,
+                "expected": true,
+                "operator": "exists"
+              },
+              "script_file_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "exists": true
+              },
+              "is_python_file": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                "expected": ".py",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "code_runnable_demo",
+                  "agent": "coder",
+                  "instruction": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main().",
+                  "output": {
+                    "code": "def main():\n    print(\"=== Dictionary Concepts Walkthrough ===\\n\")\n    \n    # 1. Creating a dictionary\n    print(\"1. Creating Dictionaries\")\n    print(\"-\" * 20)\n    empty_dict = {}\n    student = {\"name\": \"Alice\", \"age\": 20, \"grade\": \"A\"}\n    print(f\"Empty dictionary: {empty_dict}\")\n    print(f\"Student dictionary: {student}\\n\")\n    \n    # 2. Accessing values with []\n    print(\"2. Accessing Values with []\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student['name']}\")\n    print(f\"Student age: {student['age']}\")\n    # This would raise KeyError: print(student['height'])\n    print(\"Note: Accessing non-existent keys raises KeyError\\n\")\n    \n    # 3. Accessing values with get()\n    print(\"3. Accessing Values with get()\")\n    print(\"-\" * 20)\n    print(f\"Student name: {student.get('name')}\")\n    print(f\"Student height: {student.get('height', 'Not specified')}\")\n    print(f\"Student grade: {student.get('grade', 'Unknown')}\\n\")\n    \n    # 4. Adding and updating values\n    print(\"4. Adding and Updating Values\")\n    print(\"-\" * 20)\n    student[\"height\"] = 165  # Add new key-value pair\n    student[\"age\"] = 21      # Update existing value\n    print(f\"After adding height and updating age: {student}\\n\")\n    \n    # 5. Deleting items with del and pop\n    print(\"5. Deleting Items\")\n    print(\"-\" * 20)\n    del student[\"grade\"]     # Delete using del\n    removed_height = student.pop(\"height\")  # Remove and return value\n    print(f\"After deleting grade and popping height: {student}\")\n    print(f\"Removed height value: {removed_height}\\n\")\n    \n    # 6. Membership testing with 'in'\n    print(\"6. Membership Testing\")\n    print(\"-\" * 20)\n    print(f\"'name' in student: {'name' in student}\")\n    print(f\"'grade' in student: {'grade' in student}\")\n    print(f\"'Alice' in student: {'Alice' in student}\")  # Checks keys only\n    print()\n    \n    # 7. Iterating through dictionaries\n    print(\"7. Iterating Through Dictionaries\")\n    print(\"-\" * 20)\n    print(\"Keys:\")\n    for key in student:\n     ...",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "=== Dictionary Concepts Walkthrough ===\n\n1. Creating Dictionaries\n--------------------\nEmpty dictionary: {}\nStudent dictionary: {'name': 'Alice', 'age': 20, 'grade': 'A'}\n\n2. Accessing Values with []\n--------------------\nStudent name: Alice\nStudent age: 20\nNote: Accessing non-existent keys raises KeyError\n\n3. Accessing Values with get()\n--------------------\nStudent name: Alice\nStudent height: Not specified\nStudent grade: A\n\n4. Adding and Updating Values\n--------------------\nAfter adding height and updating age: {'name': 'Alice', 'age': 21, 'grade': 'A', 'height': 165}\n\n5. Deleting Items\n--------------------\nAfter deleting grade and popping height: {'name': 'Alice', 'age': 21}\nRemoved height value: 165\n\n6. Membership Testing\n--------------------\n'name' in student: True\n'grade' in student: False\n'Alice' in student: False\n\n7. Iterating Through Dictionaries\n--------------------\nKeys:\n  name\n  age\n\nValues:\n  Alice\n  21\n\nKey-Value pairs:\n  name: Alice\n  age: 21\n\n8. Nested Dictionaries\n--------------------\nClass roster: {'student1': {'name': 'Alice', 'age': 20}, 'student2': {'name': 'Bob', 'age': 22}}\nAlice's age: 20\n\n9. Mini Practice Section\n--------------------\nBook dictionary created: {'title': '1984', 'author': 'George Orwell', 'year': 1948}\nAfter adding genre: {'title': '1984', 'author': 'George Orwell', 'year': 1948, 'genre': 'Dystopian Fiction'}\nAfter updating year: {'title': '1984', 'author': 'George Orwell', 'year': 1949, 'genre': 'Dystopian Fiction'}\nAfter removing author: {'title': '1984', 'year': 1949, 'genre': 'Dystopian Fiction'}\nDoes book have 'title' key? True\nAll keys:\n  title\n  year\n  genre\nAll values:\n  1984\n  1949\n  Dystopian Fiction\nAll key-value pairs:\n  title: 1984\n  year: 1949\n  genre: Dystopian Fiction\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "script_has_main_guard",
+                      "criterion_type": "semantic",
+                      "target": "result.code_runnable_demo.output",
+                      "operator": "contains",
+                      "expected": "if __name__ == \"__main__\"",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.code_runnable_demo.output"
+                    },
+                    {
+                      "criterion_id": "script_demonstrates_items",
+                      "criterion_type": "semantic",
+                      "target": "result.code_runnable_demo.output",
+                      "operator": "contains",
+                      "expected": ".items()",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.code_runnable_demo.output"
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "file_path_provided",
+                    "is_python_file"
+                  ],
+                  "deterministic_evidence": {
+                    "file_path_provided": {
+                      "value": null,
+                      "expected": true,
+                      "operator": "exists"
+                    },
+                    "script_file_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "exists": true
+                    },
+                    "is_python_file": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                      "expected": ".py",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "quiz_questions",
+            "agent": "quizzer",
+            "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+            "criteria": [
+              {
+                "criterion_id": "quiz_has_min_questions",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              },
+              {
+                "criterion_id": "quiz_mentions_get",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": ".get",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              },
+              {
+                "criterion_id": "quiz_mentions_items",
+                "criterion_type": "semantic",
+                "target": "result.quiz_questions.output",
+                "operator": "contains",
+                "expected": ".items",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.quiz_questions.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "quiz_questions",
+                  "agent": "quizzer",
+                  "instruction": "Create a set of beginner quiz items about dictionaries: at least 8 questions with a mix of multiple choice, true/false, and short answer. Provide an answer key with brief explanations. Include at least 2 questions about .get() vs [] and iteration with .items().",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "quiz_has_min_questions",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    },
+                    {
+                      "criterion_id": "quiz_mentions_get",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": ".get",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    },
+                    {
+                      "criterion_id": "quiz_mentions_items",
+                      "criterion_type": "semantic",
+                      "target": "result.quiz_questions.output",
+                      "operator": "contains",
+                      "expected": ".items",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.quiz_questions.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"quiz_has_min_questions\",\"quiz_mentions_get\",\"quiz_mentions_items\"],\"fix_instructions\":\"Output must include at least 8 beginner dictionary quiz questions with a mix of multiple choice, true/false, and short answer. Include an explicit 'Answer Key' section with brief explanations. Ensure at least 2 questions cover .get() vs [] access and at least 2 questions cover iterating with .items(). Include the strings '.get' and '.items' in the content.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "package_final_response",
+            "agent": "text",
+            "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+            "criteria": [
+              {
+                "criterion_id": "final_includes_run_instructions",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "python",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              },
+              {
+                "criterion_id": "final_includes_filename",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "lesson_dictionaries.py",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              },
+              {
+                "criterion_id": "final_includes_quiz",
+                "criterion_type": "semantic",
+                "target": "result.package_final_response.output",
+                "operator": "contains",
+                "expected": "Quiz",
+                "severity": "required",
+                "tool": null,
+                "evidence": "result.package_final_response.output"
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "package_final_response",
+                  "agent": "text",
+                  "instruction": "Assemble final deliverables: (1) Markdown lesson text, (2) runnable Python file content with filename, (3) quiz section. Ensure consistency between snippets and script and provide brief run instructions (python lesson_dictionaries.py).",
+                  "output": {
+                    "text": "Generated text content based on: Provide the complete final Markdown deliverable, not a placeholder. It must (1) include explicit run instructions that contain the word 'python' and the exact command `python lesson_dictionaries.py`, (2) show the filename `lesson_dictionaries.py` alongside the runnable script content in a code block, and (3) include a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.",
+                    "format": "markdown"
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "final_includes_run_instructions",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "python",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    },
+                    {
+                      "criterion_id": "final_includes_filename",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "lesson_dictionaries.py",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    },
+                    {
+                      "criterion_id": "final_includes_quiz",
+                      "criterion_type": "semantic",
+                      "target": "result.package_final_response.output",
+                      "operator": "contains",
+                      "expected": "Quiz",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": "result.package_final_response.output"
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"final_includes_run_instructions\",\"final_includes_filename\",\"final_includes_quiz\"],\"fix_instructions\":\"Provide the complete final Markdown deliverable (not a placeholder). It must include: (1) explicit run instructions containing the word 'python' and the exact command `python lesson_dictionaries.py`; (2) the filename `lesson_dictionaries.py` shown alongside the full runnable script content in a code block; and (3) a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "partial",
+        "tasks": [
+          {
+            "task_id": "text_lesson_notes",
+            "verdict": "pass",
+            "failed_criteria": [],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": ""
+          },
+          {
+            "task_id": "code_runnable_demo",
+            "verdict": "fail",
+            "failed_criteria": [
+              "file_path_provided",
+              "is_python_file"
+            ],
+            "evidence": {
+              "deterministic": {
+                "file_path_provided": {
+                  "value": null,
+                  "expected": true,
+                  "operator": "exists"
+                },
+                "script_file_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                  "exists": true
+                },
+                "is_python_file": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_07b57b219f084985be8b43bf40954c26\\code_runnable_demo_20260105_0244.py",
+                  "expected": ".py",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {
+                "error": "Object of type WindowsPath is not JSON serializable"
+              }
+            },
+            "fix_instructions": "Create a runnable Python script (e.g., lesson_dictionaries.py) that prints a guided walkthrough of dictionary concepts with examples: create dict, access with [], get(), add/update, delete with del/pop, membership with in, iterate keys/values/items, nested dict, and a mini practice section with TODO-style prompts and provided solutions. Ensure it runs without external dependencies and uses if __name__ == '__main__': main()."
+          },
+          {
+            "task_id": "quiz_questions",
+            "verdict": "fail",
+            "failed_criteria": [
+              "quiz_has_min_questions",
+              "quiz_mentions_get",
+              "quiz_mentions_items"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Output must include at least 8 beginner dictionary quiz questions with a mix of multiple choice, true/false, and short answer. Include an explicit 'Answer Key' section with brief explanations. Ensure at least 2 questions cover .get() vs [] access and at least 2 questions cover iterating with .items(). Include the strings '.get' and '.items' in the content."
+          },
+          {
+            "task_id": "package_final_response",
+            "verdict": "fail",
+            "failed_criteria": [
+              "final_includes_filename",
+              "final_includes_quiz",
+              "final_includes_run_instructions"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide the complete final Markdown deliverable (not a placeholder). It must include: (1) explicit run instructions containing the word 'python' and the exact command `python lesson_dictionaries.py`; (2) the filename `lesson_dictionaries.py` shown alongside the full runnable script content in a code block; and (3) a clearly labeled `Quiz` section. Ensure any code snippets in the lesson match the script."
+          }
+        ]
+      }
+    }
+  ]
+}

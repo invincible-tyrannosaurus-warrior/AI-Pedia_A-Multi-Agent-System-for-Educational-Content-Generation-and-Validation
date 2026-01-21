@@ -1,0 +1,3162 @@
+{
+  "run_id": "e7fb125425de44a7b417a1b9257d6419",
+  "started_at": "2026-01-08T07:22:33.707418+00:00",
+  "rounds": [
+    {
+      "iteration": 1,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete ~10-minute lesson explaining Classification and Regression with k-Nearest Neighbors (k-NN), including presentation slides, code examples, exercise questions, and an accompanying video.",
+          "subtasks": [
+            {
+              "task_id": "step1_slides",
+              "agent": "presentation",
+              "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_code_snippets",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_semantic_knn_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "k-Nearest Neighbors",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step2_code",
+              "agent": "coder",
+              "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+              "inputs": {
+                "output_filename": "step2_code_20260108_0722.py",
+                "output_subdir": "run_e7fb125425de44a7b417a1b9257d6419"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_runs",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_artifact_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_classifier",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KNeighborsClassifier",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_regressor",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KNeighborsRegressor",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step3_exercises",
+              "agent": "quizzer",
+              "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+              "inputs": {},
+              "dependencies": [
+                "step1_slides",
+                "step2_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "exercise_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_mcq",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Multiple Choice",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_short_answer",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Short Answer",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_coding_prompts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Coding/Analysis",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step4_video",
+              "agent": "video",
+              "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+              "inputs": {},
+              "dependencies": [
+                "step1_slides",
+                "step2_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mp4",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mentions_classification_regression",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "classification",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_slides": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No slide deck output (.pptx) was produced. Create and export a .pptx slide deck for a ~10-minute lesson on k-Nearest Neighbors (classification + regression) including: learning objectives; intuition (neighbors/voting/averaging); algorithm steps; distance metrics + feature scaling; role of k and bias\u2013variance; classification vs regression outputs; model selection via validation; weighted k-NN; pitfalls (curse of dimensionality) + when to use; summary. Ensure it has multiple slides (>=1) and includes at least one slide with code snippets aligned with the coding task examples. Provide the generated .pptx file as result.output and verify it contains the phrase \u201ck-Nearest Neighbors\u201d.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step2_code": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "import numpy as np\nimport pandas as pd\nfrom sklearn.datasets import make_classification, make_regression\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor\nfrom sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score\nimport matplotlib.pyplot as plt\n\n# =============================================================================\n# K-NEAREST NEIGHBORS CLASSIFICATION EXAMPLE\n# =============================================================================\n\nprint(\"K-NEAREST NEIGHBORS CLASSIFICATION\")\nprint(\"=\" * 40)\n\n# Generate synthetic classification dataset\nX_class, y_class = make_classification(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    n_redundant=2,\n    n_clusters_per_class=1,\n    random_state=42\n)\n\n# Split into train and validation sets\nX_train_class, X_val_class, y_train_class, y_val_class = train_test_split(\n    X_class, y_class, test_size=0.2, random_state=42, stratify=y_class\n)\n\n# Create pipeline with StandardScaler and KNeighborsClassifier\npipeline_class = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsClassifier())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_class = {\n    'knn__n_neighbors': [1, 3, 5, 7, 9, 11]\n}\n\n# Perform grid search with cross-validation\ngrid_search_class = GridSearchCV(\n    pipeline_class,\n    param_grid_class,\n    cv=5,\n    scoring='accuracy',\n    n_jobs=-1\n)\n\n# Fit the model\ngrid_search_class.fit(X_train_class, y_train_class)\n\n# Get best parameters and predictions\nbest_k_class = grid_search_class.best_params_['knn__n_neighbors']\ny_pred_class = grid_search_class.predict(X_val_class)\n\n# Calculate metrics\naccuracy = accuracy_score(y_val_class, y_pred_class)\n\nprint(f\"Best k value: {best_k_class}\")\nprint(f\"Validation Accuracy: {accuracy:.4f}\")\n\n# =============================================================================\n# K-NEAREST NEIGHBORS REGRESSION EXAMPLE\n# =============================================================================\n\nprint(\"\\nK-NEAREST NEIGHBORS REGRESSION\")\nprint(\"=\" * 40)\n\n# Generate synthetic regression dataset\nX_reg, y_reg = make_regression(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    noise=0.1,\n    random_state=42\n)\n\n# Split into train and validation sets\nX_train_reg, X_val_reg, y_train_reg, y_val_reg = train_test_split(\n    X_reg, y_reg, test_size=0.2, random_state=42\n)\n\n# Create pipeline with StandardScaler and KNeighborsRegressor\npipeline_reg = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsRegressor())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_reg = {\n    'knn__n_neighbors': [1, 3, 5, 7, 9, 11]\n}\n\n# Perform grid search with cross-validation\ngrid_search_reg = GridSearchCV(\n    pipeline_reg,\n    param_grid_reg,\n    cv=5,\n    scoring='neg_mean_squared_error',\n    n_jobs=-1\n)\n\n# Fit the model\ngrid_search_reg.fit(X_train_reg, y_train_reg)\n\n# Get best parameters and predictions\nbest_k_reg = grid_search_reg.best_params_['knn__n_neighbors']\ny_pred_reg = grid_search_reg.predict(X_val_reg)\n\n# Calculate metrics\nmae = mean_absolute_error(y_val_reg, y_pred_reg)\nrmse = np.sqrt(mean_squared_error(y_val_reg, y_pred_reg))\nr2 = r2_score(y_val_reg, y_pred_reg)\n\nprint(f\"Best k value: {best_k_reg}\")\nprint(f\"Mean Absolute Error: {mae:.4f}\")\nprint(f\"Root Mean Squared Error: {rmse:.4f}\")\nprint(f\"R\u00b2 Score: {r2:.4f}\")\n\n# =============================================================================\n# HYPERPARAMETER SWEEP VISUALIZATION\n# =============================================================================\n\nprint(\"\\nHYPERPARAMETER SWEEP ANALYSIS\")\nprint(\"=\" * 40)\n\n# Analyze performance across different k values for classification\nk_values = [1, 3, 5, 7, 9, 11]\naccuracies = []\n\nfor k in k_values:\n    pipeline_temp = Pipeline([\n        ('scaler', StandardScaler()),\n        ('knn', KNeighborsClassifier(n_neighbors=k))\n    ])\n    pipeline_temp.fit(X_train_class, y_train_class)\n    y_pred_temp = pipeline_temp.predict(X_val_class)\n    acc = accuracy_score(y_val_class, y_pred_temp)\n    accuracies.append(acc)\n    print(f\"k={k}: Accuracy = {acc:.4f}\")\n\n# Analyze performance across different k values for regression\nr2_scores = []\nmae_scores = []\n\nfor k in k_values:\n    pipeline_temp = Pipeline([\n        ('scaler', StandardScaler()),\n        ('knn', KNeighborsRegressor(n_neighbors=k))\n    ])\n    pipeline_temp.fit(X_train_reg, y_train_reg)\n    y_pred_temp = pipeline_temp.predict(X_val_reg)\n    r2_temp = r2_score(y_val_reg, y_pred_temp)\n    mae_temp = mean_absolute_error(y_val_reg, y_pred_temp)\n    r2_scores.append(r2_temp)\n    mae_scores.append(mae_temp)\n    print(f\"k={k}: R\u00b2 = {r2_temp:.4f}, MAE = {mae_temp:.4f}\")\n\n# Plot results\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))\n\n# Classification plot\nax1.plot(k_values, accuracies, 'o-', color='blue')\nax1.set_xlabel('Number of Neighbors (k)')\nax1.set_ylabel('Accuracy')\nax1.set_title('Classification Performance vs k')\nax1.grid(True)\n\n# Regression plot\nax2.plot(k_values, r2_scores, 'o-', color='red')\nax2.set_xlabel('Number of Neighbors (k)')\nax2.set_ylabel('R\u00b2 Score')\nax2.set_title('Regression Performance vs k')\nax2.grid(True)\n\nplt.tight_layout()\nplt.show()\n\nprint(\"\\nAnalysis complete!\")\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py"
+            ],
+            "instruction": "The provided script demonstrates linear regression, not k-NN. Update the code to include both k-NN classification and k-NN regression examples using scikit-learn: generate synthetic datasets for each, perform train/validation split, use Pipeline with StandardScaler, train KNeighborsClassifier and KNeighborsRegressor, report metrics (accuracy for classification; MAE or RMSE plus R^2 for regression), and include a small hyperparameter sweep over k (e.g., k in [1,3,5,7,9,11]). Save as a single runnable script with clear section headers.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step3_exercises": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output is incomplete: it only contains 2 generic questions and lacks the required structure and content. Create 8\u201312 k-NN questions suitable for a 10-minute follow-up, including at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts. Include an explicit 'Answer Key' section. Label sections clearly with headings like 'Multiple Choice', 'Short Answer', and 'Coding/Analysis'. Ensure questions cover conceptual topics (effect of k, scaling, distance metrics, curse of dimensionality) and practical code-related prompts (where to add scaling, how to tune k via cross-validation, which metrics to use for classification vs regression).",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step4_video": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "The task output is missing: no MP4 was produced (video_success=false, output=null). Generate and provide a valid .mp4 file (~10 minutes) that delivers an instructional k-NN lesson aligned to the slide deck and code examples. Ensure the narration explicitly covers both k-NN classification and regression, including objectives, intuition, algorithm steps, scaling/distance metrics, choosing k, evaluation, a quick walkthrough of code/results with on-screen snippets, and a recap. Export as an MP4 and return the file path/link in result.output.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_slides",
+            "agent": "presentation",
+            "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_code_snippets",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_semantic_knn_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "k-Nearest Neighbors",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "slides_file_created": {
+                "value": null,
+                "exists": false
+              },
+              "slides_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "slides_code_snippets": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_slides",
+                  "agent": "presentation",
+                  "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_semantic_knn_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "k-Nearest Neighbors",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_file_created",
+                    "slides_count",
+                    "slides_code_snippets"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_created": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "slides_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "slides_code_snippets": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_file_created\",\"slides_count\",\"slides_code_snippets\",\"slides_semantic_knn_topics\"],\"fix_instructions\":\"No .pptx output was provided and no evidence of slide count or code snippet slides exists. Create and export a PowerPoint (.pptx) slide deck (~10 minutes, ~10\u201315 slides) that teaches k-Nearest Neighbors for classification and regression, covering: learning objectives; intuition (neighbors/voting/averaging); algorithm steps; distance metrics and feature scaling; role of k and bias-variance; classification vs regression outputs; model selection via validation; weighted k-NN note; pitfalls (curse of dimensionality) and when to use; and a summary slide. Include at least one slide with code snippets aligned to the coding task examples, then provide the .pptx file path/output.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_code",
+            "agent": "coder",
+            "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+            "criteria": [
+              {
+                "criterion_id": "code_runs",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_artifact_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_classifier",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KNeighborsClassifier",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_regressor",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KNeighborsRegressor",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "code_runs": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "no_stderr": {
+                "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 142, in <module>\n    print(f\"Validation R\\xb2: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 12: illegal multibyte sequence\n",
+                "expected": "",
+                "operator": "equals"
+              },
+              "code_artifact_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                "exists": true
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_code",
+                  "agent": "coder",
+                  "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+                  "output": {
+                    "code": "# k-NN Classification and Regression Examples\n# ==========================================\n\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom sklearn.datasets import make_classification, make_regression\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor\nfrom sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score\nimport pandas as pd\n\n# Section 1: Generate Synthetic Dataset for Classification\nprint(\"=== K-NN CLASSIFICATION EXAMPLE ===\")\n\n# Generate a synthetic classification dataset\nX_class, y_class = make_classification(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    n_redundant=2,\n    n_clusters_per_class=1,\n    random_state=42\n)\n\n# Split the data into training and validation sets\nX_train_class, X_val_class, y_train_class, y_val_class = train_test_split(\n    X_class, y_class, test_size=0.2, random_state=42, stratify=y_class\n)\n\nprint(f\"Classification dataset shape: {X_class.shape}\")\nprint(f\"Training set size: {X_train_class.shape[0]}\")\nprint(f\"Validation set size: {X_val_class.shape[0]}\")\n\n# Section 2: Build and Train Classification Model\nprint(\"\\n--- Building Classification Pipeline ---\")\n\n# Create a pipeline with standardization and k-NN classifier\nclass_pipeline = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsClassifier())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_class = {\n    'knn__n_neighbors': [3, 5, 7, 9, 11],\n    'knn__weights': ['uniform', 'distance'],\n    'knn__metric': ['euclidean', 'manhattan']\n}\n\n# Perform grid search with cross-validation\ngrid_search_class = GridSearchCV(\n    class_pipeline,\n    param_grid_class,\n    cv=5,\n    scoring='accuracy',\n    n_jobs=-1\n)\n\n# Fit the grid search on training data\ngrid_search_class.fit(X_train_class, y_train_class)\n\nprint(\"Best parameters fo...",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                      "stdout": "=== K-NN CLASSIFICATION EXAMPLE ===\nClassification dataset shape: (1000, 10)\nTraining set size: 800\nValidation set size: 200\n\n--- Building Classification Pipeline ---\nBest parameters for classification: {'knn__metric': 'euclidean', 'knn__n_neighbors': 11, 'knn__weights': 'uniform'}\nBest cross-validation score: 0.975\nValidation Accuracy: 0.9850\n\n=== K-NN REGRESSION EXAMPLE ===\nRegression dataset shape: (1000, 10)\nTraining set size: 800\nValidation set size: 200\n\n--- Building Regression Pipeline ---\nBest parameters for regression: {'knn__metric': 'euclidean', 'knn__n_neighbors': 5, 'knn__weights': 'distance'}\nBest cross-validation MSE: 1042.1132441953152\nValidation MAE: 22.2445\nValidation RMSE: 28.6466\n",
+                      "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 142, in <module>\n    print(f\"Validation R\\xb2: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 12: illegal multibyte sequence\n",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": 1,
+                        "stdout": "=== K-NN CLASSIFICATION EXAMPLE ===\nClassification dataset shape: (1000, 10)\nTraining set size: 800\nValidation set size: 200\n\n--- Building Classification Pipeline ---\nBest parameters for classification: {'knn__metric': 'euclidean', 'knn__n_neighbors': 11, 'knn__weights': 'uniform'}\nBest cross-validation score: 0.975\nValidation Accuracy: 0.9850\n\n=== K-NN REGRESSION EXAMPLE ===\nRegression dataset shape: (1000, 10)\nTraining set size: 800\nValidation set size: 200\n\n--- Building Regression Pipeline ---\nBest parameters for regression: {'knn__metric': 'euclidean', 'knn__n_neighbors': 5, 'knn__weights': 'distance'}\nBest cross-validation MSE: 1042.1132441953152\nValidation MAE: 22.2445\nValidation RMSE: 28.6466\n",
+                        "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 142, in <module>\n    print(f\"Validation R\\xb2: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 12: illegal multibyte sequence\n",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_includes_classifier",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KNeighborsClassifier",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "code_includes_regressor",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KNeighborsRegressor",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_runs",
+                    "no_stderr"
+                  ],
+                  "deterministic_evidence": {
+                    "code_runs": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "no_stderr": {
+                      "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 142, in <module>\n    print(f\"Validation R\\xb2: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 12: illegal multibyte sequence\n",
+                      "expected": "",
+                      "operator": "equals"
+                    },
+                    "code_artifact_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                      "exists": true
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_runs\",\"no_stderr\"],\"fix_instructions\":\"The script fails at runtime due to a UnicodeEncodeError when printing \u201cR\u00b2\u201d on GBK/Windows consoles. Replace the superscript character with plain ASCII (e.g., print('Validation R2: ...') or 'R-squared'), or ensure UTF-8 output (e.g., set PYTHONIOENCODING=utf-8 or reconfigure sys.stdout). After this change, rerun to confirm no stderr and successful completion.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step3_exercises",
+            "agent": "quizzer",
+            "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+            "criteria": [
+              {
+                "criterion_id": "exercise_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_mcq",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Multiple Choice",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_short_answer",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Short Answer",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_coding_prompts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Coding/Analysis",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_exercises",
+                  "agent": "quizzer",
+                  "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "exercise_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_mcq",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Multiple Choice",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_short_answer",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Short Answer",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_coding_prompts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Coding/Analysis",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"exercise_count\",\"includes_mcq\",\"includes_short_answer\",\"includes_coding_prompts\"],\"fix_instructions\":\"Output does not meet requirements: only 2 questions provided, and it lacks explicit sections/labels for Multiple Choice, Short Answer, and Coding/Analysis prompts, as well as an answer key. Revise to include 8\u201312 total questions with at least 4 MCQs, 2 short-answer, and 2 coding/analysis prompts tied to k-NN code usage (scaling, tuning k via CV, distance metrics). Provide a clearly marked Answer Key.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_video",
+            "agent": "video",
+            "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+            "criteria": [
+              {
+                "criterion_id": "video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mp4",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mentions_classification_regression",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "classification",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "video_mp4": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_video",
+                  "agent": "video",
+                  "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "video_mentions_classification_regression",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "classification",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "video_success",
+                    "video_mp4"
+                  ],
+                  "deterministic_evidence": {
+                    "video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "video_mp4": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.video_success\",\"deterministic_failures.video_mp4\",\"semantic.video_mentions_classification_regression\"],\"fix_instructions\":\"No MP4 was produced (output is null) and the video generation did not succeed. Re-run the video render pipeline to export an .mp4 file and attach it as result.output. Ensure the narration/onscreen text explicitly mentions both \\\"classification\\\" and \\\"regression\\\" and covers the required topics: objectives, intuition, algorithm steps, classification vs regression, scaling/distance metrics, choosing k, evaluation, code walkthrough, and recap.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "step1_slides",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_code_snippets",
+              "slides_count",
+              "slides_file_created",
+              "slides_semantic_knn_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_created": {
+                  "value": null,
+                  "exists": false
+                },
+                "slides_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "slides_code_snippets": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx output was provided and no evidence of slide count or code snippet slides exists. Create and export a PowerPoint (.pptx) slide deck (~10 minutes, ~10\u201315 slides) that teaches k-Nearest Neighbors for classification and regression, covering: learning objectives; intuition (neighbors/voting/averaging); algorithm steps; distance metrics and feature scaling; role of k and bias-variance; classification vs regression outputs; model selection via validation; weighted k-NN note; pitfalls (curse of dimensionality) and when to use; and a summary slide. Include at least one slide with code snippets aligned to the coding task examples, then provide the .pptx file path/output."
+          },
+          {
+            "task_id": "step2_code",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_runs",
+              "no_stderr"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_runs": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "no_stderr": {
+                  "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 142, in <module>\n    print(f\"Validation R\\xb2: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 12: illegal multibyte sequence\n",
+                  "expected": "",
+                  "operator": "equals"
+                },
+                "code_artifact_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                  "exists": true
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The script fails at runtime due to a UnicodeEncodeError when printing \u201cR\u00b2\u201d on GBK/Windows consoles. Replace the superscript character with plain ASCII (e.g., print('Validation R2: ...') or 'R-squared'), or ensure UTF-8 output (e.g., set PYTHONIOENCODING=utf-8 or reconfigure sys.stdout). After this change, rerun to confirm no stderr and successful completion."
+          },
+          {
+            "task_id": "step3_exercises",
+            "verdict": "fail",
+            "failed_criteria": [
+              "exercise_count",
+              "includes_coding_prompts",
+              "includes_mcq",
+              "includes_short_answer"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Output does not meet requirements: only 2 questions provided, and it lacks explicit sections/labels for Multiple Choice, Short Answer, and Coding/Analysis prompts, as well as an answer key. Revise to include 8\u201312 total questions with at least 4 MCQs, 2 short-answer, and 2 coding/analysis prompts tied to k-NN code usage (scaling, tuning k via CV, distance metrics). Provide a clearly marked Answer Key."
+          },
+          {
+            "task_id": "step4_video",
+            "verdict": "fail",
+            "failed_criteria": [
+              "video_mp4",
+              "video_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "video_mp4": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No MP4 was produced (output is null) and the video generation did not succeed. Re-run the video render pipeline to export an .mp4 file and attach it as result.output. Ensure the narration/onscreen text explicitly mentions both \"classification\" and \"regression\" and covers the required topics: objectives, intuition, algorithm steps, classification vs regression, scaling/distance metrics, choosing k, evaluation, code walkthrough, and recap."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete ~10-minute lesson explaining Classification and Regression with k-Nearest Neighbors (k-NN), including presentation slides, code examples, exercise questions, and an accompanying video.",
+          "subtasks": [
+            {
+              "task_id": "step1_slides",
+              "agent": "presentation",
+              "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_code_snippets",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_semantic_knn_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "k-Nearest Neighbors",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step2_code",
+              "agent": "coder",
+              "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+              "inputs": {
+                "output_filename": "step2_code_20260108_0722.py",
+                "output_subdir": "run_e7fb125425de44a7b417a1b9257d6419"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_runs",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_artifact_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_classifier",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KNeighborsClassifier",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_regressor",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KNeighborsRegressor",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step3_exercises",
+              "agent": "quizzer",
+              "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+              "inputs": {},
+              "dependencies": [
+                "step1_slides",
+                "step2_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "exercise_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_mcq",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Multiple Choice",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_short_answer",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Short Answer",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_coding_prompts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Coding/Analysis",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step4_video",
+              "agent": "video",
+              "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+              "inputs": {},
+              "dependencies": [
+                "step1_slides",
+                "step2_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mp4",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mentions_classification_regression",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "classification",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_slides": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No slide deck output (.pptx) was produced. Create and export a .pptx slide deck for a ~10-minute lesson on k-Nearest Neighbors (classification + regression) including: learning objectives; intuition (neighbors/voting/averaging); algorithm steps; distance metrics + feature scaling; role of k and bias\u2013variance; classification vs regression outputs; model selection via validation; weighted k-NN; pitfalls (curse of dimensionality) + when to use; summary. Ensure it has multiple slides (>=1) and includes at least one slide with code snippets aligned with the coding task examples. Provide the generated .pptx file as result.output and verify it contains the phrase \u201ck-Nearest Neighbors\u201d.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step2_code": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "import numpy as np\nimport pandas as pd\nfrom sklearn.datasets import make_classification, make_regression\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor\nfrom sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score\nimport matplotlib.pyplot as plt\n\n# =============================================================================\n# K-NEAREST NEIGHBORS CLASSIFICATION EXAMPLE\n# =============================================================================\n\nprint(\"K-NEAREST NEIGHBORS CLASSIFICATION\")\nprint(\"=\" * 40)\n\n# Generate synthetic classification dataset\nX_class, y_class = make_classification(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    n_redundant=2,\n    n_clusters_per_class=1,\n    random_state=42\n)\n\n# Split into train and validation sets\nX_train_class, X_val_class, y_train_class, y_val_class = train_test_split(\n    X_class, y_class, test_size=0.2, random_state=42, stratify=y_class\n)\n\n# Create pipeline with StandardScaler and KNeighborsClassifier\npipeline_class = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsClassifier())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_class = {\n    'knn__n_neighbors': [1, 3, 5, 7, 9, 11]\n}\n\n# Perform grid search with cross-validation\ngrid_search_class = GridSearchCV(\n    pipeline_class,\n    param_grid_class,\n    cv=5,\n    scoring='accuracy',\n    n_jobs=-1\n)\n\n# Fit the model\ngrid_search_class.fit(X_train_class, y_train_class)\n\n# Get best parameters and predictions\nbest_k_class = grid_search_class.best_params_['knn__n_neighbors']\ny_pred_class = grid_search_class.predict(X_val_class)\n\n# Calculate metrics\naccuracy = accuracy_score(y_val_class, y_pred_class)\n\nprint(f\"Best k value: {best_k_class}\")\nprint(f\"Validation Accuracy: {accuracy:.4f}\")\n\n# =============================================================================\n# K-NEAREST NEIGHBORS REGRESSION EXAMPLE\n# =============================================================================\n\nprint(\"\\nK-NEAREST NEIGHBORS REGRESSION\")\nprint(\"=\" * 40)\n\n# Generate synthetic regression dataset\nX_reg, y_reg = make_regression(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    noise=0.1,\n    random_state=42\n)\n\n# Split into train and validation sets\nX_train_reg, X_val_reg, y_train_reg, y_val_reg = train_test_split(\n    X_reg, y_reg, test_size=0.2, random_state=42\n)\n\n# Create pipeline with StandardScaler and KNeighborsRegressor\npipeline_reg = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsRegressor())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_reg = {\n    'knn__n_neighbors': [1, 3, 5, 7, 9, 11]\n}\n\n# Perform grid search with cross-validation\ngrid_search_reg = GridSearchCV(\n    pipeline_reg,\n    param_grid_reg,\n    cv=5,\n    scoring='neg_mean_squared_error',\n    n_jobs=-1\n)\n\n# Fit the model\ngrid_search_reg.fit(X_train_reg, y_train_reg)\n\n# Get best parameters and predictions\nbest_k_reg = grid_search_reg.best_params_['knn__n_neighbors']\ny_pred_reg = grid_search_reg.predict(X_val_reg)\n\n# Calculate metrics\nmae = mean_absolute_error(y_val_reg, y_pred_reg)\nrmse = np.sqrt(mean_squared_error(y_val_reg, y_pred_reg))\nr2 = r2_score(y_val_reg, y_pred_reg)\n\nprint(f\"Best k value: {best_k_reg}\")\nprint(f\"Mean Absolute Error: {mae:.4f}\")\nprint(f\"Root Mean Squared Error: {rmse:.4f}\")\nprint(f\"R\u00b2 Score: {r2:.4f}\")\n\n# =============================================================================\n# HYPERPARAMETER SWEEP VISUALIZATION\n# =============================================================================\n\nprint(\"\\nHYPERPARAMETER SWEEP ANALYSIS\")\nprint(\"=\" * 40)\n\n# Analyze performance across different k values for classification\nk_values = [1, 3, 5, 7, 9, 11]\naccuracies = []\n\nfor k in k_values:\n    pipeline_temp = Pipeline([\n        ('scaler', StandardScaler()),\n        ('knn', KNeighborsClassifier(n_neighbors=k))\n    ])\n    pipeline_temp.fit(X_train_class, y_train_class)\n    y_pred_temp = pipeline_temp.predict(X_val_class)\n    acc = accuracy_score(y_val_class, y_pred_temp)\n    accuracies.append(acc)\n    print(f\"k={k}: Accuracy = {acc:.4f}\")\n\n# Analyze performance across different k values for regression\nr2_scores = []\nmae_scores = []\n\nfor k in k_values:\n    pipeline_temp = Pipeline([\n        ('scaler', StandardScaler()),\n        ('knn', KNeighborsRegressor(n_neighbors=k))\n    ])\n    pipeline_temp.fit(X_train_reg, y_train_reg)\n    y_pred_temp = pipeline_temp.predict(X_val_reg)\n    r2_temp = r2_score(y_val_reg, y_pred_temp)\n    mae_temp = mean_absolute_error(y_val_reg, y_pred_temp)\n    r2_scores.append(r2_temp)\n    mae_scores.append(mae_temp)\n    print(f\"k={k}: R\u00b2 = {r2_temp:.4f}, MAE = {mae_temp:.4f}\")\n\n# Plot results\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))\n\n# Classification plot\nax1.plot(k_values, accuracies, 'o-', color='blue')\nax1.set_xlabel('Number of Neighbors (k)')\nax1.set_ylabel('Accuracy')\nax1.set_title('Classification Performance vs k')\nax1.grid(True)\n\n# Regression plot\nax2.plot(k_values, r2_scores, 'o-', color='red')\nax2.set_xlabel('Number of Neighbors (k)')\nax2.set_ylabel('R\u00b2 Score')\nax2.set_title('Regression Performance vs k')\nax2.grid(True)\n\nplt.tight_layout()\nplt.show()\n\nprint(\"\\nAnalysis complete!\")\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py"
+            ],
+            "instruction": "The provided script demonstrates linear regression, not k-NN. Update the code to include both k-NN classification and k-NN regression examples using scikit-learn: generate synthetic datasets for each, perform train/validation split, use Pipeline with StandardScaler, train KNeighborsClassifier and KNeighborsRegressor, report metrics (accuracy for classification; MAE or RMSE plus R^2 for regression), and include a small hyperparameter sweep over k (e.g., k in [1,3,5,7,9,11]). Save as a single runnable script with clear section headers.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step3_exercises": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output is incomplete: it only contains 2 generic questions and lacks the required structure and content. Create 8\u201312 k-NN questions suitable for a 10-minute follow-up, including at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts. Include an explicit 'Answer Key' section. Label sections clearly with headings like 'Multiple Choice', 'Short Answer', and 'Coding/Analysis'. Ensure questions cover conceptual topics (effect of k, scaling, distance metrics, curse of dimensionality) and practical code-related prompts (where to add scaling, how to tune k via cross-validation, which metrics to use for classification vs regression).",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step4_video": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "The task output is missing: no MP4 was produced (video_success=false, output=null). Generate and provide a valid .mp4 file (~10 minutes) that delivers an instructional k-NN lesson aligned to the slide deck and code examples. Ensure the narration explicitly covers both k-NN classification and regression, including objectives, intuition, algorithm steps, scaling/distance metrics, choosing k, evaluation, a quick walkthrough of code/results with on-screen snippets, and a recap. Export as an MP4 and return the file path/link in result.output.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_slides",
+            "agent": "presentation",
+            "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_code_snippets",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_semantic_knn_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "k-Nearest Neighbors",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "slides_file_created": {
+                "value": null,
+                "exists": false
+              },
+              "slides_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "slides_code_snippets": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_slides",
+                  "agent": "presentation",
+                  "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_semantic_knn_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "k-Nearest Neighbors",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_file_created",
+                    "slides_count",
+                    "slides_code_snippets"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_created": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "slides_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "slides_code_snippets": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_file_created\",\"slides_count\",\"slides_code_snippets\",\"slides_semantic_knn_topics\"],\"fix_instructions\":\"No slide deck output (.pptx) was produced. Create and export a .pptx slide deck for a ~10-minute lesson on k-Nearest Neighbors (classification + regression) including: learning objectives; intuition (neighbors/voting/averaging); algorithm steps; distance metrics + feature scaling; role of k and bias\u2013variance; classification vs regression outputs; model selection via validation; weighted k-NN; pitfalls (curse of dimensionality) + when to use; summary. Ensure it has multiple slides (>=1) and includes at least one slide with code snippets aligned with the coding task examples. Provide the generated .pptx file as result.output and verify it contains the phrase \u201ck-Nearest Neighbors\u201d.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_code",
+            "agent": "coder",
+            "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+            "criteria": [
+              {
+                "criterion_id": "code_runs",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_artifact_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_classifier",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KNeighborsClassifier",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_regressor",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KNeighborsRegressor",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "code_runs": {
+                "value": true,
+                "expected": true,
+                "operator": "equals"
+              },
+              "no_stderr": {
+                "value": "",
+                "expected": "",
+                "operator": "equals"
+              },
+              "code_artifact_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                "exists": true
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_code",
+                  "agent": "coder",
+                  "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+                  "output": {
+                    "code": "import sys\nimport numpy as np\nfrom sklearn.datasets import make_regression\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import r2_score\n\ndef main():\n    # Generate sample data\n    X, y = make_regression(n_samples=100, n_features=1, noise=10, random_state=42)\n    \n    # Split the data\n    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n    \n    # Create and train the model\n    model = LinearRegression()\n    model.fit(X_train, y_train)\n    \n    # Make predictions\n    y_pred = model.predict(X_test)\n    \n    # Calculate R\u00b2 score\n    r2 = r2_score(y_test, y_pred)\n    \n    # Print results using ASCII characters to avoid encoding issues\n    print(f'Validation R-squared: {r2:.4f}')\n    \n    # Alternative: if you want to use the unicode character, ensure UTF-8 output\n    # Uncomment the following line if you're sure your environment supports UTF-8:\n    # print(f'Validation R\u00b2: {r2:.4f}')\n\nif __name__ == \"__main__\":\n    main()\n",
+                    "validation": {
+                      "success": true,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                      "stdout": "Validation R-squared: 0.9374\n",
+                      "stderr": "",
+                      "compile_success": true,
+                      "run_success": true,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "Validation R-squared: 0.9374\n",
+                        "stderr": "",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_includes_classifier",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KNeighborsClassifier",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "code_includes_regressor",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KNeighborsRegressor",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {
+                    "code_runs": {
+                      "value": true,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "no_stderr": {
+                      "value": "",
+                      "expected": "",
+                      "operator": "equals"
+                    },
+                    "code_artifact_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                      "exists": true
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_includes_classifier\",\"code_includes_regressor\"],\"fix_instructions\":\"The provided script demonstrates linear regression, not k-NN. Update the code to include both k-NN classification and k-NN regression examples using scikit-learn: generate synthetic datasets for each, perform train/validation split, use Pipeline with StandardScaler, train KNeighborsClassifier and KNeighborsRegressor, report metrics (accuracy for classification; MAE or RMSE plus R^2 for regression), and include a small hyperparameter sweep over k (e.g., k in [1,3,5,7,9,11]). Save as a single runnable script with clear section headers.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step3_exercises",
+            "agent": "quizzer",
+            "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+            "criteria": [
+              {
+                "criterion_id": "exercise_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_mcq",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Multiple Choice",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_short_answer",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Short Answer",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_coding_prompts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Coding/Analysis",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_exercises",
+                  "agent": "quizzer",
+                  "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "exercise_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_mcq",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Multiple Choice",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_short_answer",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Short Answer",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_coding_prompts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Coding/Analysis",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"exercise_count\",\"includes_mcq\",\"includes_short_answer\",\"includes_coding_prompts\"],\"fix_instructions\":\"Output is incomplete: it only contains 2 generic questions and lacks the required structure and content. Create 8\u201312 k-NN questions suitable for a 10-minute follow-up, including at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts. Include an explicit 'Answer Key' section. Label sections clearly with headings like 'Multiple Choice', 'Short Answer', and 'Coding/Analysis'. Ensure questions cover conceptual topics (effect of k, scaling, distance metrics, curse of dimensionality) and practical code-related prompts (where to add scaling, how to tune k via cross-validation, which metrics to use for classification vs regression).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_video",
+            "agent": "video",
+            "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+            "criteria": [
+              {
+                "criterion_id": "video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mp4",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mentions_classification_regression",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "classification",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "video_mp4": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_video",
+                  "agent": "video",
+                  "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "video_mentions_classification_regression",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "classification",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "video_success",
+                    "video_mp4"
+                  ],
+                  "deterministic_evidence": {
+                    "video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "video_mp4": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.video_success\",\"deterministic_failures.video_mp4\",\"semantic.video_mentions_classification_regression\"],\"fix_instructions\":\"The task output is missing: no MP4 was produced (video_success=false, output=null). Generate and provide a valid .mp4 file (~10 minutes) that delivers an instructional k-NN lesson aligned to the slide deck and code examples. Ensure the narration explicitly covers both k-NN classification and regression, including objectives, intuition, algorithm steps, scaling/distance metrics, choosing k, evaluation, a quick walkthrough of code/results with on-screen snippets, and a recap. Export as an MP4 and return the file path/link in result.output.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "step1_slides",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_code_snippets",
+              "slides_count",
+              "slides_file_created",
+              "slides_semantic_knn_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_created": {
+                  "value": null,
+                  "exists": false
+                },
+                "slides_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "slides_code_snippets": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No slide deck output (.pptx) was produced. Create and export a .pptx slide deck for a ~10-minute lesson on k-Nearest Neighbors (classification + regression) including: learning objectives; intuition (neighbors/voting/averaging); algorithm steps; distance metrics + feature scaling; role of k and bias\u2013variance; classification vs regression outputs; model selection via validation; weighted k-NN; pitfalls (curse of dimensionality) + when to use; summary. Ensure it has multiple slides (>=1) and includes at least one slide with code snippets aligned with the coding task examples. Provide the generated .pptx file as result.output and verify it contains the phrase \u201ck-Nearest Neighbors\u201d."
+          },
+          {
+            "task_id": "step2_code",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_includes_classifier",
+              "code_includes_regressor"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_runs": {
+                  "value": true,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "no_stderr": {
+                  "value": "",
+                  "expected": "",
+                  "operator": "equals"
+                },
+                "code_artifact_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                  "exists": true
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The provided script demonstrates linear regression, not k-NN. Update the code to include both k-NN classification and k-NN regression examples using scikit-learn: generate synthetic datasets for each, perform train/validation split, use Pipeline with StandardScaler, train KNeighborsClassifier and KNeighborsRegressor, report metrics (accuracy for classification; MAE or RMSE plus R^2 for regression), and include a small hyperparameter sweep over k (e.g., k in [1,3,5,7,9,11]). Save as a single runnable script with clear section headers."
+          },
+          {
+            "task_id": "step3_exercises",
+            "verdict": "fail",
+            "failed_criteria": [
+              "exercise_count",
+              "includes_coding_prompts",
+              "includes_mcq",
+              "includes_short_answer"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Output is incomplete: it only contains 2 generic questions and lacks the required structure and content. Create 8\u201312 k-NN questions suitable for a 10-minute follow-up, including at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts. Include an explicit 'Answer Key' section. Label sections clearly with headings like 'Multiple Choice', 'Short Answer', and 'Coding/Analysis'. Ensure questions cover conceptual topics (effect of k, scaling, distance metrics, curse of dimensionality) and practical code-related prompts (where to add scaling, how to tune k via cross-validation, which metrics to use for classification vs regression)."
+          },
+          {
+            "task_id": "step4_video",
+            "verdict": "fail",
+            "failed_criteria": [
+              "video_mp4",
+              "video_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "video_mp4": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The task output is missing: no MP4 was produced (video_success=false, output=null). Generate and provide a valid .mp4 file (~10 minutes) that delivers an instructional k-NN lesson aligned to the slide deck and code examples. Ensure the narration explicitly covers both k-NN classification and regression, including objectives, intuition, algorithm steps, scaling/distance metrics, choosing k, evaluation, a quick walkthrough of code/results with on-screen snippets, and a recap. Export as an MP4 and return the file path/link in result.output."
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "request": {
+        "plan": {
+          "user_intent": "Create a complete ~10-minute lesson explaining Classification and Regression with k-Nearest Neighbors (k-NN), including presentation slides, code examples, exercise questions, and an accompanying video.",
+          "subtasks": [
+            {
+              "task_id": "step1_slides",
+              "agent": "presentation",
+              "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+              "inputs": {},
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "slides_file_created",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".pptx",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_count",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.slide_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_code_snippets",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.metrics.code_snippets_count",
+                  "operator": "gte",
+                  "expected": 1,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "slides_semantic_knn_topics",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "k-Nearest Neighbors",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step2_code",
+              "agent": "coder",
+              "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+              "inputs": {
+                "output_filename": "step2_code_20260108_0722.py",
+                "output_subdir": "run_e7fb125425de44a7b417a1b9257d6419"
+              },
+              "dependencies": [],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "code_runs",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.run_success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "no_stderr",
+                  "criterion_type": "output_shape",
+                  "target": "result.output.validation.stderr",
+                  "operator": "equals",
+                  "expected": "",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_artifact_exists",
+                  "criterion_type": "file_exists",
+                  "target": "result.artifacts[0]",
+                  "operator": "exists",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_classifier",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KNeighborsClassifier",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "code_includes_regressor",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "KNeighborsRegressor",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step3_exercises",
+              "agent": "quizzer",
+              "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+              "inputs": {},
+              "dependencies": [
+                "step1_slides",
+                "step2_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "exercise_count",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Answer Key",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_mcq",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Multiple Choice",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_short_answer",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Short Answer",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "includes_coding_prompts",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "Coding/Analysis",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            },
+            {
+              "task_id": "step4_video",
+              "agent": "video",
+              "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+              "inputs": {},
+              "dependencies": [
+                "step1_slides",
+                "step2_code"
+              ],
+              "acceptance_criteria": [
+                {
+                  "criterion_id": "video_success",
+                  "criterion_type": "output_shape",
+                  "target": "result.success",
+                  "operator": "equals",
+                  "expected": true,
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mp4",
+                  "criterion_type": "output_shape",
+                  "target": "result.artifacts[0]",
+                  "operator": "contains",
+                  "expected": ".mp4",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                },
+                {
+                  "criterion_id": "video_mentions_classification_regression",
+                  "criterion_type": "semantic",
+                  "target": "result.output",
+                  "operator": "contains",
+                  "expected": "classification",
+                  "severity": "required",
+                  "tool": null,
+                  "evidence": null
+                }
+              ]
+            }
+          ]
+        },
+        "agent_results": {
+          "step1_slides": {
+            "agent": "presentation",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "No slide deck output (.pptx) was produced. Create and export a .pptx slide deck for a ~10-minute lesson on k-Nearest Neighbors (classification + regression) including: learning objectives; intuition (neighbors/voting/averaging); algorithm steps; distance metrics + feature scaling; role of k and bias\u2013variance; classification vs regression outputs; model selection via validation; weighted k-NN; pitfalls (curse of dimensionality) + when to use; summary. Ensure it has multiple slides (>=1) and includes at least one slide with code snippets aligned with the coding task examples. Provide the generated .pptx file as result.output and verify it contains the phrase \u201ck-Nearest Neighbors\u201d.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          },
+          "step2_code": {
+            "agent": "coder",
+            "success": false,
+            "output": {
+              "code": "import numpy as np\nimport pandas as pd\nfrom sklearn.datasets import make_classification, make_regression\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor\nfrom sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score\nimport matplotlib.pyplot as plt\n\n# =============================================================================\n# K-NEAREST NEIGHBORS CLASSIFICATION EXAMPLE\n# =============================================================================\n\nprint(\"K-NEAREST NEIGHBORS CLASSIFICATION\")\nprint(\"=\" * 40)\n\n# Generate synthetic classification dataset\nX_class, y_class = make_classification(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    n_redundant=2,\n    n_clusters_per_class=1,\n    random_state=42\n)\n\n# Split into train and validation sets\nX_train_class, X_val_class, y_train_class, y_val_class = train_test_split(\n    X_class, y_class, test_size=0.2, random_state=42, stratify=y_class\n)\n\n# Create pipeline with StandardScaler and KNeighborsClassifier\npipeline_class = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsClassifier())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_class = {\n    'knn__n_neighbors': [1, 3, 5, 7, 9, 11]\n}\n\n# Perform grid search with cross-validation\ngrid_search_class = GridSearchCV(\n    pipeline_class,\n    param_grid_class,\n    cv=5,\n    scoring='accuracy',\n    n_jobs=-1\n)\n\n# Fit the model\ngrid_search_class.fit(X_train_class, y_train_class)\n\n# Get best parameters and predictions\nbest_k_class = grid_search_class.best_params_['knn__n_neighbors']\ny_pred_class = grid_search_class.predict(X_val_class)\n\n# Calculate metrics\naccuracy = accuracy_score(y_val_class, y_pred_class)\n\nprint(f\"Best k value: {best_k_class}\")\nprint(f\"Validation Accuracy: {accuracy:.4f}\")\n\n# =============================================================================\n# K-NEAREST NEIGHBORS REGRESSION EXAMPLE\n# =============================================================================\n\nprint(\"\\nK-NEAREST NEIGHBORS REGRESSION\")\nprint(\"=\" * 40)\n\n# Generate synthetic regression dataset\nX_reg, y_reg = make_regression(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    noise=0.1,\n    random_state=42\n)\n\n# Split into train and validation sets\nX_train_reg, X_val_reg, y_train_reg, y_val_reg = train_test_split(\n    X_reg, y_reg, test_size=0.2, random_state=42\n)\n\n# Create pipeline with StandardScaler and KNeighborsRegressor\npipeline_reg = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsRegressor())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_reg = {\n    'knn__n_neighbors': [1, 3, 5, 7, 9, 11]\n}\n\n# Perform grid search with cross-validation\ngrid_search_reg = GridSearchCV(\n    pipeline_reg,\n    param_grid_reg,\n    cv=5,\n    scoring='neg_mean_squared_error',\n    n_jobs=-1\n)\n\n# Fit the model\ngrid_search_reg.fit(X_train_reg, y_train_reg)\n\n# Get best parameters and predictions\nbest_k_reg = grid_search_reg.best_params_['knn__n_neighbors']\ny_pred_reg = grid_search_reg.predict(X_val_reg)\n\n# Calculate metrics\nmae = mean_absolute_error(y_val_reg, y_pred_reg)\nrmse = np.sqrt(mean_squared_error(y_val_reg, y_pred_reg))\nr2 = r2_score(y_val_reg, y_pred_reg)\n\nprint(f\"Best k value: {best_k_reg}\")\nprint(f\"Mean Absolute Error: {mae:.4f}\")\nprint(f\"Root Mean Squared Error: {rmse:.4f}\")\nprint(f\"R\u00b2 Score: {r2:.4f}\")\n\n# =============================================================================\n# HYPERPARAMETER SWEEP VISUALIZATION\n# =============================================================================\n\nprint(\"\\nHYPERPARAMETER SWEEP ANALYSIS\")\nprint(\"=\" * 40)\n\n# Analyze performance across different k values for classification\nk_values = [1, 3, 5, 7, 9, 11]\naccuracies = []\n\nfor k in k_values:\n    pipeline_temp = Pipeline([\n        ('scaler', StandardScaler()),\n        ('knn', KNeighborsClassifier(n_neighbors=k))\n    ])\n    pipeline_temp.fit(X_train_class, y_train_class)\n    y_pred_temp = pipeline_temp.predict(X_val_class)\n    acc = accuracy_score(y_val_class, y_pred_temp)\n    accuracies.append(acc)\n    print(f\"k={k}: Accuracy = {acc:.4f}\")\n\n# Analyze performance across different k values for regression\nr2_scores = []\nmae_scores = []\n\nfor k in k_values:\n    pipeline_temp = Pipeline([\n        ('scaler', StandardScaler()),\n        ('knn', KNeighborsRegressor(n_neighbors=k))\n    ])\n    pipeline_temp.fit(X_train_reg, y_train_reg)\n    y_pred_temp = pipeline_temp.predict(X_val_reg)\n    r2_temp = r2_score(y_val_reg, y_pred_temp)\n    mae_temp = mean_absolute_error(y_val_reg, y_pred_temp)\n    r2_scores.append(r2_temp)\n    mae_scores.append(mae_temp)\n    print(f\"k={k}: R\u00b2 = {r2_temp:.4f}, MAE = {mae_temp:.4f}\")\n\n# Plot results\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))\n\n# Classification plot\nax1.plot(k_values, accuracies, 'o-', color='blue')\nax1.set_xlabel('Number of Neighbors (k)')\nax1.set_ylabel('Accuracy')\nax1.set_title('Classification Performance vs k')\nax1.grid(True)\n\n# Regression plot\nax2.plot(k_values, r2_scores, 'o-', color='red')\nax2.set_xlabel('Number of Neighbors (k)')\nax2.set_ylabel('R\u00b2 Score')\nax2.set_title('Regression Performance vs k')\nax2.grid(True)\n\nplt.tight_layout()\nplt.show()\n\nprint(\"\\nAnalysis complete!\")\n",
+              "validation": {
+                "success": false,
+                "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                "compile_success": true,
+                "run_success": false,
+                "compile_details": {
+                  "success": true,
+                  "returncode": 0,
+                  "stdout": "",
+                  "stderr": "",
+                  "timed_out": false
+                },
+                "run_details": {
+                  "success": false,
+                  "returncode": 1,
+                  "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                  "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                  "timed_out": false
+                }
+              }
+            },
+            "artifacts": [
+              "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py"
+            ],
+            "instruction": "The provided script demonstrates linear regression, not k-NN. Update the code to include both k-NN classification and k-NN regression examples using scikit-learn: generate synthetic datasets for each, perform train/validation split, use Pipeline with StandardScaler, train KNeighborsClassifier and KNeighborsRegressor, report metrics (accuracy for classification; MAE or RMSE plus R^2 for regression), and include a small hyperparameter sweep over k (e.g., k in [1,3,5,7,9,11]). Save as a single runnable script with clear section headers.",
+            "attempts": 3,
+            "metadata": {
+              "model": "qwen3-coder-flash"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step3_exercises": {
+            "agent": "quizzer",
+            "success": true,
+            "output": {
+              "questions": [
+                {
+                  "q": "Example Question 1?",
+                  "a": "Answer A"
+                },
+                {
+                  "q": "Example Question 2?",
+                  "a": "Answer B"
+                }
+              ],
+              "total_questions": 2
+            },
+            "artifacts": [],
+            "instruction": "Output is incomplete: it only contains 2 generic questions and lacks the required structure and content. Create 8\u201312 k-NN questions suitable for a 10-minute follow-up, including at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts. Include an explicit 'Answer Key' section. Label sections clearly with headings like 'Multiple Choice', 'Short Answer', and 'Coding/Analysis'. Ensure questions cover conceptual topics (effect of k, scaling, distance metrics, curse of dimensionality) and practical code-related prompts (where to add scaling, how to tune k via cross-validation, which metrics to use for classification vs regression).",
+            "attempts": 3,
+            "metadata": {
+              "model": "gpt-4-turbo"
+            },
+            "error": "Max retries exceeded."
+          },
+          "step4_video": {
+            "agent": "video",
+            "success": false,
+            "output": null,
+            "artifacts": [],
+            "instruction": "The task output is missing: no MP4 was produced (video_success=false, output=null). Generate and provide a valid .mp4 file (~10 minutes) that delivers an instructional k-NN lesson aligned to the slide deck and code examples. Ensure the narration explicitly covers both k-NN classification and regression, including objectives, intuition, algorithm steps, scaling/distance metrics, choosing k, evaluation, a quick walkthrough of code/results with on-screen snippets, and a recap. Export as an MP4 and return the file path/link in result.output.",
+            "attempts": 3,
+            "metadata": {},
+            "error": "Max retries exceeded."
+          }
+        }
+      },
+      "trace": {
+        "tasks": [
+          {
+            "task_id": "step1_slides",
+            "agent": "presentation",
+            "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+            "criteria": [
+              {
+                "criterion_id": "slides_file_created",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".pptx",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_count",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.slide_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_code_snippets",
+                "criterion_type": "output_shape",
+                "target": "result.output.metrics.code_snippets_count",
+                "operator": "gte",
+                "expected": 1,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "slides_semantic_knn_topics",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "k-Nearest Neighbors",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "slides_file_created": {
+                "value": null,
+                "exists": false
+              },
+              "slides_count": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              },
+              "slides_code_snippets": {
+                "value": null,
+                "expected": 1,
+                "operator": "gte"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step1_slides",
+                  "agent": "presentation",
+                  "instruction": "Create a ~10-minute slide deck teaching k-Nearest Neighbors for both classification and regression. Include: (1) learning objectives, (2) intuition (neighbors/voting/averaging), (3) algorithm steps, (4) distance metrics and feature scaling, (5) role of k and bias-variance, (6) classification vs regression outputs, (7) model selection via validation, (8) brief note on weighted k-NN, (9) pitfalls (curse of dimensionality) and when to use, (10) summary slide. Include at least one slide with code snippets (can be partial) that will align with the code examples created in the coding task. Export as a .pptx.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "slides_semantic_knn_topics",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "k-Nearest Neighbors",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "slides_file_created",
+                    "slides_count",
+                    "slides_code_snippets"
+                  ],
+                  "deterministic_evidence": {
+                    "slides_file_created": {
+                      "value": null,
+                      "exists": false
+                    },
+                    "slides_count": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    },
+                    "slides_code_snippets": {
+                      "value": null,
+                      "expected": 1,
+                      "operator": "gte"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"slides_file_created\",\"slides_count\",\"slides_code_snippets\",\"slides_semantic_knn_topics\"],\"fix_instructions\":\"No .pptx output was provided and no evidence of slide count or code snippets exists. Create and export a PowerPoint (.pptx) slide deck (~10-minute, ~10\u201312 slides) covering k-NN for classification and regression, including required topics (learning objectives, intuition, algorithm steps, distance metrics & scaling, role of k & bias-variance, classification vs regression outputs, validation/model selection, weighted k-NN, pitfalls/curse of dimensionality & when to use, summary). Ensure at least one slide contains code snippets aligned with the coding task examples. Provide the generated .pptx file and confirm slide count and presence of code slide(s).\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step2_code",
+            "agent": "coder",
+            "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+            "criteria": [
+              {
+                "criterion_id": "code_runs",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.run_success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "no_stderr",
+                "criterion_type": "output_shape",
+                "target": "result.output.validation.stderr",
+                "operator": "equals",
+                "expected": "",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_artifact_exists",
+                "criterion_type": "file_exists",
+                "target": "result.artifacts[0]",
+                "operator": "exists",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_classifier",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KNeighborsClassifier",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "code_includes_regressor",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "KNeighborsRegressor",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "code_runs": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "no_stderr": {
+                "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                "expected": "",
+                "operator": "equals"
+              },
+              "code_artifact_exists": {
+                "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                "exists": true
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step2_code",
+                  "agent": "coder",
+                  "instruction": "Generate runnable Python code examples demonstrating k-NN classification and k-NN regression using scikit-learn. Include: synthetic dataset generation for both tasks, train/validation split, standardization with Pipeline, model training with KNeighborsClassifier and KNeighborsRegressor, evaluation metrics (accuracy for classification; MAE or RMSE and R^2 for regression), and a small hyperparameter sweep over k. Provide code as a single script or notebook-style script with clear section headers. Save code artifact(s) appropriately.",
+                  "output": {
+                    "code": "import numpy as np\nimport pandas as pd\nfrom sklearn.datasets import make_classification, make_regression\nfrom sklearn.model_selection import train_test_split, GridSearchCV\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor\nfrom sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score\nimport matplotlib.pyplot as plt\n\n# =============================================================================\n# K-NEAREST NEIGHBORS CLASSIFICATION EXAMPLE\n# =============================================================================\n\nprint(\"K-NEAREST NEIGHBORS CLASSIFICATION\")\nprint(\"=\" * 40)\n\n# Generate synthetic classification dataset\nX_class, y_class = make_classification(\n    n_samples=1000,\n    n_features=10,\n    n_informative=5,\n    n_redundant=2,\n    n_clusters_per_class=1,\n    random_state=42\n)\n\n# Split into train and validation sets\nX_train_class, X_val_class, y_train_class, y_val_class = train_test_split(\n    X_class, y_class, test_size=0.2, random_state=42, stratify=y_class\n)\n\n# Create pipeline with StandardScaler and KNeighborsClassifier\npipeline_class = Pipeline([\n    ('scaler', StandardScaler()),\n    ('knn', KNeighborsClassifier())\n])\n\n# Define parameter grid for hyperparameter tuning\nparam_grid_class = {\n    'knn__n_neighbors': [1, 3, 5, 7, 9, 11]\n}\n\n# Perform grid search with cross-validation\ngrid_search_class = GridSearchCV(\n    pipeline_class,\n    param_grid_class,\n    cv=5,\n    scoring='accuracy',\n    n_jobs=-1\n)\n\n# Fit the model\ngrid_search_class.fit(X_train_class, y_train_class)\n\n# Get best parameters and predictions\nbest_k_class = grid_search_class.best_params_['knn__n_neighbors']\ny_pred_class = grid_search_class.predict(X_val_class)\n\n# Calculate metrics\naccuracy = accuracy_score(y_val_class, y_pred_class)\n\nprint(f\"Best k value: {best_k_class}\")\nprint(f\"Validation Accuracy: {accuracy:.4f}\")\n\n# ==========================...",
+                    "validation": {
+                      "success": false,
+                      "path": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                      "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                      "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                      "compile_success": true,
+                      "run_success": false,
+                      "compile_details": {
+                        "success": true,
+                        "returncode": 0,
+                        "stdout": "",
+                        "stderr": "",
+                        "timed_out": false
+                      },
+                      "run_details": {
+                        "success": false,
+                        "returncode": 1,
+                        "stdout": "K-NEAREST NEIGHBORS CLASSIFICATION\n========================================\nBest k value: 11\nValidation Accuracy: 0.9850\n\nK-NEAREST NEIGHBORS REGRESSION\n========================================\nBest k value: 5\nMean Absolute Error: 22.5969\nRoot Mean Squared Error: 29.1269\n",
+                        "stderr": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                        "timed_out": false
+                      }
+                    }
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "code_includes_classifier",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KNeighborsClassifier",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "code_includes_regressor",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "KNeighborsRegressor",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "code_runs",
+                    "no_stderr"
+                  ],
+                  "deterministic_evidence": {
+                    "code_runs": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "no_stderr": {
+                      "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                      "expected": "",
+                      "operator": "equals"
+                    },
+                    "code_artifact_exists": {
+                      "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                      "exists": true
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"code_runs\",\"no_stderr\"],\"fix_instructions\":\"The script fails at runtime due to a UnicodeEncodeError when printing the superscript character in \u201cR\u00b2\u201d under a GBK console encoding (Windows). Fix by replacing the superscript character with plain ASCII, e.g., print(f\\\"R2 Score: {r2:.4f}\\\") instead of \\\"R\u00b2\\\", or ensure UTF-8 output (e.g., set PYTHONIOENCODING=utf-8 or use sys.stdout.reconfigure(encoding='utf-8') on Python 3.7+). After this change, rerun to confirm no stderr and run_success=True. All other required elements (Classifier/Regressor, pipeline standardization, split, metrics, and k sweep) appear present.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step3_exercises",
+            "agent": "quizzer",
+            "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+            "criteria": [
+              {
+                "criterion_id": "exercise_count",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Answer Key",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_mcq",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Multiple Choice",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_short_answer",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Short Answer",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "includes_coding_prompts",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "Coding/Analysis",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {},
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step3_exercises",
+                  "agent": "quizzer",
+                  "instruction": "Create a set of exercise questions (with answer key) related to k-NN classification and regression suitable for a 10-minute lesson follow-up. Include a mix of conceptual questions (e.g., effect of k, scaling, distance metrics, curse of dimensionality) and practical questions tied to the provided code (e.g., where to add scaling, how to tune k, which metrics to use). Provide 8\u201312 questions: at least 4 multiple-choice, 2 short-answer, and 2 coding/analysis prompts.",
+                  "output": {
+                    "questions": [
+                      {
+                        "q": "Example Question 1?",
+                        "a": "Answer A"
+                      },
+                      {
+                        "q": "Example Question 2?",
+                        "a": "Answer B"
+                      }
+                    ],
+                    "total_questions": 2
+                  },
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "exercise_count",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Answer Key",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_mcq",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Multiple Choice",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_short_answer",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Short Answer",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    },
+                    {
+                      "criterion_id": "includes_coding_prompts",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "Coding/Analysis",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [],
+                  "deterministic_evidence": {}
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"exercise_count\",\"includes_mcq\",\"includes_short_answer\",\"includes_coding_prompts\"],\"fix_instructions\":\"Provide 8\u201312 total exercises with an explicit Answer Key. Include labeled sections for Multiple Choice (at least 4 questions), Short Answer (at least 2), and Coding/Analysis prompts (at least 2). Questions should cover k effects, scaling, distance metrics, curse of dimensionality, and practical code-related items like where to add scaling, how to tune k (e.g., cross-validation/GridSearchCV), and which evaluation metrics to use for classification vs regression.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          },
+          {
+            "task_id": "step4_video",
+            "agent": "video",
+            "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+            "criteria": [
+              {
+                "criterion_id": "video_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mp4",
+                "criterion_type": "output_shape",
+                "target": "result.artifacts[0]",
+                "operator": "contains",
+                "expected": ".mp4",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              },
+              {
+                "criterion_id": "video_mentions_classification_regression",
+                "criterion_type": "semantic",
+                "target": "result.output",
+                "operator": "contains",
+                "expected": "classification",
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ],
+            "deterministic": {
+              "video_success": {
+                "value": false,
+                "expected": true,
+                "operator": "equals"
+              },
+              "video_mp4": {
+                "value": null,
+                "expected": ".mp4",
+                "operator": "contains"
+              }
+            },
+            "llm": {
+              "llm_request": {
+                "model": "gpt-5.2",
+                "system_prompt": "You are a strict but fair evaluator. Assessment Guide:\n1. Deterministic Failures: If 'deterministic_failures' includes missing files (file_exists) or empty output, verdict MUST be 'fail'. However, if the failure is minor (e.g., filename mismatch but valid file exists), you may exercise discretion and PASS with a warning in 'fix_instructions'.\n2. Semantic Criteria: Evaluate each semantic criterion thoroughly.\n3. Verdict: Return 'pass' if the core requirements are met. Return 'fail' only if the output is unusable or critically flawed.\n4. Fix Instructions: If verdict is 'fail', provide clear instructions on how to fix the issue.",
+                "payload": {
+                  "task_id": "step4_video",
+                  "agent": "video",
+                  "instruction": "Create an ~10-minute instructional video lesson on k-NN classification and regression aligned to the slide deck and code examples. Include a clear narrative: objectives, intuition, algorithm, classification vs regression, scaling/distance, choosing k, evaluation, quick walkthrough of the code results, and recap. Use visuals (slide-style frames or simple animations/diagrams) and on-screen code snippets consistent with the coding task. Output an MP4.",
+                  "output": null,
+                  "semantic_criteria": [
+                    {
+                      "criterion_id": "video_mentions_classification_regression",
+                      "criterion_type": "semantic",
+                      "target": "result.output",
+                      "operator": "contains",
+                      "expected": "classification",
+                      "severity": "required",
+                      "tool": null,
+                      "evidence": null
+                    }
+                  ],
+                  "deterministic_failures": [
+                    "video_success",
+                    "video_mp4"
+                  ],
+                  "deterministic_evidence": {
+                    "video_success": {
+                      "value": false,
+                      "expected": true,
+                      "operator": "equals"
+                    },
+                    "video_mp4": {
+                      "value": null,
+                      "expected": ".mp4",
+                      "operator": "contains"
+                    }
+                  }
+                },
+                "tool_schema": {
+                  "type": "function",
+                  "function": {
+                    "name": "judge_task",
+                    "description": "Return verdict and fixes for a single task.",
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "verdict": {
+                          "type": "string",
+                          "enum": [
+                            "pass",
+                            "fail"
+                          ]
+                        },
+                        "failed_criteria": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "evidence": {
+                          "type": "object"
+                        },
+                        "fix_instructions": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "verdict",
+                        "failed_criteria",
+                        "evidence",
+                        "fix_instructions"
+                      ]
+                    }
+                  }
+                }
+              },
+              "llm_response": {
+                "tool_calls": [
+                  {
+                    "name": "judge_task",
+                    "arguments": "{\"verdict\":\"fail\",\"failed_criteria\":[\"deterministic_failures.video_success\",\"deterministic_failures.video_mp4\",\"semantic_criteria.video_mentions_classification_regression\"],\"fix_instructions\":\"No MP4 video was produced (video_success=false and output is null). Generate and provide the final .mp4 file for the ~10-minute k-NN lesson. Ensure the narration/onscreen text explicitly includes the word \u201cclassification\u201d (and covers classification vs regression), aligns to the slide deck/code examples, and includes the required sections (objectives, intuition, algorithm, scaling/distance, choosing k, evaluation, code walkthrough, recap). Return the MP4 path/URL as result.output.\"}"
+                  }
+                ]
+              }
+            },
+            "verdict": "fail"
+          }
+        ]
+      },
+      "result": {
+        "overall_status": "fail",
+        "tasks": [
+          {
+            "task_id": "step1_slides",
+            "verdict": "fail",
+            "failed_criteria": [
+              "slides_code_snippets",
+              "slides_count",
+              "slides_file_created",
+              "slides_semantic_knn_topics"
+            ],
+            "evidence": {
+              "deterministic": {
+                "slides_file_created": {
+                  "value": null,
+                  "exists": false
+                },
+                "slides_count": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                },
+                "slides_code_snippets": {
+                  "value": null,
+                  "expected": 1,
+                  "operator": "gte"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No .pptx output was provided and no evidence of slide count or code snippets exists. Create and export a PowerPoint (.pptx) slide deck (~10-minute, ~10\u201312 slides) covering k-NN for classification and regression, including required topics (learning objectives, intuition, algorithm steps, distance metrics & scaling, role of k & bias-variance, classification vs regression outputs, validation/model selection, weighted k-NN, pitfalls/curse of dimensionality & when to use, summary). Ensure at least one slide contains code snippets aligned with the coding task examples. Provide the generated .pptx file and confirm slide count and presence of code slide(s)."
+          },
+          {
+            "task_id": "step2_code",
+            "verdict": "fail",
+            "failed_criteria": [
+              "code_runs",
+              "no_stderr"
+            ],
+            "evidence": {
+              "deterministic": {
+                "code_runs": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "no_stderr": {
+                  "value": "Traceback (most recent call last):\n  File \"D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py\", line 122, in <module>\n    print(f\"R\\xb2 Score: {r2:.4f}\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'gbk' codec can't encode character '\\xb2' in position 1: illegal multibyte sequence\n",
+                  "expected": "",
+                  "operator": "equals"
+                },
+                "code_artifact_exists": {
+                  "value": "D:\\L3\\Individual_project\\AI_Pedia_Local\\data\\generated_code\\run_e7fb125425de44a7b417a1b9257d6419\\step2_code_20260108_0722.py",
+                  "exists": true
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "The script fails at runtime due to a UnicodeEncodeError when printing the superscript character in \u201cR\u00b2\u201d under a GBK console encoding (Windows). Fix by replacing the superscript character with plain ASCII, e.g., print(f\"R2 Score: {r2:.4f}\") instead of \"R\u00b2\", or ensure UTF-8 output (e.g., set PYTHONIOENCODING=utf-8 or use sys.stdout.reconfigure(encoding='utf-8') on Python 3.7+). After this change, rerun to confirm no stderr and run_success=True. All other required elements (Classifier/Regressor, pipeline standardization, split, metrics, and k sweep) appear present."
+          },
+          {
+            "task_id": "step3_exercises",
+            "verdict": "fail",
+            "failed_criteria": [
+              "exercise_count",
+              "includes_coding_prompts",
+              "includes_mcq",
+              "includes_short_answer"
+            ],
+            "evidence": {
+              "deterministic": {},
+              "semantic": {}
+            },
+            "fix_instructions": "Provide 8\u201312 total exercises with an explicit Answer Key. Include labeled sections for Multiple Choice (at least 4 questions), Short Answer (at least 2), and Coding/Analysis prompts (at least 2). Questions should cover k effects, scaling, distance metrics, curse of dimensionality, and practical code-related items like where to add scaling, how to tune k (e.g., cross-validation/GridSearchCV), and which evaluation metrics to use for classification vs regression."
+          },
+          {
+            "task_id": "step4_video",
+            "verdict": "fail",
+            "failed_criteria": [
+              "video_mp4",
+              "video_success"
+            ],
+            "evidence": {
+              "deterministic": {
+                "video_success": {
+                  "value": false,
+                  "expected": true,
+                  "operator": "equals"
+                },
+                "video_mp4": {
+                  "value": null,
+                  "expected": ".mp4",
+                  "operator": "contains"
+                }
+              },
+              "semantic": {}
+            },
+            "fix_instructions": "No MP4 video was produced (video_success=false and output is null). Generate and provide the final .mp4 file for the ~10-minute k-NN lesson. Ensure the narration/onscreen text explicitly includes the word \u201cclassification\u201d (and covers classification vs regression), aligns to the slide deck/code examples, and includes the required sections (objectives, intuition, algorithm, scaling/distance, choosing k, evaluation, code walkthrough, recap). Return the MP4 path/URL as result.output."
+          }
+        ]
+      }
+    }
+  ]
+}
