@@ -42,8 +42,11 @@ def run_coder_pipeline(
         Dictionary containing success status, code, and validation results.
     """
     # 1. Prepare Directories
-    # Handle 'output_subdir' from kwargs to isolate runs (e.g. data/generated_code/run_<id>)
-    output_subdir = kwargs.get("output_subdir")
+    # Handle 'output_subdir' to isolate runs (e.g. data/generated_code/run_<id>)
+    # NOTE: output_subdir comes in as a named parameter from task_manager inputs.
+    # We also check kwargs as a fallback for backward compatibility.
+    if not output_subdir:
+        output_subdir = kwargs.get("output_subdir")
     run_dir = output_dir / output_subdir if output_subdir else output_dir
     
     scripts_dir = run_dir / "scripts"

@@ -3,7 +3,8 @@ from __future__ import annotations
 
 import logging
 import os
-import comtypes.client
+import subprocess
+import shutil
 import fitz  # PyMuPDF
 from pathlib import Path
 from typing import List
@@ -13,19 +14,22 @@ logger = logging.getLogger(__name__)
 class PPTConverter:
     """
     Converts PowerPoint slides to images using a two-step process:
-    1. PPTX -> PDF (via Windows COM / Microsoft PowerPoint)
+    1. PPTX -> PDF (via LibreOffice headless)
     2. PDF -> Images (via PyMuPDF)
     
     Why this approach?
-    - Direct export to images via COM often yields poor quality or artifacts.
+    - LibreOffice headless is cross-platform (Linux, macOS, Windows).
     - PDF export preserves vector fonts and exact layout.
     - PyMuPDF is faster and easier to install than pdf2image+poppler.
     """
     
     def __init__(self):
-        # Ensure we are on Windows for COM
-        if os.name != 'nt':
-            raise RuntimeError("PPTConverter requires Windows with Microsoft PowerPoint installed.")
+        if not shutil.which("libreoffice"):
+            raise RuntimeError(
+                "PPTConverter requires LibreOffice. "
+                "Install via: apt-get install -y libreoffice (Linux) "
+                "or download from https://www.libreoffice.org/ (Windows/macOS)"
+            )
 
     def convert_to_images(self, pptx_path: Path, output_dir: Path) -> List[Path]:
         """
@@ -47,34 +51,38 @@ class PPTConverter:
         return image_paths
 
     def _pptx_to_pdf(self, pptx_path: Path, pdf_path: Path):
-        """Use PowerPoint COM interface to export as PDF."""
+        """Use LibreOffice headless to export PPTX as PDF."""
         logger.info(f"Converting PPTX to PDF: {pptx_path} -> {pdf_path}")
-        powerpoint = None
-        presentation = None
         
-        try:
-            # Initialize PowerPoint
-            powerpoint = comtypes.client.CreateObject("PowerPoint.Application")
-            # powerpoint.Visible = True # Debugging
-            
-            # Open presentation (ReadOnly=True, Untitled=False, WithWindow=False)
-            presentation = powerpoint.Presentations.Open(str(pptx_path), True, False, False)
-            
-            # Save as PDF
-            # 32 = ppSaveAsPDF
-            presentation.SaveAs(str(pdf_path), 32)
-            
-        except Exception as e:
-            logger.error(f"Failed during PPTX->PDF conversion: {e}")
-            raise
-        finally:
-            if presentation:
-                presentation.Close()
-            if powerpoint:
-                # We don't Quit because user might have other files open
-                # But for headless server mode, maybe we should?
-                # Let's just release logic
-                pass
+        result = subprocess.run(
+            [
+                "libreoffice",
+                "--headless",
+                "--norestore",
+                "--convert-to", "pdf",
+                "--outdir", str(pdf_path.parent),
+                str(pptx_path),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"LibreOffice conversion failed (exit {result.returncode}): {result.stderr}"
+            )
+        
+        # LibreOffice outputs to <stem>.pdf in outdir
+        # Rename if our desired pdf_path differs from what LibreOffice produces
+        actual = pdf_path.parent / f"{pptx_path.stem}.pdf"
+        if actual != pdf_path and actual.exists():
+            actual.rename(pdf_path)
+        
+        if not pdf_path.exists():
+            raise RuntimeError(
+                f"PDF not found after conversion. Expected at: {pdf_path}"
+            )
 
     def _pdf_to_images(self, pdf_path: Path, output_dir: Path) -> List[Path]:
         """Use PyMuPDF to render PDF pages as high-res images."""

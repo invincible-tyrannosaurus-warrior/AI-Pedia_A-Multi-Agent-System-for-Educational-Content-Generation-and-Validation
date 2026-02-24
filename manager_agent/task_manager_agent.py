@@ -347,17 +347,24 @@ def _safe_stem(value: str) -> str:
     return cleaned or "lesson_example"
 
 
-def _ensure_coder_criteria(subtask: SubTask, output_filename: str) -> None:
+def _ensure_coder_criteria(subtask: Any, output_filename: str) -> None:
     # 2. explicit removal of redundant/hallucinated criteria
-    # User requested removal of 'is_python_file' and 'file_written'
-    # 'file_written' is often hallucinated by the LLM with invalid targets.
-    # 'is_python_file' failed because Path objects aren't strings in 'contains'.
-    
     tasks_to_remove = ["is_python_file", "file_written", "code_written", "script_file_exists", "python_file_exists"]
-    subtask.acceptance_criteria = [
-        c for c in subtask.acceptance_criteria 
-        if c.criterion_id not in tasks_to_remove
-    ]
+    
+    # Handle both Pydantic model (SubTask) and dictionary
+    if isinstance(subtask, dict):
+        criteria = subtask.get("acceptance_criteria", [])
+        subtask["acceptance_criteria"] = [
+            c for c in criteria 
+            if (isinstance(c, dict) and c.get("criterion_id") not in tasks_to_remove) or
+               (hasattr(c, "criterion_id") and c.criterion_id not in tasks_to_remove)
+        ]
+    else:
+        # Pydantic model
+        subtask.acceptance_criteria = [
+            c for c in subtask.acceptance_criteria 
+            if c.criterion_id not in tasks_to_remove
+        ]
 
 
 # --- Main Entry Point ---
@@ -403,7 +410,7 @@ def run_workflow(
     ]
     if extracted_snippets:
         asset_descriptors.append(
-            {"type": "text", "text": "\n\n".join(extracted_snippets)}
+            {"type": "text", "text": "\\n\\n".join(extracted_snippets)}
         )
 
     task_manager_log: Dict[str, Any] = {
@@ -667,21 +674,14 @@ generate_guidance = generate_task_plan
 __all__ = ["run_workflow", "generate_task_plan"]
 
 
-
-
-
-
-
-
-
 def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"):
     """
     Generator for streaming workflow with Judger Integration.
-    Outputs Server-Sent Events (SSE) compliant format.
+    Outputs Server-Sent Events (SSE) compliant format with STRUCTURED EVENTS.
     """
     import json
     from pathlib import Path
-
+    
     # Helper: Convert Path objects to strings
     def make_serializable(obj):
         if isinstance(obj, (Path, type(Path()))):
@@ -693,6 +693,14 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
         else:
             return obj
 
+    # SSE Helper
+    def send_event(event_type: str, data: Any) -> str:
+        # SSE format: 
+        # event: <type>
+        # data: <json>
+        # Ensure data is serializable
+        clean_data = make_serializable(data)
+        return f"event: {event_type}\ndata: {json.dumps(clean_data)}\n\n"
 
     import mimetypes
     import asyncio
@@ -733,59 +741,52 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
     from config import GENERATED_DIR
 
     # ========== Files Injection ==========
-    assets: List[StoredAsset] = []
-    asset_descriptors: List[Dict[str, Any]] = [{"type": "text", "text": user_query}]
-    file_list: List[str] = []
     try:
-        file_list = json.loads(files_json) if files_json else []
-    except Exception:
-        file_list = []
+        assets: List[StoredAsset] = []
+        asset_descriptors: List[Dict[str, Any]] = [{"type": "text", "text": user_query}]
+        file_list: List[str] = []
+        try:
+            file_list = json.loads(files_json) if files_json else []
+        except Exception:
+            file_list = []
 
-    for file_path in file_list:
-        path = Path(file_path)
-        if not path.exists():
-            warn = f"[System]: Uploaded file not found: {file_path}"
-            yield f"data: {json.dumps({'type': 'chunk', 'content': warn})}\n\n"
-            continue
+        for file_path in file_list:
+            path = Path(file_path)
+            if not path.exists():
+                warn = f"Uploaded file not found: {file_path}"
+                yield send_event("log", {"id": "system", "content": warn})
+                continue
 
-        mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-        assets.append(
-            StoredAsset(
-                path=path,
-                url=str(path),
-                mime_type=mime_type,
-                original_filename=path.name,
+            mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            assets.append(
+                StoredAsset(
+                    path=path,
+                    url=str(path),
+                    mime_type=mime_type,
+                    original_filename=path.name,
+                )
             )
-        )
-        asset_descriptors.append(
-            {
-                "type": "file",
-                "url": str(path),
-                "mime_type": mime_type,
-                "description": f"Uploaded asset: {path.name}",
-                "original_filename": path.name,
-            }
-        )
-    
-    # ========== Generate Plan ==========
-    try:
-        # SSE Format: data: <json>\n\n
-        yield f"data: {json.dumps({'type': 'chunk', 'content': '[System]: Generating Plan from User Config...'})}\n\n"
+            asset_descriptors.append(
+                {
+                    "type": "file",
+                    "url": str(path),
+                    "mime_type": mime_type,
+                    "description": f"Uploaded asset: {path.name}",
+                    "original_filename": path.name,
+                }
+            )
+        
+        # ========== Generate Plan ==========
+        # Initial system log
+        yield send_event("log", {"id": "system", "content": "Generating Plan..."})
 
         task_client = _default_client()
-        
-        # ========== DETERMINISTIC TASK CREATION ==========
-        # USER CONFIG TAKES PRIORITY - No LLM decision making!
-        # DISABLED: LLM-based plan generation
-        # plan_result = generate_task_plan(asset_descriptors, user_text=None, client=task_client)
         
         run_id = uuid.uuid4().hex
         timestamp = _local_timestamp()
         tasks = []
         
-        # Build deterministic tasks based on user config
-        # Order: presentation -> video (depends on slides) -> coder -> quizzer
-        
+        # Build deterministic tasks
         if config.get("slides", False):
             tasks.append({
                 "task_id": f"step1_presentation_{timestamp}",
@@ -855,289 +856,390 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                 }]
             })
         
-        yield f"data: {json.dumps({'type': 'chunk', 'content': f'[System]: Created {len(tasks)} tasks based on your selections'})}\n\n"
-        
         if len(tasks) == 0:
-            yield f"data: {json.dumps({'type': 'chunk', 'content': '[System]: No output types selected! Please check at least one option.'})}\n\n"
-
-        def _normalize_agent_name(value: Optional[str]) -> str:
-            name = (value or "").strip().lower()
-            if name in {"slides", "slide", "presentation", "ppt", "pptx"}:
-                return "presentation"
-            if name in {"code", "coder"}:
-                return "coder"
-            if name in {"quiz", "quizzes", "quizzer"}:
-                return "quizzer"
-            if name in {"video"}:
-                return "video"
-            # DISABLED: Text agent is a mock - do not use as fallback
-            # if name in {"text", "writing", "writer"}:
-            #     return "text"
-            # return name or "text"
-            return name  # Return as-is, registry will error if invalid
-
-        def _agent_ui_type(agent_name: str) -> str:
-            if agent_name == "presentation":
-                return "slides"
-            if agent_name == "coder":
-                return "code"
-            if agent_name == "quizzer":
-                return "quiz"
-            if agent_name == "video":
-                return "video"
-            # DISABLED: Text agent is not used
-            # if agent_name in {"video", "text"}:
-            #     return agent_name
-            # return "text"
-            return agent_name  # Return as-is for unknown
-
-        def _agent_enabled(agent_name: str) -> bool:
-            if agent_name == "video":
-                return config.get("video", True)
-            if agent_name == "presentation":
-                return config.get("slides", True)
-            if agent_name == "coder":
-                return config.get("code", True)
-            if agent_name == "quizzer":
-                return config.get("quizzes", True)
-            return True
+            yield send_event("error", {"content": "No output types selected!"})
+            return
 
         def _short_label(text: Optional[str], fallback: str) -> str:
-            if not text:
-                return fallback
+            if not text: return fallback
             label = text.strip().splitlines()[0]
-            if len(label) > 80:
-                return label[:77] + "..."
+            if len(label) > 60:
+                return label[:57] + "..."
             return label
 
         def _get_task_id(task: Dict[str, Any]) -> str:
-            task_id = task.get("task_id") or task.get("id") or task.get("step_id")
-            if not task_id:
-                task_id = f"task_{uuid.uuid4().hex[:8]}"
-                task["task_id"] = task_id
-            return task_id
-
-        def _strip_coder_criteria(task: Dict[str, Any]) -> None:
-            criteria = task.get("acceptance_criteria") or []
-            tasks_to_remove = {"is_python_file", "file_written", "code_written", "script_file_exists", "python_file_exists"}
-            if isinstance(criteria, list):
-                task["acceptance_criteria"] = [
-                    c for c in criteria if c.get("criterion_id") not in tasks_to_remove
-                ]
+            return task.get("task_id") or task.get("id")
 
         normalized_tasks: List[Dict[str, Any]] = []
         for task in tasks:
-            if isinstance(task, dict):
-                normalized_tasks.append(task)
-            elif hasattr(task, "model_dump"):
-                normalized_tasks.append(task.model_dump())
+            if isinstance(task, dict): normalized_tasks.append(task)
+            elif hasattr(task, "model_dump"): normalized_tasks.append(task.model_dump())
 
+        # Setup paths & IDs
         run_id = uuid.uuid4().hex
         output_dir = GENERATED_DIR
         output_dir.mkdir(parents=True, exist_ok=True)
         output_subdir = f"run_{run_id}"
         timestamp = _local_timestamp()
 
+        # Pre-process Tasks
+        plan_steps = []
+        final_tasks = []
+        
         for task in normalized_tasks:
-            task_id = _get_task_id(task)
-            agent_name = _normalize_agent_name(task.get("agent") or task.get("type"))
+            t_id = _get_task_id(task)
+            agent_name = (task.get("agent") or "text").lower().strip()
+            
+            # Normalize agent names
+            if agent_name in {"slides", "slide", "ppt", "pptx"}: agent_name = "presentation"
+            if agent_name in {"code"}: agent_name = "coder"
+            if agent_name in {"quiz", "quizzes"}: agent_name = "quizzer"
+            if agent_name in {"video"}: agent_name = "video"
+            
             task["agent"] = agent_name
+            task["task_id"] = t_id
+            
+            # Setup inputs
             inputs = task.get("inputs") or {}
-            base_stem = _safe_stem(task_id)
+            base_stem = _safe_stem(t_id)
             inputs.setdefault("output_filename", f"{base_stem}_{timestamp}.py")
             inputs.setdefault("output_subdir", output_subdir)
             task["inputs"] = inputs
+            
             if agent_name == "coder":
-                _strip_coder_criteria(task)
+                _ensure_coder_criteria(task, inputs["output_filename"])
 
-        disabled_ids: Set[str] = set()
-        for task in normalized_tasks:
-            task_id = _get_task_id(task)
-            if not _agent_enabled(task.get("agent")):
-                disabled_ids.add(task_id)
+            plan_steps.append({
+                "id": t_id,
+                "name": _short_label(task.get("instruction"), f"{agent_name.title()} Task"),
+                "agent": agent_name,
+                "status": "pending"
+            })
+            final_tasks.append(task)
 
-        changed = True
-        while changed:
-            changed = False
-            for task in normalized_tasks:
-                task_id = _get_task_id(task)
-                if task_id in disabled_ids:
-                    continue
-                deps = task.get("dependencies") or []
-                if any(dep in disabled_ids for dep in deps):
-                    disabled_ids.add(task_id)
-                    changed = True
+        # Emit Plan
+        yield send_event("plan", {"steps": plan_steps})
 
-        for task in normalized_tasks:
-            task_id = _get_task_id(task)
-            if task_id in disabled_ids:
-                label = _short_label(
-                    task.get("instruction") or task.get("description"),
-                    f"{task.get('agent', 'task')}",
-                )
-                skip_msg = f"[System]: Skipping {label} (disabled by configuration or dependency)."
-                yield f"data: {json.dumps({'type': 'chunk', 'content': skip_msg})}\n\n"
-
-        active_tasks = [task for task in normalized_tasks if _get_task_id(task) not in disabled_ids]
-
-        def _run_subtask(task: Dict[str, Any], dependency_results: Dict[str, Any]) -> Dict[str, Any]:
-            task_id = _get_task_id(task)
-            agent_name = task.get("agent", "text")
-            instruction = task.get("instruction") or task.get("description") or task.get("goal") or ""
-            inputs = task.get("inputs") or {}
-
-            try:
-                agent_func = registry.get(agent_name)
-                if inspect.iscoroutinefunction(agent_func):
-                    result = asyncio.run(
-                        agent_func(
-                            instruction=instruction,
-                            output_dir=output_dir,
-                            assets=assets,
-                            dependency_results=dependency_results,
-                            client=task_client,
-                            **inputs,
-                        )
-                    )
-                else:
-                    result = agent_func(
-                        instruction=instruction,
-                        output_dir=output_dir,
-                        assets=assets,
-                        dependency_results=dependency_results,
-                        client=task_client,
-                        **inputs,
-                    )
-                return {
-                    "agent": agent_name,
-                    "success": result.get("success", False),
-                    "output": result.get("output"),
-                    "artifacts": result.get("artifacts", []),
-                    "error": result.get("error"),
-                    "instruction": instruction,
-                    "attempts": 1,
-                    "metadata": result.get("metadata", {}),
-                }
-            except Exception as exc:
-                logger.exception("Error executing subtask %s", task_id)
-                return {
-                    "agent": agent_name,
-                    "success": False,
-                    "error": str(exc),
-                    "instruction": instruction,
-                    "attempts": 1,
-                }
-
-        agent_results: Dict[str, Any] = {}
+        # Dependency Management
         completed: Set[str] = set()
-        pending: List[Dict[str, Any]] = list(active_tasks)
+        pending: List[Dict[str, Any]] = list(final_tasks)
+        agent_results: Dict[str, Any] = {}
 
         while pending:
-            runnable: List[Dict[str, Any]] = []
+            runnable = []
             for task in pending:
                 deps = task.get("dependencies") or []
                 if all(dep in completed for dep in deps):
                     runnable.append(task)
-
+            
             if not runnable:
-                for task in pending:
-                    task_id = _get_task_id(task)
-                    error_msg = f"Unresolved dependencies for task {task_id}."
-                    agent_results[task_id] = {
-                        "agent": task.get("agent"),
-                        "success": False,
-                        "error": "Unresolved dependencies.",
-                        "instruction": task.get("instruction", ""),
-                    }
-                    yield f"data: {json.dumps({'type': 'error', 'content': error_msg})}\n\n"
-                break
-
+                 yield send_event("error", {"content": "Unresolved dependencies in plan."})
+                 break
+            
             for task in runnable:
                 pending.remove(task)
-                task_id = _get_task_id(task)
-                agent_name = task.get("agent", "text")
-                instruction = task.get("instruction") or task.get("description") or task.get("goal") or ""
+                t_id = _get_task_id(task)
+                agent_name = task.get("agent")
+                
+                # Notify Start
+                yield send_event("step_start", {
+                    "id": t_id,
+                    "name": _short_label(task.get("instruction"), agent_name),
+                    "agent": agent_name
+                })
 
-                label = _short_label(instruction, f"{agent_name.title()} Agent")
-                agent_type = _agent_ui_type(agent_name)
-
-                # Agent Start Notification
-                yield f"data: {json.dumps({'type': 'start', 'agent': label, 'agent_type': agent_type})}\n\n"
-
-                # ========== Judgment Loop ==========
+                # Execution & Retry Loop
                 MAX_RETRIES = 3
-
+                
+                # Check previous failures for this task if we are re-entering (not applicable here as we process sequentially)
+                # But we might want to check retry count if we implement logic for that
+                
                 for attempt in range(1, MAX_RETRIES + 2):
-                    if attempt > 1:
-                        retry_msg = f"\n[System]: Judgment failed. Retrying ({attempt-1}/{MAX_RETRIES})...\n"
-                        yield f"data: {json.dumps({'type': 'chunk', 'content': retry_msg})}\n\n"
-
-                    deps = task.get("dependencies") or []
-                    dependency_results = {dep: agent_results.get(dep) for dep in deps if dep in agent_results}
-
-                    result = _run_subtask(task, dependency_results)
-                    agent_results[task_id] = result
-
-                    # Convert Path objects to strings
-                    result = make_serializable(result)
-
-                    content = ""
-                    if isinstance(result, dict):
-                        raw = result.get("content") or result.get("output") or result.get("error")
-                        if raw is None:
-                            raw = result
-                        # Ensure content is always a string (serialize dicts/lists)
-                        if isinstance(raw, (dict, list)):
-                            content = json.dumps(raw, indent=2, ensure_ascii=False, default=str)
+                     # Prepare deps
+                     deps = task.get("dependencies") or []
+                     dep_results = {d: agent_results.get(d) for d in deps if d in agent_results}
+                     
+                     if attempt > 1:
+                         yield send_event("log", {"id": t_id, "content": f"Verifying output (Attempt {attempt-1})... Failed. Retrying..."})
+                     
+                     # Execute
+                     try:
+                        agent_func = registry.get(agent_name)
+                        if inspect.iscoroutinefunction(agent_func):
+                            result = asyncio.run(agent_func(
+                                instruction=task.get("instruction"),
+                                output_dir=output_dir,
+                                assets=assets,
+                                dependency_results=dep_results,
+                                client=task_client,
+                                **task.get("inputs", {})
+                            ))
                         else:
-                            content = str(raw)
-                    else:
-                        content = str(result)
+                            result = agent_func(
+                                instruction=task.get("instruction"),
+                                output_dir=output_dir,
+                                assets=assets,
+                                dependency_results=dep_results,
+                                client=task_client,
+                                **task.get("inputs", {})
+                            )
+                        
+                        agent_results[t_id] = result
+                        
+                        # LOGGING
+                        if result.get("success"):
+                            yield send_event("log", {"id": t_id, "content": "Generation successful."})
+                        else:
+                            err = result.get("error", "Unknown error")
+                            yield send_event("log", {"id": t_id, "content": f"Error: {err}"})
 
-                    yield f"data: {json.dumps({'type': 'chunk', 'content': content})}\n\n"
+                        # ARTIFACT DETECTION
+                        artifacts = result.get("artifacts") or []
+                        if isinstance(artifacts, list):
+                            for art in artifacts:
+                                path_str = ""
+                                if isinstance(art, str):
+                                    path_str = art
+                                elif isinstance(art, dict):
+                                    path_str = art.get("path") or art.get("url") or ""
+                                
+                                if path_str:
+                                    lpath = path_str.lower()
+                                    art_type = "file"
+                                    if lpath.endswith(".mp4"): art_type = "video"
+                                    elif lpath.endswith(".pptx"): art_type = "presentation"
+                                    elif lpath.endswith(".py"): art_type = "code"
+                                    
+                                    yield send_event("artifact", {
+                                        "id": t_id,
+                                        "type": art_type,
+                                        "url": path_str,
+                                        "name": Path(path_str).name
+                                    })
+                        
+                        # SCRIPT DETECTION (for Learning Evaluator)
+                        if agent_name == "video" and result.get("success") and result.get("scripts"):
+                            # 'scripts' is a list of strings (one per slide)
+                            # We join them for the evaluator
+                            full_script = "\n\n".join(result.get("scripts", []))
+                            if full_script.strip():
+                                yield send_event("script", {
+                                    "id": t_id,
+                                    "content": full_script
+                                })
+                        
+                        # QUIZ DETECTION
+                        if agent_name == "quizzer" and result.get("success"):
+                            try:
+                                q_data = result.get("output")
+                                if isinstance(q_data, str):
+                                    clean = q_data.replace("```json", "").replace("```", "").strip()
+                                    q_data = json.loads(clean)
+                                
+                                yield send_event("quiz", {
+                                    "id": t_id,
+                                    "content": q_data
+                                })
+                            except:
+                                yield send_event("log", {"id": t_id, "content": "Failed to parse quiz JSON."})
 
-                    # Only judge if we have substantial content
-                    content_text = str(content).strip()
-                    if not content_text or len(content_text) < 5:
-                        if attempt <= MAX_RETRIES:
-                            continue
+                     except Exception as e:
+                         import traceback
+                         trace = traceback.format_exc()
+                         logger.error(trace)
+                         yield send_event("log", {"id": t_id, "content": f"Execution Exception: {str(e)}"})
+                         result = {"success": False, "error": str(e)}
+                         agent_results[t_id] = result
 
-                    verdict = run_judger_pipeline(
+                     # JUDGMENT
+                     verdict = run_judger_pipeline(
                         plan={"subtasks": [task]},
-                        agent_results={task_id: result},
+                        agent_results={t_id: result},
                         assets=assets,
-                        client=task_client,
-                    )
+                        client=task_client
+                     )
+                     
+                     v_map = {item.get("task_id"): item for item in verdict.get("tasks", [])}
+                     task_v = v_map.get(t_id, {})
+                     
+                     if task_v.get("verdict") == "pass":
+                         yield send_event("step_complete", {"id": t_id, "status": "success"})
+                         break
+                     else:
+                         fix = task_v.get("fix_instructions")
+                         if fix: task["instruction"] = fix
+                         reason = ", ".join(task_v.get("failed_criteria", [])) or "Unknown issues"
+                         yield send_event("log", {"id": t_id, "content": f"Judger: {reason}"})
+                         
+                         if attempt > MAX_RETRIES:
+                             yield send_event("step_complete", {"id": t_id, "status": "fail"})
+                
+                completed.add(t_id)
 
-                    verdict_map = {item.get("task_id"): item for item in verdict.get("tasks", [])}
-                    task_verdict = verdict_map.get(task_id, {})
-                    if task_verdict.get("verdict") == "pass":
-                        verify_msg = f"\n[System]: Verified ✔\n"
-                        yield f"data: {json.dumps({'type': 'chunk', 'content': verify_msg})}\n\n"
-                        break
+        yield send_event("workflow_complete", {})
 
-                    fix = task_verdict.get("fix_instructions") or ""
-                    if fix:
-                        task["instruction"] = fix.strip()
-                        instruction = task["instruction"]
-
-                    reason = ", ".join(task_verdict.get("failed_criteria", [])) or "Unknown issues"
-                    fail_msg = f"\n[System]: Verification Failed: {reason}\n"
-                    yield f"data: {json.dumps({'type': 'chunk', 'content': fail_msg})}\n\n"
-                    if attempt > MAX_RETRIES:
-                        max_msg = f"\n[System]: Max retries reached.\n"
-                        yield f"data: {json.dumps({'type': 'chunk', 'content': max_msg})}\n\n"
-
-                completed.add(task_id)
-
-                # Agent End Notification
-                yield f"data: {json.dumps({'type': 'end'})}\n\n"
-            
-        # Workflow Complete
-        yield f"data: {json.dumps({'type': 'complete'})}\n\n"
-        
     except Exception as e:
-        error_msg = f"Workflow Error: {str(e)}"
-        yield f"data: {json.dumps({'type': 'error', 'content': error_msg})}\n\n"
+        import traceback
+        trace = traceback.format_exc()
+        logger.error(trace)
+        yield send_event("error", {"content": f"Workflow Error: {str(e)}"})
 
 
+def refine_stream(run_id: str, task_id: str, feedback: str):
+    """
+    Refines a specific artifact based on user feedback.
+    Hydrates context from logs and executes ONLY the targeted agent.
+    """
+    import json
+    from pathlib import Path
+    import asyncio
+    import inspect
+    from config import LOGS_DIR, GENERATED_DIR
+
+    # SSE Helper (Duplicate to avoid dependency issues if moved)
+    def make_serializable(obj):
+        if isinstance(obj, (Path, type(Path()))):
+            return str(obj)
+        elif isinstance(obj, dict):
+            return {k: make_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [make_serializable(item) for item in obj]
+        else:
+            return obj
+
+    def send_event(event_type: str, data: Any) -> str:
+        clean_data = make_serializable(data)
+        return f"event: {event_type}\ndata: {json.dumps(clean_data)}\n\n"
+
+    try:
+        # 1. HYDRATE CONTEXT
+        log_path = LOGS_DIR / "task_manager" / f"{run_id}.json"
+        if not log_path.exists():
+            yield send_event("error", {"content": "Session log not found."})
+            return
+
+        with open(log_path, "r", encoding="utf-8") as f:
+            run_data = json.load(f)
+
+        # 2. LOCATE TASK & ASSETS
+        # We need the original asset descriptors
+        assets_data = run_data.get("asset_descriptors", [])
+        assets = [
+            StoredAsset(
+                path=Path(a["url"]), # Assuming 'url' matches local path for simplistic hydration
+                url=a["url"],
+                mime_type=a["mime_type"],
+                original_filename=a.get("original_filename", "unknown")
+            ) for a in assets_data if a.get("type") == "file"
+        ]
+        
+        # Locate the specific task in final_plan
+        plan = run_data.get("final_plan", {})
+        subtasks = plan.get("subtasks", [])
+        target_task = next((t for t in subtasks if t["task_id"] == task_id or t.get("id") == task_id), None)
+        
+        if not target_task:
+            yield send_event("error", {"content": f"Task {task_id} not found in plan."})
+            return
+
+        # Locate previous result
+        agent_results = run_data.get("agent_results", {})
+        prev_result = agent_results.get(task_id, {})
+        
+        # 3. CONSTRUCT REFINEMENT INSTRUCTION
+        original_instruction = target_task.get("instruction", "")
+        agent_name = target_task.get("agent")
+        
+        # We append the feedback to the instruction.
+        # This is the simplest way to support refinement without changing agent signatures.
+        # The agent sees: "Do X... CRITICAL UPDATE: User wants Y."
+        new_instruction = (
+            f"{original_instruction}\n\n"
+            f"*** CRITICAL UPDATE / REFINEMENT REQUEST ***\n"
+            f"The user has reviewed the previous output and provided this feedback:\n"
+            f"'{feedback}'\n\n"
+            f"Please RE-GENERATE the output to address this feedback while maintaining the original goals."
+        )
+
+        yield send_event("log", {"id": "system", "content": f"Refining {agent_name} task..."})
+
+        # 4. EXECUTE AGENT
+        # Verify agent exists
+        agent_func = registry.get(agent_name)
+        if not agent_func:
+            yield send_event("error", {"content": f"Agent {agent_name} not found."})
+            return
+            
+        # Prepare inputs (reuse from original task)
+        inputs = target_task.get("inputs", {})
+        # Output to a refinement subdir to avoid overwriting or just use same dir with new timestamp
+        # Let's verify output filename
+        timestamp = _local_timestamp()
+        run_subdir = f"run_{run_id}"
+        base_stem = _safe_stem(task_id)
+        # Force a new filename to ensure we get a new artifact
+        inputs["output_filename"] = f"{base_stem}_refine_{timestamp}.py" 
+        
+        # Execute
+        task_client = _default_client()
+        output_dir = GENERATED_DIR # Same root
+
+        if inspect.iscoroutinefunction(agent_func):
+            result = asyncio.run(agent_func(
+                instruction=new_instruction,
+                output_dir=output_dir,
+                assets=assets,
+                dependency_results={}, # Dependencies might be stale, but typically refinement doesn't need them if self-contained
+                client=task_client,
+                **inputs
+            ))
+        else:
+            result = agent_func(
+                instruction=new_instruction,
+                output_dir=output_dir,
+                assets=assets,
+                dependency_results={},
+                client=task_client,
+                **inputs
+            )
+
+        updated_artifact = None
+        if result.get("success"):
+            yield send_event("log", {"id": "system", "content": "Refinement successful."})
+            
+            # Extract new artifact path
+            artifacts = result.get("artifacts", [])
+            if artifacts:
+                 # Take the first one or logic
+                 art = artifacts[0]
+                 path_str = art if isinstance(art, str) else (art.get("path") or art.get("url"))
+                 
+                 yield send_event("artifact", {
+                    "id": task_id,
+                    "type": "file", # Generic, frontend will handle preview based on ext
+                    "url": path_str,
+                    "name": Path(path_str).name
+                 })
+                 updated_artifact = path_str
+        else:
+            err = result.get("error", "Unknown error")
+            yield send_event("log", {"id": "system", "content": f"Refinement failed: {err}"})
+
+        # 5. UPDATE LOGS (Optional but good for history)
+        # We could append to a "refinements" list in the log
+        # run_data.setdefault("refinements", []).append({
+        #     "task_id": task_id, 
+        #     "feedback": feedback,
+        #     "result": result
+        # })
+        # _write_json(log_path, run_data)
+
+        yield send_event("complete", {})
+
+    except Exception as e:
+        import traceback
+        trace = traceback.format_exc()
+        logger.error(trace)
+        yield send_event("error", {"content": f"Refinement Error: {str(e)}"})
+
+__all__ = ["run_workflow", "generate_task_plan", "stream_workflow", "refine_stream"]

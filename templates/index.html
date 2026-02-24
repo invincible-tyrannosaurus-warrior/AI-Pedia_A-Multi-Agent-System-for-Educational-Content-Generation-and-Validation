@@ -1,410 +1,570 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Pedia - Agent Orchestrator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            --accent-color: #00f2fe;
-            --text-color: #ffffff;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 40px auto;
-            display: flex;
-            gap: 20px;
-            height: 85vh;
-        }
-
-        .sidebar {
-            flex: 1;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: var(--glass-shadow);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .main-content {
-            flex: 3;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: var(--glass-shadow);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        h1 {
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-            text-align: center;
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .config-panel h3 {
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .checkbox-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        input[type="checkbox"] {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--accent-color);
-            border-radius: 4px;
-            background: transparent;
-            cursor: pointer;
-            position: relative;
-        }
-
-        input[type="checkbox"]:checked {
-            background: var(--accent-color);
-        }
-
-        input[type="checkbox"]:checked::after {
-            content: '✔';
-            position: absolute;
-            color: #000;
-            font-size: 14px;
-            left: 3px;
-            top: 0;
-        }
-
-        .chat-area {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding-right: 10px;
-        }
-
-        /* Scrollbar styling */
-        .chat-area::-webkit-scrollbar {
-            width: 8px;
-        }
-        .chat-area::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .chat-area::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
-
-        .agent-box {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .agent-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-            color: var(--accent-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 5px;
-        }
-
-        .agent-content {
-            font-size: 1em;
-            line-height: 1.6;
-            color: #eee;
-            white-space: pre-wrap; /* Preserve whitespace for code/text */
-        }
-
-        .input-area {
-            display: flex;
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 12px;
-        }
-
-        #user-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.1em;
-            outline: none;
-            font-family: inherit;
-        }
-
-        #user-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        #send-btn {
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        #send-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Specific Agent Styles */
-        .agent-box.video { border-left: 4px solid #ff4b4b; }
-        .agent-box.slides { border-left: 4px solid #ffa502; }
-        .agent-box.code { border-left: 4px solid #2ecc71; font-family: 'Courier New', monospace; }
-        .agent-box.quiz { border-left: 4px solid #9b59b6; }
-        
-        pre {
-            background: #1e1e1e;
-            padding: 10px;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
 
-<div class="container">
-    <div class="sidebar">
-        <h1>AI Pedia</h1>
-        
-        <div class="config-panel">
-            <h3>Output Configuration</h3>
-            <div class="checkbox-group">
-                <label class="checkbox-item">
-                    <input type="checkbox" id="check-video" checked>
-                    <span>Video Explanation</span>
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="check-slides" checked>
-                    <span>Presentation Slides</span>
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="check-code" checked>
-                    <span>Code Example</span>
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" id="check-quizzes" checked>
-                    <span>Interactive Quiz</span>
-                </label>
-            
-                <label class="checkbox-item" style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                    <span style="font-size:0.9em;">Attach Files (PDF/Txt)</span>
-                </label>
-                <input type="file" id="file-upload" multiple style="color: white; font-size: 0.8em;">
-        </div>
-        </div>
-        
-        <div style="margin-top: auto; font-size: 0.8em; color: rgba(255,255,255,0.4);">
-            <p>Powered by Multi-Agent System</p>
-        </div>
-    </div>
+    <div class="container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h1>AI Pedia</h1>
 
-    <div class="main-content">
-        <div class="chat-area" id="messag-container">
-            <!-- Messages and Agent Responses will appear here -->
-            <div class="agent-box">
-                <div class="agent-header">System</div>
-                <div class="agent-content">Welcome to AI Pedia. Select your desired output formats and ask a question to begin.</div>
+            <div class="config-panel">
+                <div class="section-title">Output Config</div>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="check-video" checked>
+                        <span>Video Explanation</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="check-slides" checked>
+                        <span>Presentation Slides</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="check-code" checked>
+                        <span>Code Example</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="check-quizzes" checked>
+                        <span>Interactive Quiz</span>
+                    </label>
+
+                    <div class="section-title" style="margin-top:20px;">Context</div>
+                    <input type="file" id="file-upload" multiple style="color: white; font-size: 0.8em;">
+                </div>
+            </div>
+
+            <div class="task-panel">
+                <div class="section-title">Task Progression</div>
+                <div id="task-list">
+                    <div style="text-align:center; color:#666; font-size:0.9em; padding:20px;">
+                        No active tasks.
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Ask about a topic (e.g., 'Transformer Architecture')...">
-            <button id="send-btn">Generate</button>
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="chat-area" id="message-container">
+                <div class="agent-box">
+                    <div class="agent-header">System</div>
+                    <div class="agent-body">Welcome to AI Pedia. Configure your output needs and ask a question to
+                        begin.</div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="user-input"
+                    placeholder="Ask about a topic (e.g., 'Transformer Architecture')...">
+                <button id="send-btn">Generate</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const sendBtn = document.getElementById('send-btn');
-    const userInput = document.getElementById('user-input');
-    const messageContainer = document.getElementById('messag-container'); // fixed typo in id if needed, matched HTML
+    <div id="feedback-modal">
+        ✅ Workflow Complete! Click to Rate
+    </div>
 
-    sendBtn.addEventListener('click', startGeneration);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') startGeneration();
-    });
+    <div id="refine-modal" class="refine-modal">
+        <div class="refine-content">
+            <div class="refine-header">
+                <span id="refine-title">Refining Artifact</span>
+                <span class="close-refine" onclick="closeRefineModal()">&times;</span>
+            </div>
+            <div class="refine-body">
+                <div class="refine-left" id="refine-preview">
+                    <!-- Preview content goes here (Code block, Slide image, etc.) -->
+                    <div style="color:#888; text-align:center; padding-top:100px;">Preview Loading...</div>
+                </div>
+                <div class="refine-right">
+                    <div class="refine-chat-history" id="refine-chat-history">
+                        <div class="agent-box">
+                            <div class="agent-header">System</div>
+                            <div class="agent-body">You are refining this specific artifact. Ask for changes here.</div>
+                        </div>
+                    </div>
+                    <div class="refine-input-area">
+                        <textarea id="refine-input"
+                            placeholder="Describe your changes... (e.g., 'Change the chart color to red')"></textarea>
+                        <button id="refine-send-btn" onclick="sendRefinement()">Refine</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    async function startGeneration() {
-        const query = userInput.value.trim();
-        if (!query) return;
+    <script>
+        const sendBtn = document.getElementById('send-btn');
+        const userInput = document.getElementById('user-input');
+        const messageContainer = document.getElementById('message-container');
+        const taskList = document.getElementById('task-list');
+        const feedbackModal = document.getElementById('feedback-modal');
+        const refineModal = document.getElementById('refine-modal');
+        const refineChatHistory = document.getElementById('refine-chat-history');
+        const refineInput = document.getElementById('refine-input');
 
-        // User Message
-        appendMessage('User', query);
-        userInput.value = '';
-
-        // Gather Config
-        const config = {
-            video: document.getElementById('check-video').checked,
-            slides: document.getElementById('check-slides').checked,
-            code: document.getElementById('check-code').checked,
-            quizzes: document.getElementById('check-quizzes').checked
-        };
-
-        // Start EventSource Stream
-        
-        // Upload Files First
-        const fileInput = document.getElementById('file-upload');
-        let uploadedFiles = [];
-        
-        if (fileInput.files.length > 0) {
-            const formData = new FormData();
-            for (let i = 0; i < fileInput.files.length; i++) {
-                formData.append('files', fileInput.files[i]);
-            }
-            
-            appendMessage('System', 'Uploading files...');
-            
-            try {
-                const uploadResp = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                const uploadResult = await uploadResp.json();
-                uploadedFiles = uploadResult.paths;
-                appendMessage('System', `Uploaded ${uploadedFiles.length} files.`);
-            } catch (e) {
-                appendMessage('System Error', 'Upload failed: ' + e);
-                return;
-            }
-        }
-    const queryParams = new URLSearchParams({
-            topic: query,
-            files: JSON.stringify(uploadedFiles),
-            ...config
+        sendBtn.addEventListener('click', startGeneration);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') startGeneration();
         });
 
-        // Use a persistent connection or one-time stream
-        const eventSource = new EventSource(`/stream_generate?${queryParams.toString()}`);
-
-        let currentAgentBox = null;
-        let currentAgentName = '';
-
-        eventSource.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            
-            // Handle different event types from backend
-            if (data.type === 'start') {
-                // Start of a new agent's block
-                currentAgentName = data.agent;
-                currentAgentBox = createAgentBox(data.agent, data.agent_type);
-                messageContainer.appendChild(currentAgentBox);
-                scrollToBottom();
-            } else if (data.type === 'chunk') {
-                // Streaming text content
-                if (currentAgentBox) {
-                    const contentDiv = currentAgentBox.querySelector('.agent-content');
-                    contentDiv.innerHTML += data.content; // Use innerHTML to allow basic formatting if needed
-                    scrollToBottom();
-                }
-            } else if (data.type === 'end') {
-                // Agent finished
-                currentAgentBox = null;
-            } else if (data.type === 'error') {
-                appendMessage('System Error', data.content);
-                eventSource.close();
-            } else if (data.type === 'complete') {
-                eventSource.close();
+        // Refine Input Enter Key
+        refineInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendRefinement();
             }
-        };
+        });
 
-        eventSource.onerror = function() {
-            console.error("EventSource failed.");
-            eventSource.close();
-        };
-    }
+        feedbackModal.addEventListener('click', () => {
+            feedbackModal.style.display = 'none';
+        });
 
-    function appendMessage(sender, text) {
-        const box = document.createElement('div');
-        box.className = 'agent-box';
-        box.innerHTML = `
-            <div class="agent-header">${sender}</div>
-            <div class="agent-content">${text}</div>
+        let currentTaskMap = {}; // Maps task_id to DOM Element (Sidebar)
+        let currentAgentBox = null;
+        let currentAgentId = null;
+
+        // --- REFINEMENT STATE ---
+        let currentRefineContext = null; // { run_id, task_id, agent, artifact_type, content_url }
+
+        function openRefineModal(runId, taskId, agent, artifact, artifactUrl) {
+            currentRefineContext = { run_id: runId, task_id: taskId, agent: agent, url: artifactUrl };
+
+            // 1. Setup UI
+            refineModal.style.display = 'flex';
+            document.getElementById('refine-title').textContent = `Refining: ${taskId} (${agent})`;
+            refineChatHistory.innerHTML = `
+                <div class="agent-box">
+                    <div class="agent-header">System</div>
+                    <div class="agent-body">You are refining this specific artifact. Ask for changes here.</div>
+                </div>
+            `;
+            refineInput.value = '';
+
+            // 2. Load Preview
+            const previewContainer = document.getElementById('refine-preview');
+            previewContainer.innerHTML = '<div style="color:#aaa; text-align:center; padding-top:50px;">Loading Preview...</div>';
+
+            // Determine preview type based on URL or basic heuristic using URL extension
+            // artifact is the raw object if passed, but here we passed components.
+            // Let's rely on URL extension.
+
+            if (artifactUrl.endsWith('.png') || artifactUrl.endsWith('.jpg')) {
+                previewContainer.innerHTML = `<img src="${artifactUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+            } else if (artifactUrl.endsWith('.py') || artifactUrl.endsWith('.txt') || artifactUrl.endsWith('.json') || artifactUrl.endsWith('.md')) {
+                // Fetch text content
+                fetch(artifactUrl).then(r => r.text()).then(text => {
+                    previewContainer.innerHTML = `<pre style="text-align:left; background:#1e1e1e; padding:10px; border-radius:5px; overflow:auto; height:100%; margin:0;"><code>${text.replace(/</g, '&lt;')}</code></pre>`;
+                }).catch(e => {
+                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${e}</div>`;
+                });
+            } else if (artifactUrl.endsWith('.mp4')) {
+                previewContainer.innerHTML = `<video controls src="${artifactUrl}" style="width:100%; max-height:100%;"></video>`;
+            } else {
+                previewContainer.innerHTML = `<div style="text-align:center; padding-top:50px; color:#fff;">
+                    Preview not available for this file type.<br>
+                    <a href="${artifactUrl}" target="_blank" style="color:#4a9eff">Click to open</a>
+                 </div>`;
+            }
+        }
+
+        function closeRefineModal() {
+            refineModal.style.display = 'none';
+            currentRefineContext = null;
+        }
+
+        async function sendRefinement() {
+            const text = refineInput.value.trim();
+            if (!text || !currentRefineContext) return;
+
+            // 1. UI Update
+            const userBox = document.createElement('div');
+            userBox.className = 'agent-box user';
+            userBox.innerHTML = `<div class="agent-header">User</div><div class="agent-body">${text}</div>`;
+            refineChatHistory.appendChild(userBox);
+            refineInput.value = '';
+
+            // Scroll to bottom
+            refineChatHistory.scrollTop = refineChatHistory.scrollHeight;
+
+            // 2. Send to Backend
+            appendRefineSystemMsg("Thinking...");
+
+            try {
+                // Determine API endpoint - we need a new streaming endpoint for refinement
+                // '/refine_stream'
+                const params = new URLSearchParams({
+                    run_id: currentRefineContext.run_id,
+                    task_id: currentRefineContext.task_id,
+                    feedback: text
+                });
+
+                const eventSource = new EventSource(`/refine_stream?${params.toString()}`);
+
+                let currentMsgBody = null;
+
+                eventSource.onmessage = function (event) {
+                    // Start of message
+                };
+
+                eventSource.addEventListener('chunk', (e) => {
+                    // Update the last system message or create new one?
+                    // Stream tokens logic for chat experience
+                    // For simplicity, let's just show status log or final result
+                });
+
+                eventSource.addEventListener('log', (e) => {
+                    const data = JSON.parse(e.data);
+                    updateRefineSystemMsg(data.content);
+                });
+
+                eventSource.addEventListener('artifact', (e) => {
+                    const data = JSON.parse(e.data);
+                    // Refresh Preview!
+                    // Construct new URL
+                    let newUrl = "#";
+                    if (data.url && data.url.includes('generated_code')) {
+                        const parts = data.url.split('generated_code');
+                        const relative = parts[1].replace(/\\\\/g, '/');
+                        newUrl = '/generated' + relative;
+                    }
+
+                    // Allow small delay for file write
+                    setTimeout(() => {
+                        // Update Context URL so subsequent refinements use THIS version
+                        currentRefineContext.url = newUrl;
+
+                        // Refresh Preview
+                        const previewContainer = document.getElementById('refine-preview');
+                        // Logic similar to openRefineModal... reuse code if possible or copy/paste logic for robustness
+                        if (newUrl.endsWith('.png') || newUrl.endsWith('.jpg')) {
+                            previewContainer.innerHTML = `<img src="${newUrl}?t=${Date.now()}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+                        } else if (newUrl.endsWith('.py') || newUrl.endsWith('.txt')) {
+                            fetch(newUrl).then(r => r.text()).then(txt => {
+                                previewContainer.innerHTML = `<pre style="text-align:left; background:#1e1e1e; padding:10px; border-radius:5px; overflow:auto; height:100%; margin:0;"><code>${txt.replace(/</g, '&lt;')}</code></pre>`;
+                            });
+                        }
+                    }, 1000);
+
+                    appendRefineSystemMsg(`✅ Updated Artifact Generated.`);
+                });
+
+                eventSource.addEventListener('complete', () => {
+                    eventSource.close();
+                });
+
+                eventSource.addEventListener('error', (e) => {
+                    eventSource.close();
+                    appendRefineSystemMsg("Error: Connection lost");
+                });
+
+            } catch (e) {
+                appendRefineSystemMsg("Error sending request: " + e);
+            }
+        }
+
+        let lastSystemMsgBody = null;
+        function appendRefineSystemMsg(text) {
+            const box = document.createElement('div');
+            box.className = 'agent-box';
+            box.innerHTML = `<div class="agent-header">System</div><div class="agent-body system-msg-body">${text}</div>`;
+            refineChatHistory.appendChild(box);
+            lastSystemMsgBody = box.querySelector('.system-msg-body');
+            refineChatHistory.scrollTop = refineChatHistory.scrollHeight;
+        }
+
+        function updateRefineSystemMsg(text) {
+            if (lastSystemMsgBody) {
+                lastSystemMsgBody.textContent = text;
+            } else {
+                appendRefineSystemMsg(text);
+            }
+        }
+
+        async function startGeneration() {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            // Reset UI
+            taskList.innerHTML = '<div style="text-align:center; padding:10px;">Initializing Plan...</div>';
+            feedbackModal.style.display = 'none';
+
+            // Render User Message
+            appendUserMessage(query);
+            userInput.value = '';
+
+            // Gather Config
+            const config = {
+                video: document.getElementById('check-video').checked,
+                slides: document.getElementById('check-slides').checked,
+                code: document.getElementById('check-code').checked,
+                quizzes: document.getElementById('check-quizzes').checked
+            };
+
+            // Upload Files First
+            const fileInput = document.getElementById('file-upload');
+            let uploadedFiles = [];
+            if (fileInput.files.length > 0) {
+                const formData = new FormData();
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('files', fileInput.files[i]);
+                }
+                appendSystemMessage('System', 'Uploading files...');
+                try {
+                    const uploadResp = await fetch('/upload', { method: 'POST', body: formData });
+                    const uploadResult = await uploadResp.json();
+                    uploadedFiles = uploadResult.paths;
+                } catch (e) {
+                    appendSystemMessage('Error', 'Upload failed: ' + e);
+                    return;
+                }
+            }
+
+            // Start SSE
+            const queryParams = new URLSearchParams({
+                topic: query,
+                files: JSON.stringify(uploadedFiles),
+                ...config
+            });
+
+            const eventSource = new EventSource(`/stream_generate?${queryParams.toString()}`);
+
+            // Keep track of run_id from the first plan event?
+            // Actually stream_generate doesn't send run_id explicitly in event structure usually, 
+            // but we need it for Refinement.
+            // Let's assume 'plan' event sends it or we extract from logs.
+            // UPDATED: Let's modify the backend to send run_id in the 'plan' event.
+
+            let globalRunId = null;
+
+            eventSource.addEventListener('plan', (e) => {
+                const data = JSON.parse(e.data);
+                if (data.run_id) globalRunId = data.run_id; // Capture Run ID
+                renderTaskPlan(data.steps);
+            });
+
+            eventSource.addEventListener('step_start', (e) => {
+                const data = JSON.parse(e.data);
+                updateTaskStatus(data.id, 'active');
+                createAgentBox(data.id, data.name, data.agent);
+            });
+
+            eventSource.addEventListener('log', (e) => {
+                const data = JSON.parse(e.data);
+                appendLog(data.id, data.content);
+            });
+
+            eventSource.addEventListener('artifact', (e) => {
+                const data = JSON.parse(e.data);
+                // Pass globalRunId to renderArtifact
+                renderArtifact(data.id, data, globalRunId, currentAgentId);
+            });
+
+            eventSource.addEventListener('quiz', (e) => {
+                const data = JSON.parse(e.data);
+                renderQuiz(data.id, data.content);
+            });
+
+            eventSource.addEventListener('step_complete', (e) => {
+                const data = JSON.parse(e.data);
+                updateTaskStatus(data.id, data.status); // 'success' or 'fail'
+            });
+
+            eventSource.addEventListener('workflow_complete', (e) => {
+                feedbackModal.style.display = 'block';
+                eventSource.close();
+            });
+
+            eventSource.addEventListener('error', (e) => {
+                console.error("EventSource failed:", e);
+                try {
+                    const data = JSON.parse(e.data);
+                    appendSystemMessage('Error', data.content || "Connection lost.");
+                } catch (x) {
+                    appendSystemMessage('Error', "Stream connection closed.");
+                }
+                eventSource.close();
+            });
+        }
+
+        // --- RENDERERS ---
+
+        function appendUserMessage(text) {
+            const box = document.createElement('div');
+            box.className = 'agent-box user';
+            box.innerHTML = `
+            <div class="agent-header">User</div>
+            <div class="agent-body">${text}</div>
         `;
-        messageContainer.appendChild(box);
-        scrollToBottom();
-    }
+            messageContainer.appendChild(box);
+            scrollToBottom();
+        }
 
-    function createAgentBox(agentName, agentType) {
-        const box = document.createElement('div');
-        // agentType can be 'video', 'slides', 'code', 'quiz', 'text' to apply specific border colors
-        box.className = `agent-box ${agentType || 'text'}`;
-        box.innerHTML = `
-            <div class="agent-header">${agentName}</div>
-            <div class="agent-content"></div> 
+        function appendSystemMessage(title, text) {
+            const box = document.createElement('div');
+            box.className = 'agent-box';
+            box.innerHTML = `
+            <div class="agent-header">${title}</div>
+            <div class="agent-body">${text}</div>
         `;
-        return box;
-    }
+            messageContainer.appendChild(box);
+            scrollToBottom();
+        }
 
-    function scrollToBottom() {
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-    }
-</script>
+        function renderTaskPlan(steps) {
+            taskList.innerHTML = '';
+            currentTaskMap = {};
 
+            steps.forEach((step, index) => {
+                const el = document.createElement('div');
+                el.className = 'task-step pending';
+                el.id = `sidebar-${step.id}`;
+                el.innerHTML = `
+                <div class="step-header">
+                    <span>${index + 1}. ${step.name}</span>
+                    <span class="step-status-icon">○</span>
+                </div>
+                <div class="step-agent">${step.agent}</div>
+            `;
+                taskList.appendChild(el);
+                currentTaskMap[step.id] = el;
+            });
+        }
+
+        function updateTaskStatus(taskId, status) {
+            const el = currentTaskMap[taskId];
+            if (!el) return;
+
+            el.className = `task-step ${status}`; // pending, active, success, fail
+            const icon = el.querySelector('.step-status-icon');
+
+            if (status === 'active') icon.textContent = '▶';
+            else if (status === 'success') icon.textContent = '✔';
+            else if (status === 'fail') icon.textContent = '✘';
+        }
+
+        function createAgentBox(taskId, taskName, agentName) {
+            currentAgentId = taskId;
+            const box = document.createElement('div');
+            box.className = 'agent-box';
+            box.id = `box-${taskId}`;
+            // Store agent type in data attribute for later access
+            box.dataset.agentType = agentName;
+            box.innerHTML = `
+            <div class="agent-header">
+                <span>${taskName}</span>
+                <span style="font-size:0.8em; opacity:0.7;">${agentName.toUpperCase()}</span>
+            </div>
+            <div class="agent-body">
+                <div class="status-text">Processing...</div>
+                <div class="log-toggle" onclick="toggleLog('${taskId}')">Show Logs</div>
+                <div class="log-container" id="log-${taskId}"></div>
+                <div class="artifact-grid" id="art-${taskId}"></div>
+            </div>
+        `;
+            messageContainer.appendChild(box);
+            currentAgentBox = box;
+            scrollToBottom();
+        }
+
+        function appendLog(taskId, content) {
+            const logDiv = document.getElementById(`log-${taskId}`);
+            if (!logDiv) return;
+            logDiv.textContent += content + '\\n';
+
+            // Update status text if it's the active box
+            const box = document.getElementById(`box-${taskId}`);
+            if (box) {
+                const status = box.querySelector('.status-text');
+                if (status) status.textContent = content.substring(0, 50) + "...";
+            }
+        }
+
+        window.toggleLog = function (taskId) {
+            const log = document.getElementById(`log-${taskId}`);
+            if (log.style.display === 'block') {
+                log.style.display = 'none';
+            } else {
+                log.style.display = 'block';
+            }
+        }
+
+        function renderArtifact(taskId, artifact, runId, agentId) {
+            const artGrid = document.getElementById(`art-${taskId}`);
+            if (!artGrid) return;
+
+            // Get Agent Name from box
+            const box = document.getElementById(`box-${taskId}`);
+            const agentName = box ? box.dataset.agentType : 'unknown';
+
+            const card = document.createElement('div');
+            card.className = 'artifact-card'; // Changed from 'a' to 'div' to contain buttons
+
+            // Link logic matching the /generated mount
+            let fileUrl = "#";
+            if (artifact.url && artifact.url.includes('generated_code')) {
+                const parts = artifact.url.split('generated_code');
+                // Regex to replace one OR more backslashes with forward slash
+                const relative = parts[1].replace(/\\+/g, '/');
+                fileUrl = '/generated' + relative;
+            }
+
+            // Icons
+            let icon = '📄';
+            if (artifact.type === 'video') icon = '🎬';
+            if (artifact.type === 'presentation') icon = '📊';
+            if (artifact.type === 'code') icon = '💻';
+
+            card.innerHTML = `
+                <a href="${fileUrl}" target="_blank" style="text-decoration:none; color:inherit; display:block; margin-bottom:10px;">
+                    <div class="artifact-icon">${icon}</div>
+                    <div class="artifact-name">${artifact.name}</div>
+                </a>
+                <button class="refine-btn" onclick="openRefineModal('${runId}', '${taskId}', '${agentName}', '${artifact.name}', '${fileUrl}')">Refine ✏️</button>
+            `;
+
+            artGrid.appendChild(card);
+
+            if (box) box.querySelector('.status-text').textContent = "Asset Generated.";
+        }
+
+        function renderQuiz(taskId, quizContent) {
+            const artGrid = document.getElementById(`art-${taskId}`);
+            if (!artGrid) return;
+
+            const container = document.createElement('div');
+            container.className = 'quiz-container';
+            container.style.width = '100%';
+
+            let html = '';
+            if (quizContent.questions) {
+                quizContent.questions.forEach((q, idx) => {
+                    html += `
+                    <div class="quiz-question">${idx + 1}. ${q.question}</div>
+                    <div class="quiz-options">
+                        ${(q.options || []).map(opt => `<div class="quiz-option" onclick="this.classList.toggle('selected')">${opt}</div>`).join('')}
+                    </div>
+                    <hr style="border:0; border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+                `;
+                });
+            }
+
+            container.innerHTML = html || 'No questions found.';
+            artGrid.appendChild(container);
+        }
+
+        function scrollToBottom() {
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+    </script>
 </body>
+
 </html>

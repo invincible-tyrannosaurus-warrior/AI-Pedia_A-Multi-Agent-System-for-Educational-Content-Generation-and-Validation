@@ -1,4 +1,11 @@
 from pathlib import Path
+import os
+
+# ========== API Keys ==========
+# These are injected into environment variables so that all OpenAI() / OpenRouter
+# clients across the project pick them up automatically.
+os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENROUTER_API_KEY"] = "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"
 
 # Base Directory of the project
 BASE_DIR = Path(__file__).resolve().parent

@@ -36,6 +36,10 @@ async def run_video_pipeline(
         api_key=kwargs.get("api_key")
     )
     
+    # Handle 'output_subdir' to ensure we work in the isolated run directory
+    output_subdir_kw = kwargs.get("output_subdir")
+    run_dir = output_dir / output_subdir_kw if output_subdir_kw else output_dir
+    
     ppt_path = _resolve_ppt_path(assets, kwargs.get("dependency_results"))
     if not ppt_path:
         return {
@@ -47,8 +51,8 @@ async def run_video_pipeline(
         # 1. Convert PPT -> Images
         converter = PPTConverter()
         
-        # STRICT PATH: assets/slides_images
-        assets_dir = output_dir / "assets"
+        # STRICT PATH: run_dir/assets/slides_images
+        assets_dir = run_dir / "assets"
         images_dir = assets_dir / "slides_images"
         images_dir.mkdir(parents=True, exist_ok=True)
         
@@ -65,12 +69,12 @@ async def run_video_pipeline(
         # 3. Compose Video
         composer = VideoComposer()
         
-        # STRICT PATH: output/
-        output_subdir = output_dir / "output"
-        output_subdir.mkdir(parents=True, exist_ok=True)
+        # STRICT PATH: run_dir/output/
+        video_out_dir = run_dir / "output"
+        video_out_dir.mkdir(parents=True, exist_ok=True)
         
         video_filename = f"{ppt_path.stem}_lecture.mp4"
-        video_path = output_subdir / video_filename
+        video_path = video_out_dir / video_filename
         
         await composer.compose_video(image_paths, scripts, video_path)
         
