@@ -1,10 +1,4 @@
-"""
-evaluation/token_logging.py
-
-Reads per-run token-usage summaries produced by the observability module
-(trace_log.jsonl / summary.json).  Provides a uniform interface for the
-evaluation runner.
-"""
+"""Token usage loader with schema and filename compatibility."""
 
 from __future__ import annotations
 
@@ -16,101 +10,197 @@ from typing import Any, Dict, Optional
 logger = logging.getLogger(__name__)
 
 
-def load_run_summary(run_dir: str) -> Optional[Dict[str, Any]]:
-    """Load token / LLM-call statistics from a run directory.
+_AGENT_KEYS = {
+    "coder": "coder",
+    "code": "coder",
+    "presentation": "presentation",
+    "slides": "presentation",
+    "slide": "presentation",
+    "quiz": "quiz",
+    "quizzer": "quiz",
+    "quizzes": "quiz",
+    "video": "video",
+}
 
-    The function looks for the following files (in order):
-      1. ``<run_dir>/summary.json``  – written by the observability module
-      2. ``<run_dir>/trace_log.jsonl`` – raw per-call log; aggregated here
-
-    Returns
-    -------
-    dict or None
-        ``{"total_tokens": int, "tokens_by_agent": dict, "llm_call_count": int}``
-        or *None* if no log files are found.
-    """
-    rd = Path(run_dir)
-
-    # --- Try summary.json first -------------------------------------------
-    summary_path = rd / "summary.json"
-    if summary_path.exists():
-        try:
-            data = json.loads(summary_path.read_text(encoding="utf-8"))
-            return _normalise(data)
-        except Exception as exc:
-            logger.warning("Could not parse %s: %s", summary_path, exc)
-
-    # --- Fallback: aggregate trace_log.jsonl ------------------------------
-    trace_path = rd / "trace_log.jsonl"
-    if trace_path.exists():
-        try:
-            return _aggregate_trace(trace_path)
-        except Exception as exc:
-            logger.warning("Could not aggregate %s: %s", trace_path, exc)
-
-    # Nothing found
-    return None
+_TRACKED_AGENTS = ("coder", "presentation", "quiz", "video")
 
 
-# ---------------------------------------------------------------------------
-# Internal helpers
-# ---------------------------------------------------------------------------
+def _safe_int(x: Any) -> int:
+    try:
+        return int(x)
+    except Exception:  # noqa: BLE001
+        return 0
 
-def _normalise(data: Dict[str, Any]) -> Dict[str, Any]:
-    """Ensure the summary dict contains the expected keys."""
-    total = data.get("total_tokens", 0)
-    by_agent: Dict[str, int] = {}
-    call_count = 0
 
-    # tokens_by_agent might be nested inside "agents" or directly  
-    agents_raw = data.get("tokens_by_agent", data.get("agents", {}))
-    if isinstance(agents_raw, dict):
-        for agent, info in agents_raw.items():
-            if isinstance(info, int):
-                by_agent[agent] = info
-            elif isinstance(info, dict):
-                by_agent[agent] = info.get("total_tokens", 0)
-                call_count += info.get("call_count", 0)
-            else:
-                by_agent[agent] = 0
+def _map_agent_name(name: str) -> Optional[str]:
+    key = (name or "").strip().lower()
+    return _AGENT_KEYS.get(key)
 
-    if total == 0 and by_agent:
+
+def _extract_total_tokens(node: Any) -> int:
+    if node is None:
+        return 0
+
+    if isinstance(node, int):
+        return node
+
+    if isinstance(node, float):
+        return int(node)
+
+    if isinstance(node, dict):
+        if "total_tokens" in node:
+            return _safe_int(node.get("total_tokens"))
+        if "total" in node and isinstance(node["total"], dict):
+            return _safe_int(node["total"].get("total_tokens"))
+
+        # Could be nested model map: {"gpt-4o": {"total_tokens": 123}}
+        subtotal = 0
+        has_nested = False
+        for v in node.values():
+            if isinstance(v, dict):
+                has_nested = True
+                subtotal += _extract_total_tokens(v)
+        if has_nested:
+            return subtotal
+
+    return 0
+
+
+def _normalize_agent_tokens(raw: Any) -> Dict[str, int]:
+    out: Dict[str, int] = {k: 0 for k in _TRACKED_AGENTS}
+
+    if not isinstance(raw, dict):
+        return out
+
+    for agent, value in raw.items():
+        mapped = _map_agent_name(str(agent))
+        if not mapped:
+            continue
+        out[mapped] += _extract_total_tokens(value)
+
+    return out
+
+
+def _merge_agent_tokens(a: Dict[str, int], b: Dict[str, int]) -> Dict[str, int]:
+    out = {k: 0 for k in _TRACKED_AGENTS}
+    for k in _TRACKED_AGENTS:
+        out[k] = _safe_int(a.get(k, 0)) + _safe_int(b.get(k, 0))
+    return out
+
+
+def _parse_summary(summary_path: Path) -> Optional[Dict[str, Any]]:
+    try:
+        data = json.loads(summary_path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Could not parse %s: %s", summary_path, exc)
+        return None
+
+    total = 0
+    by_agent = {k: 0 for k in _TRACKED_AGENTS}
+    llm_call_count = _safe_int(data.get("llm_call_count", 0))
+
+    # Schema 1: top-level total_tokens / tokens_by_agent
+    if "total_tokens" in data:
+        total = _safe_int(data.get("total_tokens", 0))
+    if "tokens_by_agent" in data:
+        by_agent = _merge_agent_tokens(by_agent, _normalize_agent_tokens(data.get("tokens_by_agent")))
+
+    # Schema 2: nested tokens.total.total_tokens / tokens.by_agent
+    tokens_node = data.get("tokens", {})
+    if isinstance(tokens_node, dict):
+        if total == 0:
+            total = _extract_total_tokens(tokens_node)
+
+        nested_by_agent = tokens_node.get("by_agent")
+        if nested_by_agent is not None:
+            by_agent = _merge_agent_tokens(by_agent, _normalize_agent_tokens(nested_by_agent))
+
+    # Schema 3: agents map
+    agents_node = data.get("agents")
+    if isinstance(agents_node, dict):
+        by_agent = _merge_agent_tokens(by_agent, _normalize_agent_tokens(agents_node))
+
+    if total == 0:
         total = sum(by_agent.values())
 
-    if call_count == 0:
-        call_count = data.get("llm_call_count", 0)
-
     return {
-        "total_tokens": total,
+        "tokens_total": total,
         "tokens_by_agent": by_agent,
-        "llm_call_count": call_count,
+        "llm_call_count": llm_call_count,
+        "source": str(summary_path.name),
     }
 
 
-def _aggregate_trace(trace_path: Path) -> Dict[str, Any]:
-    """Build a summary from per-call JSONL entries."""
-    by_agent: Dict[str, int] = {}
+def _parse_trace(trace_path: Path) -> Optional[Dict[str, Any]]:
     total = 0
+    by_agent = {k: 0 for k in _TRACKED_AGENTS}
     call_count = 0
 
-    with open(trace_path, "r", encoding="utf-8") as fh:
-        for line in fh:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                entry = json.loads(line)
-            except json.JSONDecodeError:
-                continue
+    try:
+        with trace_path.open("r", encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                except Exception:
+                    continue
 
-            tokens = entry.get("total_tokens", entry.get("tokens", 0))
-            agent = entry.get("agent_name", entry.get("agent", "unknown"))
-            total += tokens
-            by_agent[agent] = by_agent.get(agent, 0) + tokens
-            call_count += 1
+                usage_node = entry.get("usage") if isinstance(entry.get("usage"), dict) else {}
+                tok = (
+                    _safe_int(entry.get("total_tokens", 0))
+                    or _safe_int(entry.get("tokens", 0))
+                    or _safe_int(usage_node.get("total_tokens", 0))
+                )
+
+                agent_raw = entry.get("agent_name", entry.get("agent", ""))
+                mapped = _map_agent_name(str(agent_raw))
+                if mapped:
+                    by_agent[mapped] += tok
+
+                total += tok
+
+                event = str(entry.get("event", "")).upper()
+                if event == "LLM_CALL" or tok > 0:
+                    call_count += 1
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Could not aggregate %s: %s", trace_path, exc)
+        return None
 
     return {
-        "total_tokens": total,
+        "tokens_total": total,
         "tokens_by_agent": by_agent,
         "llm_call_count": call_count,
+        "source": str(trace_path.name),
     }
+
+
+def load_run_summary(run_dir: str) -> Optional[Dict[str, Any]]:
+    """Load token summary from a run directory with compatibility fallbacks.
+
+    Supported summary files:
+    - summary.json
+
+    Supported trace files:
+    - trace_log.jsonl
+    - trace.jsonl
+    """
+    rd = Path(run_dir)
+    if not rd.exists() or not rd.is_dir():
+        return None
+
+    summary_path = rd / "summary.json"
+    if summary_path.exists():
+        parsed = _parse_summary(summary_path)
+        if parsed is not None:
+            return parsed
+
+    for trace_name in ("trace_log.jsonl", "trace.jsonl"):
+        trace_path = rd / trace_name
+        if trace_path.exists():
+            parsed = _parse_trace(trace_path)
+            if parsed is not None:
+                return parsed
+
+    return None
