@@ -135,6 +135,56 @@
         // --- REFINEMENT STATE ---
         let currentRefineContext = null; // { run_id, task_id, agent, artifact_type, content_url }
 
+        function resolveGeneratedUrl(rawUrl) {
+            if (!rawUrl) return '#';
+            if (rawUrl.startsWith('/generated/') || rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+                return rawUrl;
+            }
+            if (rawUrl.includes('generated_code')) {
+                const parts = rawUrl.split('generated_code');
+                const relative = (parts[1] || '').replace(/\\+/g, '/');
+                return '/generated' + relative;
+            }
+            return rawUrl;
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function renderRefinePreview(artifactUrl) {
+            const previewContainer = document.getElementById('refine-preview');
+            const cacheBustedUrl = artifactUrl.includes('?') ? `${artifactUrl}&t=${Date.now()}` : `${artifactUrl}?t=${Date.now()}`;
+            previewContainer.innerHTML = '<div style="color:#aaa; text-align:center; padding-top:50px;">Loading Preview...</div>';
+
+            if (artifactUrl.endsWith('.png') || artifactUrl.endsWith('.jpg') || artifactUrl.endsWith('.jpeg')) {
+                previewContainer.innerHTML = `<img src="${cacheBustedUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+                return;
+            }
+
+            if (artifactUrl.endsWith('.mp4')) {
+                previewContainer.innerHTML = `<video controls src="${cacheBustedUrl}" style="width:100%; max-height:100%;"></video>`;
+                return;
+            }
+
+            if (artifactUrl.endsWith('.py') || artifactUrl.endsWith('.txt') || artifactUrl.endsWith('.json') || artifactUrl.endsWith('.md')) {
+                fetch(cacheBustedUrl).then(r => r.text()).then(text => {
+                    previewContainer.innerHTML = `<pre style="text-align:left; background:#1e1e1e; padding:10px; border-radius:5px; overflow:auto; height:100%; margin:0;"><code>${escapeHtml(text)}</code></pre>`;
+                }).catch(e => {
+                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${escapeHtml(e)}</div>`;
+                });
+                return;
+            }
+
+            previewContainer.innerHTML = `<div style="text-align:center; padding-top:50px; color:#fff;">
+                Preview not available for this file type.<br>
+                <a href="${cacheBustedUrl}" target="_blank" style="color:#4a9eff">Click to open</a>
+             </div>`;
+        }
+
         function openRefineModal(runId, taskId, agent, artifact, artifactUrl) {
             currentRefineContext = { run_id: runId, task_id: taskId, agent: agent, url: artifactUrl };
 
@@ -152,28 +202,7 @@
             // 2. Load Preview
             const previewContainer = document.getElementById('refine-preview');
             previewContainer.innerHTML = '<div style="color:#aaa; text-align:center; padding-top:50px;">Loading Preview...</div>';
-
-            // Determine preview type based on URL or basic heuristic using URL extension
-            // artifact is the raw object if passed, but here we passed components.
-            // Let's rely on URL extension.
-
-            if (artifactUrl.endsWith('.png') || artifactUrl.endsWith('.jpg')) {
-                previewContainer.innerHTML = `<img src="${artifactUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
-            } else if (artifactUrl.endsWith('.py') || artifactUrl.endsWith('.txt') || artifactUrl.endsWith('.json') || artifactUrl.endsWith('.md')) {
-                // Fetch text content
-                fetch(artifactUrl).then(r => r.text()).then(text => {
-                    previewContainer.innerHTML = `<pre style="text-align:left; background:#1e1e1e; padding:10px; border-radius:5px; overflow:auto; height:100%; margin:0;"><code>${text.replace(/</g, '&lt;')}</code></pre>`;
-                }).catch(e => {
-                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${e}</div>`;
-                });
-            } else if (artifactUrl.endsWith('.mp4')) {
-                previewContainer.innerHTML = `<video controls src="${artifactUrl}" style="width:100%; max-height:100%;"></video>`;
-            } else {
-                previewContainer.innerHTML = `<div style="text-align:center; padding-top:50px; color:#fff;">
-                    Preview not available for this file type.<br>
-                    <a href="${artifactUrl}" target="_blank" style="color:#4a9eff">Click to open</a>
-                 </div>`;
-            }
+            renderRefinePreview(artifactUrl);
         }
 
         function closeRefineModal() {
@@ -228,29 +257,16 @@
 
                 eventSource.addEventListener('artifact', (e) => {
                     const data = JSON.parse(e.data);
-                    // Refresh Preview!
-                    // Construct new URL
-                    let newUrl = "#";
-                    if (data.url && data.url.includes('generated_code')) {
-                        const parts = data.url.split('generated_code');
-                        const relative = parts[1].replace(/\\\\/g, '/');
-                        newUrl = '/generated' + relative;
-                    }
+                    const newUrl = resolveGeneratedUrl(data.url);
 
                     // Allow small delay for file write
                     setTimeout(() => {
                         // Update Context URL so subsequent refinements use THIS version
-                        currentRefineContext.url = newUrl;
-
-                        // Refresh Preview
-                        const previewContainer = document.getElementById('refine-preview');
-                        // Logic similar to openRefineModal... reuse code if possible or copy/paste logic for robustness
-                        if (newUrl.endsWith('.png') || newUrl.endsWith('.jpg')) {
-                            previewContainer.innerHTML = `<img src="${newUrl}?t=${Date.now()}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
-                        } else if (newUrl.endsWith('.py') || newUrl.endsWith('.txt')) {
-                            fetch(newUrl).then(r => r.text()).then(txt => {
-                                previewContainer.innerHTML = `<pre style="text-align:left; background:#1e1e1e; padding:10px; border-radius:5px; overflow:auto; height:100%; margin:0;"><code>${txt.replace(/</g, '&lt;')}</code></pre>`;
-                            });
+                        if (currentRefineContext) {
+                            currentRefineContext.url = newUrl;
+                        }
+                        if (refineModal.style.display === 'flex') {
+                            renderRefinePreview(newUrl);
                         }
                     }, 1000);
 
@@ -262,8 +278,17 @@
                 });
 
                 eventSource.addEventListener('error', (e) => {
+                    let message = "Connection lost";
+                    if (e && typeof e.data === 'string') {
+                        try {
+                            const data = JSON.parse(e.data);
+                            message = data.content || message;
+                        } catch (err) {
+                            message = e.data || message;
+                        }
+                    }
                     eventSource.close();
-                    appendRefineSystemMsg("Error: Connection lost");
+                    appendRefineSystemMsg(`Error: ${message}`);
                 });
 
             } catch (e) {
@@ -379,6 +404,10 @@
             });
 
             eventSource.addEventListener('workflow_complete', (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.run_id && !globalRunId) globalRunId = data.run_id;
+                } catch (_) {}
                 feedbackModal.style.display = 'block';
                 eventSource.close();
             });
@@ -509,13 +538,7 @@
             card.className = 'artifact-card'; // Changed from 'a' to 'div' to contain buttons
 
             // Link logic matching the /generated mount
-            let fileUrl = "#";
-            if (artifact.url && artifact.url.includes('generated_code')) {
-                const parts = artifact.url.split('generated_code');
-                // Regex to replace one OR more backslashes with forward slash
-                const relative = parts[1].replace(/\\+/g, '/');
-                fileUrl = '/generated' + relative;
-            }
+            const fileUrl = resolveGeneratedUrl(artifact.url);
 
             // Icons
             let icon = '📄';
@@ -523,12 +546,16 @@
             if (artifact.type === 'presentation') icon = '📊';
             if (artifact.type === 'code') icon = '💻';
 
+            const refineButton = runId
+                ? `<button class="refine-btn" onclick="openRefineModal('${runId}', '${taskId}', '${agentName}', '${artifact.name}', '${fileUrl}')">Refine ✏️</button>`
+                : `<button class="refine-btn" disabled title="Run ID unavailable">Refine ✏️</button>`;
+
             card.innerHTML = `
                 <a href="${fileUrl}" target="_blank" style="text-decoration:none; color:inherit; display:block; margin-bottom:10px;">
                     <div class="artifact-icon">${icon}</div>
                     <div class="artifact-name">${artifact.name}</div>
                 </a>
-                <button class="refine-btn" onclick="openRefineModal('${runId}', '${taskId}', '${agentName}', '${artifact.name}', '${fileUrl}')">Refine ✏️</button>
+                ${refineButton}
             `;
 
             artGrid.appendChild(card);

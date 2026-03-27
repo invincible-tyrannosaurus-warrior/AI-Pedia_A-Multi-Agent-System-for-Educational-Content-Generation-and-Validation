@@ -31,7 +31,7 @@ async def run_video_pipeline(
     logger.info("Starting Video Agent Pipeline...")
     
     # 0. Setup
-    client = OpenAI(
+    client = kwargs.get("client") or OpenAI(
         base_url=kwargs.get("base_url"),
         api_key=kwargs.get("api_key")
     )

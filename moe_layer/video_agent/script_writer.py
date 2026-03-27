@@ -9,6 +9,7 @@ from typing import Dict, List, Optional
 from openai import OpenAI
 
 logger = logging.getLogger(__name__)
+_MAX_SCRIPT_RETRIES = 3
 
 class ScriptWriter:
     """
@@ -65,38 +66,50 @@ class ScriptWriter:
         Return ONLY the spoken narration text. No "Slide 1:" prefixes or markdown.
         """
         
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o", 
-                messages=[
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "text", "text": prompt},
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": f"data:image/jpeg;base64,{base64_image}", 
-                                    "detail": "high" # Use high detail for text legibility
-                                }
-                            },
-                        ],
-                    }
-                ],
-                max_tokens=500
-            )
-            
-            script_text = response.choices[0].message.content.strip()
-            
-            # Update Context for next slide (Self-Correction/Summarization)
-            self._update_context(script_text)
-            
-            logger.info(f"Generated script for Slide {index+1}: {script_text[:50]}...")
-            return script_text
-            
-        except Exception as e:
-            logger.error(f"Failed to generate script for {img_path}: {e}")
-            return "Let's move to the next slide."
+        last_error: Optional[Exception] = None
+        for attempt in range(1, _MAX_SCRIPT_RETRIES + 1):
+            try:
+                response = self.client.chat.completions.create(
+                    model="gpt-4o", 
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": prompt},
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/jpeg;base64,{base64_image}", 
+                                        "detail": "high" # Use high detail for text legibility
+                                    }
+                                },
+                            ],
+                        }
+                    ],
+                    max_tokens=500
+                )
+                
+                script_text = response.choices[0].message.content.strip()
+                if not script_text:
+                    raise ValueError("Empty narration returned by model.")
+                
+                # Update Context for next slide (Self-Correction/Summarization)
+                self._update_context(script_text)
+                
+                logger.info(f"Generated script for Slide {index+1}: {script_text[:50]}...")
+                return script_text
+                
+            except Exception as e:
+                last_error = e
+                logger.warning(
+                    "Failed to generate script for %s on attempt %d/%d: %s",
+                    img_path,
+                    attempt,
+                    _MAX_SCRIPT_RETRIES,
+                    e,
+                )
+
+        raise RuntimeError(f"Failed to generate script for {img_path}: {last_error}")
 
     def _update_context(self, current_script: str):
         """

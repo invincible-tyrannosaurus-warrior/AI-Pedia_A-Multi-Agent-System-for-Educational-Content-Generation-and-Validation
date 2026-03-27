@@ -331,6 +331,28 @@ def _write_json(path: Path, payload: Dict[str, Any]) -> None:
         json.dump(payload, handle, ensure_ascii=True, indent=2, default=_json_default)
 
 
+def _hydrate_assets_from_descriptors(asset_descriptors: Iterable[Dict[str, Any]]) -> List[StoredAsset]:
+    assets: List[StoredAsset] = []
+    for descriptor in asset_descriptors:
+        if descriptor.get("type") != "file":
+            continue
+
+        url = descriptor.get("url")
+        if not url:
+            continue
+
+        asset_path = Path(url)
+        assets.append(
+            StoredAsset(
+                path=asset_path,
+                url=url,
+                mime_type=descriptor.get("mime_type", "application/octet-stream"),
+                original_filename=descriptor.get("original_filename") or asset_path.name,
+            )
+        )
+    return assets
+
+
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -738,7 +760,12 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
     if config is None: 
         config = {}
     
-    from config import GENERATED_DIR
+    from config import GENERATED_DIR, LOGS_DIR
+
+    task_manager_log_path: Optional[Path] = None
+    task_manager_log: Optional[Dict[str, Any]] = None
+    final_plan: Dict[str, Any] = {"user_intent": user_query, "subtasks": []}
+    agent_results: Dict[str, Any] = {}
 
     # ========== Files Injection ==========
     try:
@@ -785,6 +812,17 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
         run_id = uuid.uuid4().hex
         timestamp = _local_timestamp()
         tasks = []
+        task_manager_log_path = LOGS_DIR / "task_manager" / f"{run_id}.json"
+        task_manager_log = {
+            "run_id": run_id,
+            "started_at": _now_iso(),
+            "user_text": user_query,
+            "asset_descriptors": asset_descriptors,
+            "plan_attempts": [],
+            "final_plan": final_plan,
+            "agent_results": agent_results,
+            "overall_status": "running",
+        }
         
         # Build deterministic tasks
         if config.get("slides", False):
@@ -876,15 +914,23 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             elif hasattr(task, "model_dump"): normalized_tasks.append(task.model_dump())
 
         # Setup paths & IDs
-        run_id = uuid.uuid4().hex
         output_dir = GENERATED_DIR
         output_dir.mkdir(parents=True, exist_ok=True)
         output_subdir = f"run_{run_id}"
-        timestamp = _local_timestamp()
+        artifact_timestamp = _local_timestamp()
 
         # Pre-process Tasks
         plan_steps = []
         final_tasks = []
+
+        def persist_stream_log(overall_status: Optional[str] = None) -> None:
+            if task_manager_log is None or task_manager_log_path is None:
+                return
+            if overall_status is not None:
+                task_manager_log["overall_status"] = overall_status
+            task_manager_log["final_plan"] = final_plan
+            task_manager_log["agent_results"] = agent_results
+            _write_json(task_manager_log_path, task_manager_log)
         
         for task in normalized_tasks:
             t_id = _get_task_id(task)
@@ -902,7 +948,8 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             # Setup inputs
             inputs = task.get("inputs") or {}
             base_stem = _safe_stem(t_id)
-            inputs.setdefault("output_filename", f"{base_stem}_{timestamp}.py")
+            if agent_name == "coder":
+                inputs.setdefault("output_filename", f"{base_stem}_{artifact_timestamp}.py")
             inputs.setdefault("output_subdir", output_subdir)
             task["inputs"] = inputs
             
@@ -917,13 +964,19 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             })
             final_tasks.append(task)
 
+        final_plan = {
+            "user_intent": user_query,
+            "subtasks": final_tasks,
+        }
+        persist_stream_log()
+
         # Emit Plan
-        yield send_event("plan", {"steps": plan_steps})
+        yield send_event("plan", {"run_id": run_id, "steps": plan_steps})
 
         # Dependency Management
         completed: Set[str] = set()
         pending: List[Dict[str, Any]] = list(final_tasks)
-        agent_results: Dict[str, Any] = {}
+        task_statuses: Dict[str, str] = {}
 
         while pending:
             runnable = []
@@ -933,6 +986,7 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                     runnable.append(task)
             
             if not runnable:
+                 persist_stream_log("fail")
                  yield send_event("error", {"content": "Unresolved dependencies in plan."})
                  break
             
@@ -985,6 +1039,7 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                             )
                         
                         agent_results[t_id] = result
+                        persist_stream_log()
                         
                         # LOGGING
                         if result.get("success"):
@@ -1050,6 +1105,7 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                          yield send_event("log", {"id": t_id, "content": f"Execution Exception: {str(e)}"})
                          result = {"success": False, "error": str(e)}
                          agent_results[t_id] = result
+                         persist_stream_log()
 
                      # JUDGMENT
                      verdict = run_judger_pipeline(
@@ -1063,25 +1119,42 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                      task_v = v_map.get(t_id, {})
                      
                      if task_v.get("verdict") == "pass":
+                         task_statuses[t_id] = "success"
+                         persist_stream_log()
                          yield send_event("step_complete", {"id": t_id, "status": "success"})
                          break
                      else:
                          fix = task_v.get("fix_instructions")
-                         if fix: task["instruction"] = fix
+                         if fix:
+                             task["instruction"] = fix
+                             persist_stream_log()
                          reason = ", ".join(task_v.get("failed_criteria", [])) or "Unknown issues"
                          yield send_event("log", {"id": t_id, "content": f"Judger: {reason}"})
                          
                          if attempt > MAX_RETRIES:
+                             task_statuses[t_id] = "fail"
+                             persist_stream_log()
                              yield send_event("step_complete", {"id": t_id, "status": "fail"})
                 
                 completed.add(t_id)
 
-        yield send_event("workflow_complete", {})
+        overall_status = "pass"
+        if len(task_statuses) != len(final_tasks) or any(status != "success" for status in task_statuses.values()):
+            overall_status = "fail"
+        persist_stream_log(overall_status)
+        yield send_event("workflow_complete", {"run_id": run_id, "status": overall_status})
 
     except Exception as e:
         import traceback
         trace = traceback.format_exc()
         logger.error(trace)
+        if task_manager_log is not None:
+            task_manager_log["error"] = str(e)
+            try:
+                if task_manager_log_path is not None:
+                    _write_json(task_manager_log_path, task_manager_log)
+            except Exception:
+                logger.exception("Failed to persist stream workflow error log")
         yield send_event("error", {"content": f"Workflow Error: {str(e)}"})
 
 
@@ -1124,14 +1197,7 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
         # 2. LOCATE TASK & ASSETS
         # We need the original asset descriptors
         assets_data = run_data.get("asset_descriptors", [])
-        assets = [
-            StoredAsset(
-                path=Path(a["url"]), # Assuming 'url' matches local path for simplistic hydration
-                url=a["url"],
-                mime_type=a["mime_type"],
-                original_filename=a.get("original_filename", "unknown")
-            ) for a in assets_data if a.get("type") == "file"
-        ]
+        assets = _hydrate_assets_from_descriptors(assets_data)
         
         # Locate the specific task in final_plan
         plan = run_data.get("final_plan", {})
@@ -1145,6 +1211,11 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
         # Locate previous result
         agent_results = run_data.get("agent_results", {})
         prev_result = agent_results.get(task_id, {})
+        dependency_results = {
+            dep: agent_results.get(dep)
+            for dep in target_task.get("dependencies", [])
+            if dep in agent_results
+        }
         
         # 3. CONSTRUCT REFINEMENT INSTRUCTION
         original_instruction = target_task.get("instruction", "")
@@ -1171,14 +1242,17 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
             return
             
         # Prepare inputs (reuse from original task)
-        inputs = target_task.get("inputs", {})
+        inputs = dict(target_task.get("inputs", {}))
         # Output to a refinement subdir to avoid overwriting or just use same dir with new timestamp
         # Let's verify output filename
         timestamp = _local_timestamp()
         run_subdir = f"run_{run_id}"
         base_stem = _safe_stem(task_id)
-        # Force a new filename to ensure we get a new artifact
-        inputs["output_filename"] = f"{base_stem}_refine_{timestamp}.py" 
+        inputs["output_subdir"] = run_subdir
+        if agent_name == "coder":
+            inputs["output_filename"] = f"{base_stem}_refine_{timestamp}.py"
+        else:
+            inputs.pop("output_filename", None)
         
         # Execute
         task_client = _default_client()
@@ -1189,7 +1263,7 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
                 instruction=new_instruction,
                 output_dir=output_dir,
                 assets=assets,
-                dependency_results={}, # Dependencies might be stale, but typically refinement doesn't need them if self-contained
+                dependency_results=dependency_results,
                 client=task_client,
                 **inputs
             ))
@@ -1198,7 +1272,7 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
                 instruction=new_instruction,
                 output_dir=output_dir,
                 assets=assets,
-                dependency_results={},
+                dependency_results=dependency_results,
                 client=task_client,
                 **inputs
             )
@@ -1225,14 +1299,18 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
             err = result.get("error", "Unknown error")
             yield send_event("log", {"id": "system", "content": f"Refinement failed: {err}"})
 
-        # 5. UPDATE LOGS (Optional but good for history)
-        # We could append to a "refinements" list in the log
-        # run_data.setdefault("refinements", []).append({
-        #     "task_id": task_id, 
-        #     "feedback": feedback,
-        #     "result": result
-        # })
-        # _write_json(log_path, run_data)
+        # 5. UPDATE LOGS
+        run_data.setdefault("refinements", []).append({
+            "task_id": task_id,
+            "agent": agent_name,
+            "feedback": feedback,
+            "previous_result": prev_result,
+            "result": result,
+            "updated_artifact": updated_artifact,
+            "refined_at": _now_iso(),
+        })
+        run_data.setdefault("agent_results", {})[task_id] = result
+        _write_json(log_path, run_data)
 
         yield send_event("complete", {})
 
