@@ -62,6 +62,13 @@ class VideoComposer:
         Main entry point: Compose a full video from images and scripts.
         """
         logger.info(f"Composing video to {output_path}...")
+        if len(image_paths) != len(scripts):
+            raise RuntimeError(
+                f"Image/script count mismatch: {len(image_paths)} images vs {len(scripts)} scripts."
+            )
+        if not image_paths:
+            raise RuntimeError("No slide images were provided for video composition.")
+
         temp_root = output_path.parent / "temp_video"
         audio_dir = temp_root / "audio"
         segments_dir = temp_root / "segments"
@@ -100,12 +107,12 @@ class VideoComposer:
                 logger.error(f"Failed to create segment for slide {i + 1}: {e}")
                 if build_progress_callback is not None:
                     build_progress_callback(
-                        stage_progress=(i + 1) / max(total_items, 1),
-                        current=i + 1,
+                        stage_progress=i / max(total_items, 1),
+                        current=i,
                         total=total_items,
-                        message=f"Skipped slide {i + 1} after segment error: {e}",
+                        message=f"Failed on slide {i + 1} of {total_items}: {e}",
                     )
-                continue
+                raise RuntimeError(f"Failed to create video segment for slide {i + 1}: {e}") from e
         
         if not segment_paths:
             raise RuntimeError("No slide segments were generated successfully.")

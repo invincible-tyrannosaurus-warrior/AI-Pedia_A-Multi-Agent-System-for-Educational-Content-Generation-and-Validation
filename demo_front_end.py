@@ -11,7 +11,8 @@ import os
 
 # Import your agent orchestrator
 from manager_agent import task_manager_agent
-from config import DATA_DIR, GENERATED_DIR
+from config import GENERATED_DIR, UPLOADS_DIR, resolve_artifact_ref
+from moe_layer.coder_agent.storage.local import persist_upload
 from moe_layer.video_agent.ppt_converter import PPTConverter
 
 app = FastAPI()
@@ -20,10 +21,9 @@ app = FastAPI()
 current_dir = Path(__file__).resolve().parent
 static_dir = current_dir / "static"
 templates_dir = current_dir / "templates"
-uploads_dir = current_dir / "static" / "data" / "uploads"
+uploads_dir = UPLOADS_DIR
 ALLOWED_ARTIFACT_ROOTS = [
     GENERATED_DIR.resolve(),
-    DATA_DIR.resolve(),
     uploads_dir.resolve(),
 ]
 
@@ -38,20 +38,10 @@ def _resolve_artifact_path(raw_path: str) -> Path:
     if not raw_path:
         raise HTTPException(status_code=400, detail="Artifact path is required.")
 
-    normalized = raw_path.strip()
-    if normalized.startswith("/generated/"):
-        relative = normalized[len("/generated/"):].lstrip("/")
-        candidate = GENERATED_DIR / relative
-    elif normalized.startswith("/static/"):
-        candidate = current_dir / normalized.lstrip("/")
-    else:
-        candidate = Path(normalized)
-        if not candidate.is_absolute():
-            candidate = current_dir / candidate
-
     try:
-        resolved = candidate.resolve(strict=True)
-    except FileNotFoundError as exc:
+        resolved = resolve_artifact_ref(raw_path)
+        resolved = resolved.resolve(strict=True)
+    except (FileNotFoundError, ValueError) as exc:
         raise HTTPException(status_code=404, detail="Artifact not found.") from exc
 
     if not any(resolved == root or root in resolved.parents for root in ALLOWED_ARTIFACT_ROOTS):
@@ -120,19 +110,11 @@ async def upload_files(request: Request):
     form = await request.form()
     files = form.getlist("files")  # List of UploadFile objects
     saved_paths = []
-    
-    upload_dir = uploads_dir
-    upload_dir.mkdir(parents=True, exist_ok=True)
-    
+
     for file in files:
         if file.filename:
-            # Secure filename: strip paths, keep basename
-            safe_filename = Path(file.filename).name
-            path = upload_dir / safe_filename
-            with open(path, "wb") as buffer:
-                content = await file.read()
-                buffer.write(content)
-            saved_paths.append(str(path))
+            stored = await persist_upload(file, uploads_dir, "/uploads/")
+            saved_paths.append(stored.url)
             
     return {"paths": saved_paths}
 

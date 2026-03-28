@@ -301,7 +301,6 @@ def run_judger_pipeline(
 
     del assets  # not used for now, reserved for future enhancements
 
-    client = client or _default_client()
     tasks = plan.get("subtasks", [])
 
     verdicts: List[Dict[str, Any]] = []
@@ -350,9 +349,8 @@ def run_judger_pipeline(
                 c_type = criterion.get("criterion_type") or criterion.get("type")
                 severity = criterion.get("severity") or "required"
 
-                # DISABLED: Skip semantic criteria entirely - use deterministic only
                 if c_type == "semantic":
-                    # semantic_criteria.append(criterion)
+                    semantic_criteria.append(criterion)
                     continue
 
                 passed, evidence = _evaluate_nonsemantic_criterion(
@@ -363,18 +361,15 @@ def run_judger_pipeline(
                 if not passed and severity == "required" and cid:
                     deterministic_failures.append(cid)
 
-            # DISABLED: LLM-based semantic evaluation
-            # Now using pure deterministic checks only
             llm_failed: List[str] = []
             llm_evidence: Dict[str, Any] = {}
             fix_instructions = ""
             llm_trace: Dict[str, Any] = {}
 
-            # DISABLED: Skip LLM call entirely
-            # needs_llm = bool(semantic_criteria or deterministic_failures)
-            needs_llm = False  # Force deterministic-only mode
+            needs_llm = bool(semantic_criteria)
             if needs_llm:
                 try:
+                    eval_client = client or _default_client()
                     llm_result = _judge_with_llm(
                         task_id=task_id,
                         agent=agent,
@@ -383,7 +378,7 @@ def run_judger_pipeline(
                         semantic_criteria=semantic_criteria,
                         deterministic_failures=deterministic_failures,
                         deterministic_evidence=deterministic_evidence,
-                        client=client,
+                        client=eval_client,
                         log_capture=llm_trace,
                     )
                     llm_failed = llm_result.get("failed_criteria", [])
@@ -394,11 +389,10 @@ def run_judger_pipeline(
                     llm_failed = []
                     llm_evidence = {"error": str(exc)}
 
-            # DISABLED: LLM failures are no longer counted
             all_failed = set(deterministic_failures)
-            # for cid in llm_failed:
-            #     if cid in criteria_by_id and cid in required_ids:
-            #         all_failed.add(cid)
+            for cid in llm_failed:
+                if cid in criteria_by_id and cid in required_ids:
+                    all_failed.add(cid)
 
             verdict = "fail" if all_failed else "pass"
             if verdict == "pass":

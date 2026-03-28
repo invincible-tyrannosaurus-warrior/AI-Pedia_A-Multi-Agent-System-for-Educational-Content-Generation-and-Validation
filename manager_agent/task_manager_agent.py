@@ -15,6 +15,7 @@ import json
 import logging
 import os
 import re
+import mimetypes
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -26,7 +27,8 @@ from pydantic import BaseModel, Field, AliasChoices
 
 from moe_layer.orchestrator.agent_registry import registry
 from moe_layer.coder_agent.storage.local import StoredAsset
-from moe_layer.coder_agent.utils.file_processors import summarize_text
+from moe_layer.coder_agent.utils.file_processors import extract_text, summarize_text
+from config import GENERATED_DIR, LOGS_DIR, artifact_to_public_ref, resolve_artifact_ref
 
 # Import agent pipelines for registration
 from moe_layer.coder_agent.coder_pipeline import run_coder_pipeline
@@ -341,13 +343,20 @@ def _hydrate_assets_from_descriptors(asset_descriptors: Iterable[Dict[str, Any]]
         if not url:
             continue
 
-        asset_path = Path(url)
+        try:
+            asset_path = resolve_artifact_ref(url)
+        except ValueError:
+            asset_path = Path(url)
+        extracted_text = descriptor.get("extracted_text")
+        if not extracted_text and asset_path.exists():
+            extracted_text = extract_text(asset_path, descriptor.get("mime_type", "application/octet-stream"))
         assets.append(
             StoredAsset(
                 path=asset_path,
                 url=url,
                 mime_type=descriptor.get("mime_type", "application/octet-stream"),
                 original_filename=descriptor.get("original_filename") or asset_path.name,
+                extracted_text=extracted_text,
             )
         )
     return assets
@@ -416,12 +425,17 @@ def _build_artifact_payloads(task_id: str, result: Dict[str, Any]) -> List[Dict[
         if not path_str:
             continue
 
+        try:
+            public_path = artifact_to_public_ref(path_str)
+        except ValueError:
+            continue
+
         payloads.append(
             {
                 "id": task_id,
-                "type": _classify_artifact_type(path_str),
-                "url": path_str,
-                "name": Path(path_str).name,
+                "type": _classify_artifact_type(public_path),
+                "url": public_path,
+                "name": Path(public_path).name,
             }
         )
     return payloads
@@ -547,7 +561,12 @@ def run_workflow(
 
     def dependencies_satisfied(task_id: str, pending: Set[str]) -> bool:
         subtask = subtasks_by_id[task_id]
-        return all(dep in agent_results and dep not in pending for dep in subtask.dependencies)
+        return all(
+            dep in agent_results
+            and dep not in pending
+            and bool(agent_results.get(dep, {}).get("success"))
+            for dep in subtask.dependencies
+        )
 
     def run_subtask(task_id: str) -> Dict[str, Any]:
         subtask = subtasks_by_id[task_id]
@@ -762,7 +781,6 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
         clean_data = make_serializable(data)
         return f"event: {event_type}\ndata: {json.dumps(clean_data)}\n\n"
 
-    import mimetypes
     import asyncio
     import inspect
     import queue
@@ -828,8 +846,6 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
     if config is None: 
         config = {}
     
-    from config import GENERATED_DIR, LOGS_DIR
-
     task_manager_log_path: Optional[Path] = None
     task_manager_log: Optional[Dict[str, Any]] = None
     final_plan: Dict[str, Any] = {"user_intent": user_query, "subtasks": []}
@@ -846,25 +862,33 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             file_list = []
 
         for file_path in file_list:
-            path = Path(file_path)
+            try:
+                path = resolve_artifact_ref(file_path)
+            except ValueError:
+                path = Path(file_path)
             if not path.exists():
                 warn = f"Uploaded file not found: {file_path}"
                 yield send_event("log", {"id": "system", "content": warn})
                 continue
 
             mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            try:
+                public_url = artifact_to_public_ref(path)
+            except ValueError:
+                public_url = str(path)
             assets.append(
                 StoredAsset(
                     path=path,
-                    url=str(path),
+                    url=public_url,
                     mime_type=mime_type,
                     original_filename=path.name,
+                    extracted_text=extract_text(path, mime_type),
                 )
             )
             asset_descriptors.append(
                 {
                     "type": "file",
-                    "url": str(path),
+                    "url": public_url,
                     "mime_type": mime_type,
                     "description": f"Uploaded asset: {path.name}",
                     "original_filename": path.name,
@@ -875,7 +899,13 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
         # Initial system log
         yield send_event("log", {"id": "system", "content": "Generating Plan..."})
 
-        task_client = _default_client()
+        task_client = None
+        try:
+            task_client = _default_client()
+        except Exception as exc:
+            if config.get("slides", False) or config.get("video", False) or config.get("quizzes", False):
+                raise
+            logger.warning("OpenAI client unavailable; continuing in code-only mode: %s", exc)
         
         run_id = uuid.uuid4().hex
         timestamp = _local_timestamp()
@@ -966,6 +996,11 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             yield send_event("error", {"content": "No output types selected!"})
             return
 
+        source_context = ""
+        if assets:
+            filenames = ", ".join(asset.original_filename for asset in assets)
+            source_context = f" Use the uploaded source materials when relevant: {filenames}."
+
         def _short_label(text: Optional[str], fallback: str) -> str:
             if not text: return fallback
             label = text.strip().splitlines()[0]
@@ -1012,6 +1047,8 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             
             task["agent"] = agent_name
             task["task_id"] = t_id
+            if source_context:
+                task["instruction"] = f"{task.get('instruction', '').strip()}{source_context}"
             
             # Setup inputs
             inputs = task.get("inputs") or {}
@@ -1054,14 +1091,35 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                     runnable.append(task)
             
             if not runnable:
+                 for blocked_task in list(pending):
+                     blocked_id = _get_task_id(blocked_task)
+                     failed_deps = [
+                         dep for dep in (blocked_task.get("dependencies") or [])
+                         if task_statuses.get(dep) == "fail"
+                     ]
+                     reason = (
+                         f"Blocked by failed dependencies: {', '.join(failed_deps)}"
+                         if failed_deps
+                         else "Unresolved dependencies in plan."
+                     )
+                     yield send_event("step_start", {
+                         "id": blocked_id,
+                         "name": _short_label(blocked_task.get("instruction"), blocked_task.get("agent", "task")),
+                         "agent": blocked_task.get("agent"),
+                     })
+                     yield send_event("log", {"id": blocked_id, "content": reason})
+                     agent_results[blocked_id] = {"success": False, "error": reason}
+                     task_statuses[blocked_id] = "fail"
+                     yield send_event("step_complete", {"id": blocked_id, "status": "fail"})
+                 pending.clear()
                  persist_stream_log("fail")
-                 yield send_event("error", {"content": "Unresolved dependencies in plan."})
                  break
             
             for task in runnable:
                 pending.remove(task)
                 t_id = _get_task_id(task)
                 agent_name = task.get("agent")
+                task_succeeded = False
                 
                 # Notify Start
                 yield send_event("step_start", {
@@ -1077,15 +1135,16 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                 # But we might want to check retry count if we implement logic for that
                 
                 for attempt in range(1, MAX_RETRIES + 2):
-                     # Prepare deps
-                     deps = task.get("dependencies") or []
-                     dep_results = {d: agent_results.get(d) for d in deps if d in agent_results}
-                     
-                     if attempt > 1:
-                         yield send_event("log", {"id": t_id, "content": f"Verifying output (Attempt {attempt-1})... Failed. Retrying..."})
-                     
-                     # Execute
-                     try:
+                    deps = task.get("dependencies") or []
+                    dep_results = {d: agent_results.get(d) for d in deps if d in agent_results}
+
+                    if attempt > 1:
+                        yield send_event(
+                            "log",
+                            {"id": t_id, "content": f"Verifying output (Attempt {attempt - 1})... Failed. Retrying..."},
+                        )
+
+                    try:
                         agent_func = registry.get(agent_name)
                         if inspect.iscoroutinefunction(agent_func):
                             agent_kwargs = {
@@ -1140,83 +1199,91 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                                 assets=assets,
                                 dependency_results=dep_results,
                                 client=task_client,
-                                **task.get("inputs", {})
+                                **task.get("inputs", {}),
                             )
-                        
+
                         agent_results[t_id] = result
                         persist_stream_log()
-                        
-                        # LOGGING
+
                         if result.get("success"):
                             yield send_event("log", {"id": t_id, "content": "Generation successful."})
                         else:
                             err = result.get("error", "Unknown error")
                             yield send_event("log", {"id": t_id, "content": f"Error: {err}"})
 
-                     except Exception as e:
-                         import traceback
-                         trace = traceback.format_exc()
-                         logger.error(trace)
-                         yield send_event("log", {"id": t_id, "content": f"Execution Exception: {str(e)}"})
-                         result = {"success": False, "error": str(e)}
-                         agent_results[t_id] = result
-                         persist_stream_log()
+                    except Exception as e:
+                        import traceback
 
-                     # JUDGMENT
-                     verdict = run_judger_pipeline(
+                        trace = traceback.format_exc()
+                        logger.error(trace)
+                        yield send_event("log", {"id": t_id, "content": f"Execution Exception: {str(e)}"})
+                        result = {"success": False, "error": str(e)}
+                        agent_results[t_id] = result
+                        persist_stream_log()
+
+                    verdict = run_judger_pipeline(
                         plan={"subtasks": [task]},
                         agent_results={t_id: result},
                         assets=assets,
-                        client=task_client
-                     )
-                     
-                     v_map = {item.get("task_id"): item for item in verdict.get("tasks", [])}
-                     task_v = v_map.get(t_id, {})
-                     
-                     if task_v.get("verdict") == "pass":
-                         for artifact_payload in _build_artifact_payloads(t_id, result):
-                             yield send_event("artifact", artifact_payload)
+                        client=task_client,
+                    )
 
-                         if agent_name == "video" and result.get("success") and result.get("scripts"):
-                             full_script = "\n\n".join(result.get("scripts", []))
-                             if full_script.strip():
-                                 yield send_event("script", {
-                                     "id": t_id,
-                                     "content": full_script
-                                 })
+                    v_map = {item.get("task_id"): item for item in verdict.get("tasks", [])}
+                    task_v = v_map.get(t_id, {})
 
-                         if agent_name == "quizzer" and result.get("success"):
-                             try:
-                                 q_data = result.get("output")
-                                 if isinstance(q_data, str):
-                                     clean = q_data.replace("```json", "").replace("```", "").strip()
-                                     q_data = json.loads(clean)
+                    if task_v.get("verdict") == "pass":
+                        for artifact_payload in _build_artifact_payloads(t_id, result):
+                            yield send_event("artifact", artifact_payload)
 
-                                 yield send_event("quiz", {
-                                     "id": t_id,
-                                     "content": q_data
-                                 })
-                             except:
-                                 yield send_event("log", {"id": t_id, "content": "Failed to parse quiz JSON."})
+                        if agent_name == "video" and result.get("success") and result.get("scripts"):
+                            full_script = "\n\n".join(result.get("scripts", []))
+                            if full_script.strip():
+                                yield send_event(
+                                    "script",
+                                    {
+                                        "id": t_id,
+                                        "content": full_script,
+                                    },
+                                )
 
-                         task_statuses[t_id] = "success"
-                         persist_stream_log()
-                         yield send_event("step_complete", {"id": t_id, "status": "success"})
-                         break
-                     else:
-                         fix = task_v.get("fix_instructions")
-                         if fix:
-                             task["instruction"] = fix
-                             persist_stream_log()
-                         reason = ", ".join(task_v.get("failed_criteria", [])) or "Unknown issues"
-                         yield send_event("log", {"id": t_id, "content": f"Judger: {reason}"})
-                         
-                         if attempt > MAX_RETRIES:
-                             task_statuses[t_id] = "fail"
-                             persist_stream_log()
-                             yield send_event("step_complete", {"id": t_id, "status": "fail"})
-                
-                completed.add(t_id)
+                        if agent_name == "quizzer" and result.get("success"):
+                            try:
+                                q_data = result.get("output")
+                                if isinstance(q_data, str):
+                                    clean = q_data.replace("```json", "").replace("```", "").strip()
+                                    q_data = json.loads(clean)
+
+                                yield send_event(
+                                    "quiz",
+                                    {
+                                        "id": t_id,
+                                        "content": q_data,
+                                    },
+                                )
+                            except Exception:
+                                yield send_event("log", {"id": t_id, "content": "Failed to parse quiz JSON."})
+
+                        task_statuses[t_id] = "success"
+                        task_succeeded = True
+                        persist_stream_log()
+                        yield send_event("step_complete", {"id": t_id, "status": "success"})
+                        break
+
+                    fix = task_v.get("fix_instructions")
+                    if fix:
+                        task["instruction"] = fix
+                        persist_stream_log()
+
+                    reason = ", ".join(task_v.get("failed_criteria", [])) or "Unknown issues"
+                    yield send_event("log", {"id": t_id, "content": f"Judger: {reason}"})
+
+                    if attempt > MAX_RETRIES:
+                        task_statuses[t_id] = "fail"
+                        persist_stream_log()
+                        yield send_event("step_complete", {"id": t_id, "status": "fail"})
+
+                if task_succeeded:
+                    completed.add(t_id)
 
         overall_status = "pass"
         if len(task_statuses) != len(final_tasks) or any(status != "success" for status in task_statuses.values()):

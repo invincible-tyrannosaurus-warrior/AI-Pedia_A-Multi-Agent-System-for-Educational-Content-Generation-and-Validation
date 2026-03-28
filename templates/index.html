@@ -110,32 +110,12 @@
         const refineModal = document.getElementById('refine-modal');
         const refineChatHistory = document.getElementById('refine-chat-history');
         const refineInput = document.getElementById('refine-input');
+        const refineTitle = document.getElementById('refine-title');
+        const videoCheckbox = document.getElementById('check-video');
+        const slidesCheckbox = document.getElementById('check-slides');
+        const codeCheckbox = document.getElementById('check-code');
+        const quizzesCheckbox = document.getElementById('check-quizzes');
 
-        sendBtn.addEventListener('click', startGeneration);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') startGeneration();
-        });
-
-        // Refine Input Enter Key
-        refineInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendRefinement();
-            }
-        });
-
-        feedbackModal.addEventListener('click', () => {
-            feedbackModal.style.display = 'none';
-        });
-
-        let currentTaskMap = {}; // Maps task_id to DOM Element (Sidebar)
-        let currentAgentBox = null;
-        let currentAgentId = null;
-        let currentRunId = null;
-        let lastSystemMsgBody = null;
-        let currentRefineContext = null; // { run_id, task_id, agent, name, rawPath }
-        let refineSessions = {};
-        let isRestoringUiState = false;
         const VIDEO_STAGE_ORDER = ['prepare', 'convert_slides', 'generate_scripts', 'build_clips', 'encode_video'];
         const VIDEO_STAGE_LABELS = {
             prepare: 'prepare',
@@ -144,35 +124,59 @@
             build_clips: 'build clips',
             encode_video: 'encode video'
         };
-        const UI_STATE_STORAGE_KEY = 'ai_pedia_ui_state_v4';
-        const REFINE_SYSTEM_MESSAGE_HTML = `
-            <div class="agent-box">
-                <div class="agent-header">System</div>
-                <div class="agent-body system-msg-body">You are refining this specific artifact. Ask for changes here.</div>
-            </div>
-        `;
+        const UI_STATE_STORAGE_KEY = 'ai_pedia_ui_state_v5';
+        const REFINE_SYSTEM_MESSAGE = 'You are refining this specific artifact. Ask for changes here.';
 
-        document.addEventListener('click', (event) => {
-            const refineButton = event.target.closest('.refine-btn[data-run-id]');
-            if (refineButton) {
-                event.preventDefault();
-                openRefineModal(
-                    refineButton.dataset.runId,
-                    refineButton.dataset.taskId,
-                    refineButton.dataset.agent,
-                    refineButton.dataset.artifactName,
-                    refineButton.dataset.artifactPath
-                );
+        let currentTaskMap = {};
+        let currentAgentBox = null;
+        let currentAgentId = null;
+        let currentRunId = null;
+        let currentRefineContext = null;
+        let refineSessions = {};
+        let isRestoringUiState = false;
+        let taskPlanLoading = false;
+        let feedbackVisible = false;
+        let messageSequence = 0;
+
+        const uiState = {
+            feed: [],
+            taskPlan: [],
+            tasks: {}
+        };
+
+        sendBtn.addEventListener('click', startGeneration);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') startGeneration();
+        });
+        refineInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendRefinement();
             }
         });
-
-        [document.getElementById('check-video'), document.getElementById('check-slides'), document.getElementById('check-code'), document.getElementById('check-quizzes')]
+        feedbackModal.addEventListener('click', () => {
+            feedbackVisible = false;
+            renderFeedbackModal();
+            persistUiState();
+        });
+        [videoCheckbox, slidesCheckbox, codeCheckbox, quizzesCheckbox]
             .forEach((checkbox) => checkbox.addEventListener('change', persistUiState));
         userInput.addEventListener('input', persistUiState);
         refineInput.addEventListener('input', persistActiveRefineDraft);
 
+        function nextMessageId() {
+            messageSequence += 1;
+            return `msg-${messageSequence}`;
+        }
+
         function createRefineKey(runId, taskId) {
             return `${runId}::${taskId}`;
+        }
+
+        function stringifyError(error) {
+            if (!error) return 'Unknown error';
+            if (error instanceof Error) return error.message || error.toString();
+            return String(error);
         }
 
         function getArtifactExtension(rawPath = '') {
@@ -224,16 +228,48 @@
             return meta.type || 'file';
         }
 
-        function escapeHtml(text) {
-            return String(text)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
+        function getConfigState() {
+            return {
+                video: videoCheckbox.checked,
+                slides: slidesCheckbox.checked,
+                code: codeCheckbox.checked,
+                quizzes: quizzesCheckbox.checked
+            };
         }
 
-        function refreshLastSystemMsgBody() {
-            const nodes = refineChatHistory.querySelectorAll('.system-msg-body');
-            lastSystemMsgBody = nodes.length ? nodes[nodes.length - 1] : null;
+        function setConfigState(config = {}) {
+            videoCheckbox.checked = config.video !== false;
+            slidesCheckbox.checked = config.slides !== false;
+            codeCheckbox.checked = config.code !== false;
+            quizzesCheckbox.checked = config.quizzes !== false;
+        }
+
+        function ensureTaskState(taskId, seed = {}) {
+            if (!uiState.tasks[taskId]) {
+                uiState.tasks[taskId] = {
+                    id: taskId,
+                    name: seed.name || taskId,
+                    agent: seed.agent || 'unknown',
+                    status: seed.status || 'pending',
+                    statusText: seed.statusText || 'Processing...',
+                    logs: [],
+                    logOpen: false,
+                    artifacts: {},
+                    quiz: null,
+                    videoProgress: null
+                };
+            }
+            const task = uiState.tasks[taskId];
+            Object.entries(seed).forEach(([key, value]) => {
+                if (value !== undefined) task[key] = value;
+            });
+            return task;
+        }
+
+        function ensureTaskFeedEntry(taskId) {
+            if (!uiState.feed.some((item) => item.kind === 'task' && item.taskId === taskId)) {
+                uiState.feed.push({ kind: 'task', taskId });
+            }
         }
 
         function ensureRefineSession(context) {
@@ -241,15 +277,20 @@
             if (!refineSessions[key]) {
                 refineSessions[key] = {
                     context: { ...context },
-                    chatHtml: REFINE_SYSTEM_MESSAGE_HTML,
+                    messages: [{ role: 'system', text: REFINE_SYSTEM_MESSAGE }],
                     draft: '',
                     preview: null,
-                    isOpen: false
+                    isOpen: false,
+                    lastSystemMessageIndex: 0
                 };
             } else {
                 refineSessions[key].context = { ...refineSessions[key].context, ...context };
-                refineSessions[key].chatHtml = refineSessions[key].chatHtml || REFINE_SYSTEM_MESSAGE_HTML;
-                refineSessions[key].draft = refineSessions[key].draft || '';
+                if (!Array.isArray(refineSessions[key].messages) || !refineSessions[key].messages.length) {
+                    refineSessions[key].messages = [{ role: 'system', text: REFINE_SYSTEM_MESSAGE }];
+                }
+                if (typeof refineSessions[key].lastSystemMessageIndex !== 'number') {
+                    refineSessions[key].lastSystemMessageIndex = refineSessions[key].messages.length - 1;
+                }
             }
             return refineSessions[key];
         }
@@ -257,7 +298,6 @@
         function syncCurrentRefineSessionFromDom() {
             if (!currentRefineContext) return;
             const session = ensureRefineSession(currentRefineContext);
-            session.chatHtml = refineChatHistory.innerHTML || REFINE_SYSTEM_MESSAGE_HTML;
             session.draft = refineInput.value;
             session.isOpen = refineModal.style.display === 'flex';
         }
@@ -267,95 +307,446 @@
             persistUiState();
         }
 
-        function rebuildTaskMapFromDom() {
-            currentTaskMap = {};
-            document.querySelectorAll('#task-list .task-step[id]').forEach((el) => {
-                currentTaskMap[el.id.replace('sidebar-', '')] = el;
-            });
-        }
-
-        function persistUiState() {
-            if (isRestoringUiState) return;
+        function buildSnapshot() {
             syncCurrentRefineSessionFromDom();
-            const snapshot = {
-                messageHtml: messageContainer.innerHTML,
-                taskHtml: taskList.innerHTML,
+            return {
+                version: 5,
+                feed: uiState.feed,
+                taskPlan: uiState.taskPlan,
+                tasks: uiState.tasks,
                 currentRunId,
                 currentAgentId,
                 refineSessions,
                 activeRefineKey: currentRefineContext ? createRefineKey(currentRefineContext.run_id, currentRefineContext.task_id) : null,
                 modalOpen: refineModal.style.display === 'flex',
-                config: {
-                    video: document.getElementById('check-video').checked,
-                    slides: document.getElementById('check-slides').checked,
-                    code: document.getElementById('check-code').checked,
-                    quizzes: document.getElementById('check-quizzes').checked
-                },
-                userInput: userInput.value
+                config: getConfigState(),
+                userInput: userInput.value,
+                taskPlanLoading,
+                feedbackVisible,
+                messageSequence
             };
-            localStorage.setItem(UI_STATE_STORAGE_KEY, JSON.stringify(snapshot));
         }
 
-        async function restoreUiState() {
-            const raw = localStorage.getItem(UI_STATE_STORAGE_KEY);
-            if (!raw) {
-                rebuildTaskMapFromDom();
+        function persistUiState() {
+            if (isRestoringUiState) return;
+            localStorage.setItem(UI_STATE_STORAGE_KEY, JSON.stringify(buildSnapshot()));
+        }
+
+        function createAgentBoxBase(className = '') {
+            const box = document.createElement('div');
+            box.className = className ? `agent-box ${className}` : 'agent-box';
+            return box;
+        }
+
+        function createChatBox(title, text, options = {}) {
+            const box = createAgentBoxBase(options.className || '');
+            const header = document.createElement('div');
+            header.className = 'agent-header';
+            header.textContent = title;
+            const body = document.createElement('div');
+            body.className = `agent-body${options.systemBody ? ' system-msg-body' : ''}`;
+            body.textContent = text;
+            box.appendChild(header);
+            box.appendChild(body);
+            return box;
+        }
+
+        function renderFeedbackModal() {
+            feedbackModal.style.display = feedbackVisible ? 'block' : 'none';
+        }
+
+        function renderTaskStepElement(step, index) {
+            const el = document.createElement('div');
+            el.className = `task-step ${step.status || 'pending'}`;
+            el.id = `sidebar-${step.id}`;
+
+            const header = document.createElement('div');
+            header.className = 'step-header';
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = `${index + 1}. ${step.name}`;
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'step-status-icon';
+            header.appendChild(nameSpan);
+            header.appendChild(iconSpan);
+
+            const agentLine = document.createElement('div');
+            agentLine.className = 'step-agent';
+            agentLine.textContent = step.agent;
+
+            el.appendChild(header);
+            el.appendChild(agentLine);
+            currentTaskMap[step.id] = el;
+            applyTaskStatusElement(el, step.status || 'pending');
+            return el;
+        }
+
+        function applyTaskStatusElement(el, status) {
+            el.className = `task-step ${status}`;
+            const icon = el.querySelector('.step-status-icon');
+            if (!icon) return;
+            if (status === 'active') icon.textContent = '▶';
+            else if (status === 'success') icon.textContent = '✔';
+            else if (status === 'fail') icon.textContent = '✘';
+            else icon.textContent = '○';
+        }
+
+        function renderTaskPlanFromState() {
+            currentTaskMap = {};
+            taskList.replaceChildren();
+
+            if (taskPlanLoading) {
+                const placeholder = document.createElement('div');
+                placeholder.style.textAlign = 'center';
+                placeholder.style.padding = '10px';
+                placeholder.textContent = 'Initializing Plan...';
+                taskList.appendChild(placeholder);
                 return;
             }
 
-            try {
-                const snapshot = JSON.parse(raw);
-                isRestoringUiState = true;
-                if (snapshot.messageHtml) messageContainer.innerHTML = snapshot.messageHtml;
-                if (snapshot.taskHtml) taskList.innerHTML = snapshot.taskHtml;
-                currentRunId = snapshot.currentRunId || null;
-                currentAgentId = snapshot.currentAgentId || null;
-                refineSessions = snapshot.refineSessions || {};
-                userInput.value = snapshot.userInput || '';
-                if (snapshot.config) {
-                    document.getElementById('check-video').checked = snapshot.config.video !== false;
-                    document.getElementById('check-slides').checked = snapshot.config.slides !== false;
-                    document.getElementById('check-code').checked = snapshot.config.code !== false;
-                    document.getElementById('check-quizzes').checked = snapshot.config.quizzes !== false;
+            if (!uiState.taskPlan.length) {
+                const placeholder = document.createElement('div');
+                placeholder.style.textAlign = 'center';
+                placeholder.style.color = '#666';
+                placeholder.style.fontSize = '0.9em';
+                placeholder.style.padding = '20px';
+                placeholder.textContent = 'No active tasks.';
+                taskList.appendChild(placeholder);
+                return;
+            }
+
+            uiState.taskPlan.forEach((step, index) => {
+                taskList.appendChild(renderTaskStepElement(step, index));
+            });
+        }
+
+        function createVideoProgressCard(taskId) {
+            const card = document.createElement('div');
+            card.className = 'video-progress-card';
+            card.id = `video-progress-${taskId}`;
+
+            const topline = document.createElement('div');
+            topline.className = 'video-progress-topline';
+            const stage = document.createElement('span');
+            stage.className = 'video-progress-stage';
+            stage.id = `video-stage-${taskId}`;
+            stage.textContent = 'prepare';
+            const percent = document.createElement('span');
+            percent.className = 'video-progress-percent';
+            percent.id = `video-percent-${taskId}`;
+            percent.textContent = '0%';
+            topline.appendChild(stage);
+            topline.appendChild(percent);
+
+            const track = document.createElement('div');
+            track.className = 'video-progress-track';
+            const fill = document.createElement('div');
+            fill.className = 'video-progress-fill';
+            fill.id = `video-fill-${taskId}`;
+            track.appendChild(fill);
+
+            const detail = document.createElement('div');
+            detail.className = 'video-progress-detail';
+            detail.id = `video-detail-${taskId}`;
+            detail.textContent = 'Waiting for video progress...';
+
+            const stageList = document.createElement('div');
+            stageList.className = 'video-stage-list';
+            stageList.id = `video-stage-list-${taskId}`;
+            VIDEO_STAGE_ORDER.forEach((stageName) => {
+                const node = document.createElement('div');
+                node.className = 'video-stage-step';
+                node.dataset.stage = stageName;
+                node.textContent = VIDEO_STAGE_LABELS[stageName];
+                stageList.appendChild(node);
+            });
+
+            card.appendChild(topline);
+            card.appendChild(track);
+            card.appendChild(detail);
+            card.appendChild(stageList);
+            return card;
+        }
+
+        function buildArtifactCard(meta) {
+            const card = document.createElement('div');
+            card.className = 'artifact-card';
+            card.dataset.artifactSlot = meta.slot;
+            card.dataset.artifactPath = meta.rawPath;
+
+            let icon = '📄';
+            if (meta.type === 'video') icon = '🎬';
+            if (meta.type === 'presentation') icon = '📊';
+            if (meta.type === 'code') icon = '💻';
+
+            const downloadArtifact = shouldDownloadArtifact(meta.ext);
+            const fileLink = document.createElement('a');
+            fileLink.href = buildArtifactAccessUrl(meta.rawPath, { download: downloadArtifact });
+            fileLink.className = 'artifact-link';
+            fileLink.target = downloadArtifact ? '_self' : '_blank';
+            if (downloadArtifact) fileLink.setAttribute('download', meta.name);
+
+            const iconEl = document.createElement('div');
+            iconEl.className = 'artifact-icon';
+            iconEl.textContent = icon;
+            fileLink.appendChild(iconEl);
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'artifact-name';
+            nameEl.textContent = meta.name;
+            fileLink.appendChild(nameEl);
+
+            const hintEl = document.createElement('div');
+            hintEl.className = 'artifact-hint';
+            hintEl.textContent = downloadArtifact ? 'Click to download' : 'Click to open';
+            fileLink.appendChild(hintEl);
+
+            card.appendChild(fileLink);
+
+            const refineButton = document.createElement('button');
+            refineButton.className = 'refine-btn';
+            refineButton.textContent = 'Refine ✏️';
+            if (meta.runId) {
+                refineButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    openRefineModal(meta.runId, meta.taskId, meta.agentName, meta.name, meta.rawPath);
+                });
+            } else {
+                refineButton.disabled = true;
+                refineButton.title = 'Run ID unavailable';
+            }
+            card.appendChild(refineButton);
+
+            return card;
+        }
+
+        function createQuizElement(taskId, quizState) {
+            const container = document.createElement('div');
+            container.className = 'quiz-container';
+            container.style.width = '100%';
+
+            const questions = Array.isArray(quizState?.questions) ? quizState.questions : [];
+            if (!questions.length) {
+                container.textContent = 'No questions found.';
+                return container;
+            }
+
+            questions.forEach((question, questionIndex) => {
+                const questionEl = document.createElement('div');
+                questionEl.className = 'quiz-question';
+                questionEl.textContent = `${questionIndex + 1}. ${question.question || ''}`;
+                container.appendChild(questionEl);
+
+                const optionsEl = document.createElement('div');
+                optionsEl.className = 'quiz-options';
+                const selected = new Set((quizState.selected && quizState.selected[questionIndex]) || []);
+
+                (question.options || []).forEach((option, optionIndex) => {
+                    const optionEl = document.createElement('div');
+                    optionEl.className = 'quiz-option';
+                    if (selected.has(optionIndex)) optionEl.classList.add('selected');
+                    optionEl.textContent = option;
+                    optionEl.addEventListener('click', () => {
+                        const task = ensureTaskState(taskId);
+                        const quiz = task.quiz;
+                        if (!quiz.selected[questionIndex]) quiz.selected[questionIndex] = [];
+                        const current = new Set(quiz.selected[questionIndex]);
+                        if (current.has(optionIndex)) current.delete(optionIndex);
+                        else current.add(optionIndex);
+                        quiz.selected[questionIndex] = Array.from(current).sort((a, b) => a - b);
+                        optionEl.classList.toggle('selected');
+                        persistUiState();
+                    });
+                    optionsEl.appendChild(optionEl);
+                });
+
+                container.appendChild(optionsEl);
+                if (questionIndex < questions.length - 1) {
+                    const divider = document.createElement('hr');
+                    divider.style.border = '0';
+                    divider.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+                    divider.style.margin = '15px 0';
+                    container.appendChild(divider);
                 }
-                rebuildTaskMapFromDom();
-                if (snapshot.modalOpen && snapshot.activeRefineKey && refineSessions[snapshot.activeRefineKey]) {
-                    const context = refineSessions[snapshot.activeRefineKey].context;
-                    await openRefineModal(
-                        context.run_id,
-                        context.task_id,
-                        context.agent,
-                        context.name,
-                        context.rawPath
-                    );
-                } else {
-                    refineModal.style.display = 'none';
-                    currentRefineContext = null;
-                }
-            } catch (error) {
-                console.error('Failed to restore UI state:', error);
-            } finally {
-                isRestoringUiState = false;
-                refreshLastSystemMsgBody();
+            });
+
+            return container;
+        }
+
+        function renderArtifactsAndQuizInto(taskId, artGrid) {
+            const task = ensureTaskState(taskId);
+            artGrid.replaceChildren();
+
+            Object.values(task.artifacts).forEach((meta) => {
+                artGrid.appendChild(buildArtifactCard(meta));
+            });
+
+            if (task.quiz) {
+                artGrid.appendChild(createQuizElement(taskId, task.quiz));
             }
         }
 
-        function normalizeArtifactPayload(taskId, artifact, runId, agentName) {
-            const rawPath = typeof artifact === 'string'
-                ? artifact
-                : (artifact.url || artifact.path || '');
-            const ext = getArtifactExtension(rawPath);
-            const type = inferArtifactType(rawPath, typeof artifact === 'object' ? artifact.type : 'file');
-            return {
-                taskId,
-                runId: runId || currentRunId,
-                agentName,
-                rawPath,
-                ext,
-                type,
-                name: typeof artifact === 'object' && artifact.name ? artifact.name : getArtifactNameFromPath(rawPath),
-                slot: getArtifactSlot({ type, ext })
-            };
+        function createTaskBoxElement(task) {
+            const box = createAgentBoxBase();
+            box.id = `box-${task.id}`;
+            box.dataset.agentType = task.agent;
+
+            const header = document.createElement('div');
+            header.className = 'agent-header';
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = task.name;
+            const agentSpan = document.createElement('span');
+            agentSpan.style.fontSize = '0.8em';
+            agentSpan.style.opacity = '0.7';
+            agentSpan.textContent = String(task.agent || 'unknown').toUpperCase();
+            header.appendChild(nameSpan);
+            header.appendChild(agentSpan);
+
+            const body = document.createElement('div');
+            body.className = 'agent-body';
+            const statusText = document.createElement('div');
+            statusText.className = 'status-text';
+            statusText.textContent = task.statusText || 'Processing...';
+            body.appendChild(statusText);
+
+            if (task.agent === 'video') {
+                body.appendChild(createVideoProgressCard(task.id));
+            }
+
+            const logToggle = document.createElement('div');
+            logToggle.className = 'log-toggle';
+            logToggle.textContent = task.logOpen ? 'Hide Logs' : 'Show Logs';
+            logToggle.addEventListener('click', () => toggleLog(task.id));
+
+            const logContainer = document.createElement('div');
+            logContainer.className = 'log-container';
+            logContainer.id = `log-${task.id}`;
+            logContainer.style.display = task.logOpen ? 'block' : 'none';
+            logContainer.textContent = (task.logs || []).join('\n');
+
+            const artGrid = document.createElement('div');
+            artGrid.className = 'artifact-grid';
+            artGrid.id = `art-${task.id}`;
+            renderArtifactsAndQuizInto(task.id, artGrid);
+
+            body.appendChild(logToggle);
+            body.appendChild(logContainer);
+            body.appendChild(artGrid);
+            box.appendChild(header);
+            box.appendChild(body);
+
+            if (task.agent === 'video' && task.videoProgress) {
+                requestAnimationFrame(() => applyVideoProgressToDom(task.id, task.videoProgress));
+            }
+            return box;
+        }
+
+        function renderFeedFromState() {
+            messageContainer.replaceChildren();
+
+            if (!uiState.feed.length) {
+                messageContainer.appendChild(
+                    createChatBox('System', 'Welcome to AI Pedia. Configure your output needs and ask a question to begin.')
+                );
+                currentAgentBox = null;
+                return;
+            }
+
+            uiState.feed.forEach((item) => {
+                if (item.kind === 'message') {
+                    const box = createChatBox(item.title, item.text, { className: item.role === 'user' ? 'user' : '' });
+                    messageContainer.appendChild(box);
+                    return;
+                }
+
+                if (item.kind === 'task') {
+                    const task = ensureTaskState(item.taskId);
+                    messageContainer.appendChild(createTaskBoxElement(task));
+                }
+            });
+
+            currentAgentBox = currentAgentId ? document.getElementById(`box-${currentAgentId}`) : null;
+        }
+
+        function renderRefineChat(session) {
+            refineChatHistory.replaceChildren();
+            session.messages.forEach((message) => {
+                refineChatHistory.appendChild(
+                    createChatBox(
+                        message.role === 'user' ? 'User' : 'System',
+                        message.text,
+                        { className: message.role === 'user' ? 'user' : '', systemBody: message.role === 'system' }
+                    )
+                );
+            });
+            refineChatHistory.scrollTop = refineChatHistory.scrollHeight;
+        }
+
+        function setPreviewStatus(message, color = '#aaa') {
+            const previewContainer = document.getElementById('refine-preview');
+            previewContainer.replaceChildren();
+            const node = document.createElement('div');
+            node.style.color = color;
+            node.style.textAlign = 'center';
+            node.style.paddingTop = '50px';
+            node.textContent = message;
+            previewContainer.appendChild(node);
+        }
+
+        function renderRefineSlidePreview(session) {
+            const previewContainer = document.getElementById('refine-preview');
+            previewContainer.replaceChildren();
+
+            const slides = session.preview && Array.isArray(session.preview.slides) ? session.preview.slides : [];
+            if (!slides.length) {
+                setPreviewStatus('No slide previews available.', '#ff9b9b');
+                return;
+            }
+
+            const maxIndex = slides.length - 1;
+            session.preview.slideIndex = Math.max(0, Math.min(maxIndex, session.preview.slideIndex || 0));
+            const currentSlideUrl = slides[session.preview.slideIndex];
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'refine-slide-preview';
+
+            const toolbar = document.createElement('div');
+            toolbar.className = 'refine-slide-toolbar';
+
+            const prevButton = document.createElement('button');
+            prevButton.className = 'refine-slide-nav';
+            prevButton.textContent = '◀';
+            prevButton.disabled = session.preview.slideIndex === 0;
+            prevButton.addEventListener('click', () => changeRefineSlide(-1));
+
+            const meta = document.createElement('div');
+            meta.className = 'refine-slide-meta';
+            const name = document.createElement('div');
+            name.className = 'refine-slide-name';
+            name.textContent = session.preview.title || session.context.name || 'Presentation';
+            const count = document.createElement('div');
+            count.className = 'refine-slide-count';
+            count.textContent = `Slide ${session.preview.slideIndex + 1} / ${slides.length}`;
+            meta.appendChild(name);
+            meta.appendChild(count);
+
+            const nextButton = document.createElement('button');
+            nextButton.className = 'refine-slide-nav';
+            nextButton.textContent = '▶';
+            nextButton.disabled = session.preview.slideIndex === maxIndex;
+            nextButton.addEventListener('click', () => changeRefineSlide(1));
+
+            toolbar.appendChild(prevButton);
+            toolbar.appendChild(meta);
+            toolbar.appendChild(nextButton);
+
+            const image = document.createElement('img');
+            image.className = 'refine-slide-image';
+            image.alt = 'Presentation slide preview';
+            image.src = `${currentSlideUrl}${currentSlideUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+
+            wrapper.appendChild(toolbar);
+            wrapper.appendChild(image);
+            previewContainer.appendChild(wrapper);
         }
 
         async function loadPresentationPreview(session) {
@@ -370,53 +761,39 @@
                 sourcePath: session.context.rawPath,
                 title: data.name || session.context.name,
                 slides: data.slides || [],
-                slideIndex: 0
+                slideIndex: session.preview && typeof session.preview.slideIndex === 'number' ? session.preview.slideIndex : 0
             };
         }
 
-        function renderRefineSlidePreview(session) {
-            const previewContainer = document.getElementById('refine-preview');
-            const slides = session.preview && session.preview.slides ? session.preview.slides : [];
-            if (!slides.length) {
-                previewContainer.innerHTML = '<div style="color:#ff9b9b; text-align:center; padding-top:50px;">No slide previews available.</div>';
-                return;
-            }
-
-            const maxIndex = slides.length - 1;
-            session.preview.slideIndex = Math.max(0, Math.min(maxIndex, session.preview.slideIndex || 0));
-            const currentSlideUrl = slides[session.preview.slideIndex];
-            const slideLabel = `${session.preview.slideIndex + 1} / ${slides.length}`;
-
-            previewContainer.innerHTML = `
-                <div class="refine-slide-preview">
-                    <div class="refine-slide-toolbar">
-                        <button class="refine-slide-nav" onclick="changeRefineSlide(-1)" ${session.preview.slideIndex === 0 ? 'disabled' : ''}>◀</button>
-                        <div class="refine-slide-meta">
-                            <div class="refine-slide-name">${escapeHtml(session.preview.title || session.context.name || 'Presentation')}</div>
-                            <div class="refine-slide-count">Slide ${slideLabel}</div>
-                        </div>
-                        <button class="refine-slide-nav" onclick="changeRefineSlide(1)" ${session.preview.slideIndex === maxIndex ? 'disabled' : ''}>▶</button>
-                    </div>
-                    <img src="${currentSlideUrl}?t=${Date.now()}" class="refine-slide-image" alt="Presentation slide preview">
-                </div>
-            `;
-        }
-
         async function renderRefinePreview(rawPath) {
-            const previewContainer = document.getElementById('refine-preview');
             const session = currentRefineContext ? ensureRefineSession(currentRefineContext) : null;
             if (!session) return;
 
+            const previewContainer = document.getElementById('refine-preview');
+            previewContainer.replaceChildren();
+            setPreviewStatus('Loading Preview...');
+
             const ext = getArtifactExtension(rawPath);
-            previewContainer.innerHTML = '<div style="color:#aaa; text-align:center; padding-top:50px;">Loading Preview...</div>';
 
             if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
-                previewContainer.innerHTML = `<img src="${buildArtifactAccessUrl(rawPath, { cacheBust: true })}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+                previewContainer.replaceChildren();
+                const image = document.createElement('img');
+                image.src = buildArtifactAccessUrl(rawPath, { cacheBust: true });
+                image.style.maxWidth = '100%';
+                image.style.maxHeight = '100%';
+                image.style.objectFit = 'contain';
+                previewContainer.appendChild(image);
                 return;
             }
 
             if (ext === '.mp4') {
-                previewContainer.innerHTML = `<video controls src="${buildArtifactAccessUrl(rawPath, { cacheBust: true })}" style="width:100%; max-height:100%;"></video>`;
+                previewContainer.replaceChildren();
+                const video = document.createElement('video');
+                video.controls = true;
+                video.src = buildArtifactAccessUrl(rawPath, { cacheBust: true });
+                video.style.width = '100%';
+                video.style.maxHeight = '100%';
+                previewContainer.appendChild(video);
                 return;
             }
 
@@ -428,7 +805,7 @@
                     renderRefineSlidePreview(session);
                     persistUiState();
                 } catch (error) {
-                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${escapeHtml(error)}</div>`;
+                    setPreviewStatus(`Failed to load preview: ${stringifyError(error)}`, 'red');
                 }
                 return;
             }
@@ -437,17 +814,39 @@
                 try {
                     const response = await fetch(buildArtifactAccessUrl(rawPath, { cacheBust: true }));
                     const text = await response.text();
-                    previewContainer.innerHTML = `<pre style="text-align:left; background:#1e1e1e; padding:10px; border-radius:5px; overflow:auto; height:100%; margin:0;"><code>${escapeHtml(text)}</code></pre>`;
+                    previewContainer.replaceChildren();
+                    const pre = document.createElement('pre');
+                    pre.style.textAlign = 'left';
+                    pre.style.background = '#1e1e1e';
+                    pre.style.padding = '10px';
+                    pre.style.borderRadius = '5px';
+                    pre.style.overflow = 'auto';
+                    pre.style.height = '100%';
+                    pre.style.margin = '0';
+                    const code = document.createElement('code');
+                    code.textContent = text;
+                    pre.appendChild(code);
+                    previewContainer.appendChild(pre);
                 } catch (error) {
-                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${escapeHtml(error)}</div>`;
+                    setPreviewStatus(`Failed to load preview: ${stringifyError(error)}`, 'red');
                 }
                 return;
             }
 
-            previewContainer.innerHTML = `<div style="text-align:center; padding-top:50px; color:#fff;">
-                Preview not available for this file type.<br>
-                <a href="${buildArtifactAccessUrl(rawPath, { download: true })}" target="_blank" style="color:#4a9eff">Click to download</a>
-             </div>`;
+            previewContainer.replaceChildren();
+            const wrapper = document.createElement('div');
+            wrapper.style.textAlign = 'center';
+            wrapper.style.paddingTop = '50px';
+            wrapper.style.color = '#fff';
+            wrapper.appendChild(document.createTextNode('Preview not available for this file type.'));
+            wrapper.appendChild(document.createElement('br'));
+            const link = document.createElement('a');
+            link.href = buildArtifactAccessUrl(rawPath, { download: true });
+            link.target = '_blank';
+            link.style.color = '#4a9eff';
+            link.textContent = 'Click to download';
+            wrapper.appendChild(link);
+            previewContainer.appendChild(wrapper);
         }
 
         async function openRefineModal(runId, taskId, agent, artifactName, artifactPath) {
@@ -462,10 +861,9 @@
             session.isOpen = true;
 
             refineModal.style.display = 'flex';
-            document.getElementById('refine-title').textContent = `Refining: ${taskId} (${agent})`;
-            refineChatHistory.innerHTML = session.chatHtml || REFINE_SYSTEM_MESSAGE_HTML;
+            refineTitle.textContent = `Refining: ${taskId} (${agent})`;
             refineInput.value = session.draft || '';
-            refreshLastSystemMsgBody();
+            renderRefineChat(session);
 
             await renderRefinePreview(session.context.rawPath);
             persistUiState();
@@ -478,7 +876,6 @@
             }
             refineModal.style.display = 'none';
             currentRefineContext = null;
-            lastSystemMsgBody = null;
             persistUiState();
         }
 
@@ -487,16 +884,14 @@
             if (!text || !currentRefineContext) return;
 
             const context = { ...currentRefineContext };
-            const userBox = document.createElement('div');
-            userBox.className = 'agent-box user';
-            userBox.innerHTML = `<div class="agent-header">User</div><div class="agent-body">${text}</div>`;
-            refineChatHistory.appendChild(userBox);
+            const session = ensureRefineSession(context);
+            session.messages.push({ role: 'user', text });
+            session.draft = '';
             refineInput.value = '';
-            refineChatHistory.scrollTop = refineChatHistory.scrollHeight;
-            syncCurrentRefineSessionFromDom();
+            renderRefineChat(session);
             persistUiState();
 
-            appendRefineSystemMsg("Thinking...");
+            appendRefineSystemMsg('Thinking...');
 
             try {
                 const params = new URLSearchParams({
@@ -520,8 +915,8 @@
                         rawPath: data.url
                     };
                     currentRefineContext = updatedContext;
-                    const session = ensureRefineSession(updatedContext);
-                    session.preview = null;
+                    const updatedSession = ensureRefineSession(updatedContext);
+                    updatedSession.preview = null;
                     renderArtifact(data.id, data, updatedContext.run_id, updatedContext.agent);
 
                     setTimeout(async () => {
@@ -531,7 +926,7 @@
                         persistUiState();
                     }, 1000);
 
-                    appendRefineSystemMsg('✅ Updated Artifact Generated.');
+                    appendRefineSystemMsg('Updated artifact generated.');
                 });
 
                 eventSource.addEventListener('complete', () => {
@@ -540,12 +935,12 @@
                 });
 
                 eventSource.addEventListener('error', (e) => {
-                    let message = "Connection lost";
+                    let message = 'Connection lost';
                     if (e && typeof e.data === 'string') {
                         try {
                             const data = JSON.parse(e.data);
                             message = data.content || message;
-                        } catch (err) {
+                        } catch (_) {
                             message = e.data || message;
                         }
                     }
@@ -553,291 +948,129 @@
                     appendRefineSystemMsg(`Error: ${message}`);
                 });
 
-            } catch (e) {
-                appendRefineSystemMsg("Error sending request: " + e);
+            } catch (error) {
+                appendRefineSystemMsg(`Error sending request: ${stringifyError(error)}`);
             }
         }
 
-        window.changeRefineSlide = function (offset) {
+        function changeRefineSlide(offset) {
             if (!currentRefineContext) return;
             const session = ensureRefineSession(currentRefineContext);
             if (!session.preview || session.preview.kind !== 'slides') return;
-            session.preview.slideIndex = Math.max(
-                0,
-                Math.min((session.preview.slides || []).length - 1, (session.preview.slideIndex || 0) + offset)
-            );
+            const slideCount = (session.preview.slides || []).length;
+            session.preview.slideIndex = Math.max(0, Math.min(slideCount - 1, (session.preview.slideIndex || 0) + offset));
             renderRefineSlidePreview(session);
             persistUiState();
-        };
+        }
 
         function appendRefineSystemMsg(text) {
-            const box = document.createElement('div');
-            box.className = 'agent-box';
-            box.innerHTML = `<div class="agent-header">System</div><div class="agent-body system-msg-body">${text}</div>`;
-            refineChatHistory.appendChild(box);
-            refreshLastSystemMsgBody();
-            refineChatHistory.scrollTop = refineChatHistory.scrollHeight;
-            syncCurrentRefineSessionFromDom();
+            if (!currentRefineContext) return;
+            const session = ensureRefineSession(currentRefineContext);
+            session.messages.push({ role: 'system', text });
+            session.lastSystemMessageIndex = session.messages.length - 1;
+            if (refineModal.style.display === 'flex') {
+                renderRefineChat(session);
+            }
             persistUiState();
         }
 
         function updateRefineSystemMsg(text) {
-            if (lastSystemMsgBody) {
-                lastSystemMsgBody.textContent = text;
+            if (!currentRefineContext) return;
+            const session = ensureRefineSession(currentRefineContext);
+            if (typeof session.lastSystemMessageIndex === 'number' && session.messages[session.lastSystemMessageIndex]) {
+                session.messages[session.lastSystemMessageIndex].text = text;
             } else {
-                appendRefineSystemMsg(text);
-                return;
+                session.messages.push({ role: 'system', text });
+                session.lastSystemMessageIndex = session.messages.length - 1;
             }
-            syncCurrentRefineSessionFromDom();
+            if (refineModal.style.display === 'flex') {
+                renderRefineChat(session);
+            }
             persistUiState();
         }
 
-        async function startGeneration() {
-            const query = userInput.value.trim();
-            if (!query) return;
-
-            // Reset UI
-            taskList.innerHTML = '<div style="text-align:center; padding:10px;">Initializing Plan...</div>';
-            feedbackModal.style.display = 'none';
-            currentRunId = null;
-            rebuildTaskMapFromDom();
-
-            // Render User Message
-            appendUserMessage(query);
-            userInput.value = '';
-            persistUiState();
-
-            // Gather Config
-            const config = {
-                video: document.getElementById('check-video').checked,
-                slides: document.getElementById('check-slides').checked,
-                code: document.getElementById('check-code').checked,
-                quizzes: document.getElementById('check-quizzes').checked
-            };
-
-            // Upload Files First
-            const fileInput = document.getElementById('file-upload');
-            let uploadedFiles = [];
-            if (fileInput.files.length > 0) {
-                const formData = new FormData();
-                for (let i = 0; i < fileInput.files.length; i++) {
-                    formData.append('files', fileInput.files[i]);
-                }
-                appendSystemMessage('System', 'Uploading files...');
-                try {
-                    const uploadResp = await fetch('/upload', { method: 'POST', body: formData });
-                    const uploadResult = await uploadResp.json();
-                    uploadedFiles = uploadResult.paths;
-                } catch (e) {
-                    appendSystemMessage('Error', 'Upload failed: ' + e);
-                    return;
-                }
-            }
-
-            // Start SSE
-            const queryParams = new URLSearchParams({
-                topic: query,
-                files: JSON.stringify(uploadedFiles),
-                ...config
+        function appendMessage(role, title, text) {
+            uiState.feed.push({
+                kind: 'message',
+                id: nextMessageId(),
+                role,
+                title,
+                text
             });
-
-            const eventSource = new EventSource(`/stream_generate?${queryParams.toString()}`);
-
-            // Keep track of run_id from the first plan event?
-            // Actually stream_generate doesn't send run_id explicitly in event structure usually, 
-            // but we need it for Refinement.
-            // Let's assume 'plan' event sends it or we extract from logs.
-            // UPDATED: Let's modify the backend to send run_id in the 'plan' event.
-
-            eventSource.addEventListener('plan', (e) => {
-                const data = JSON.parse(e.data);
-                if (data.run_id) currentRunId = data.run_id;
-                renderTaskPlan(data.steps);
-                persistUiState();
-            });
-
-            eventSource.addEventListener('step_start', (e) => {
-                const data = JSON.parse(e.data);
-                updateTaskStatus(data.id, 'active');
-                createAgentBox(data.id, data.name, data.agent);
-                persistUiState();
-            });
-
-            eventSource.addEventListener('log', (e) => {
-                const data = JSON.parse(e.data);
-                appendLog(data.id, data.content);
-                persistUiState();
-            });
-
-            eventSource.addEventListener('artifact', (e) => {
-                const data = JSON.parse(e.data);
-                renderArtifact(data.id, data, currentRunId, null);
-                if (data.type === 'video') {
-                    completeVideoProgress(data.id, 'Video ready.');
-                }
-                persistUiState();
-            });
-
-            eventSource.addEventListener('video_progress', (e) => {
-                const data = JSON.parse(e.data);
-                updateVideoProgress(data.id, data);
-                persistUiState();
-            });
-
-            eventSource.addEventListener('quiz', (e) => {
-                const data = JSON.parse(e.data);
-                renderQuiz(data.id, data.content);
-                persistUiState();
-            });
-
-            eventSource.addEventListener('step_complete', (e) => {
-                const data = JSON.parse(e.data);
-                updateTaskStatus(data.id, data.status); // 'success' or 'fail'
-                if (data.status === 'fail') {
-                    failVideoProgress(data.id, 'Video generation failed.');
-                }
-                persistUiState();
-            });
-
-            eventSource.addEventListener('workflow_complete', (e) => {
-                try {
-                    const data = JSON.parse(e.data);
-                    if (data.run_id && !currentRunId) currentRunId = data.run_id;
-                } catch (_) {}
-                feedbackModal.style.display = 'block';
-                eventSource.close();
-                persistUiState();
-            });
-
-            eventSource.addEventListener('error', (e) => {
-                console.error("EventSource failed:", e);
-                try {
-                    const data = JSON.parse(e.data);
-                    appendSystemMessage('Error', data.content || "Connection lost.");
-                } catch (x) {
-                    appendSystemMessage('Error', "Stream connection closed.");
-                }
-                eventSource.close();
-                persistUiState();
-            });
-        }
-
-        // --- RENDERERS ---
-
-        function appendUserMessage(text) {
-            const box = document.createElement('div');
-            box.className = 'agent-box user';
-            box.innerHTML = `
-            <div class="agent-header">User</div>
-            <div class="agent-body">${text}</div>
-        `;
-            messageContainer.appendChild(box);
+            renderFeedFromState();
             scrollToBottom();
             persistUiState();
+        }
+
+        function appendUserMessage(text) {
+            appendMessage('user', 'User', text);
         }
 
         function appendSystemMessage(title, text) {
-            const box = document.createElement('div');
-            box.className = 'agent-box';
-            box.innerHTML = `
-            <div class="agent-header">${title}</div>
-            <div class="agent-body">${text}</div>
-        `;
-            messageContainer.appendChild(box);
-            scrollToBottom();
-            persistUiState();
+            appendMessage('system', title, text);
         }
 
         function renderTaskPlan(steps) {
-            taskList.innerHTML = '';
-            currentTaskMap = {};
-
-            steps.forEach((step, index) => {
-                const el = document.createElement('div');
-                el.className = 'task-step pending';
-                el.id = `sidebar-${step.id}`;
-                el.innerHTML = `
-                <div class="step-header">
-                    <span>${index + 1}. ${step.name}</span>
-                    <span class="step-status-icon">○</span>
-                </div>
-                <div class="step-agent">${step.agent}</div>
-            `;
-                taskList.appendChild(el);
-                currentTaskMap[step.id] = el;
+            taskPlanLoading = false;
+            uiState.taskPlan = steps.map((step) => {
+                const existing = uiState.taskPlan.find((item) => item.id === step.id);
+                ensureTaskState(step.id, { name: step.name, agent: step.agent });
+                return {
+                    id: step.id,
+                    name: step.name,
+                    agent: step.agent,
+                    status: existing ? existing.status : 'pending'
+                };
             });
+            renderTaskPlanFromState();
             persistUiState();
         }
 
         function updateTaskStatus(taskId, status) {
+            const task = ensureTaskState(taskId);
+            task.status = status;
+            const step = uiState.taskPlan.find((item) => item.id === taskId);
+            if (step) step.status = status;
             const el = currentTaskMap[taskId];
-            if (!el) return;
-
-            el.className = `task-step ${status}`; // pending, active, success, fail
-            const icon = el.querySelector('.step-status-icon');
-
-            if (status === 'active') icon.textContent = '▶';
-            else if (status === 'success') icon.textContent = '✔';
-            else if (status === 'fail') icon.textContent = '✘';
+            if (el) applyTaskStatusElement(el, status);
             persistUiState();
         }
 
         function createAgentBox(taskId, taskName, agentName) {
             currentAgentId = taskId;
-            const box = document.createElement('div');
-            box.className = 'agent-box';
-            box.id = `box-${taskId}`;
-            // Store agent type in data attribute for later access
-            box.dataset.agentType = agentName;
-            const videoProgressHtml = agentName === 'video' ? `
-                <div class="video-progress-card" id="video-progress-${taskId}">
-                    <div class="video-progress-topline">
-                        <span class="video-progress-stage" id="video-stage-${taskId}">prepare</span>
-                        <span class="video-progress-percent" id="video-percent-${taskId}">0%</span>
-                    </div>
-                    <div class="video-progress-track">
-                        <div class="video-progress-fill" id="video-fill-${taskId}"></div>
-                    </div>
-                    <div class="video-progress-detail" id="video-detail-${taskId}">Waiting for video progress...</div>
-                    <div class="video-stage-list" id="video-stage-list-${taskId}">
-                        ${VIDEO_STAGE_ORDER.map((stage) => `<div class="video-stage-step" data-stage="${stage}">${VIDEO_STAGE_LABELS[stage]}</div>`).join('')}
-                    </div>
-                </div>
-            ` : '';
-            box.innerHTML = `
-            <div class="agent-header">
-                <span>${taskName}</span>
-                <span style="font-size:0.8em; opacity:0.7;">${agentName.toUpperCase()}</span>
-            </div>
-            <div class="agent-body">
-                <div class="status-text">Processing...</div>
-                ${videoProgressHtml}
-                <div class="log-toggle" onclick="toggleLog('${taskId}')">Show Logs</div>
-                <div class="log-container" id="log-${taskId}"></div>
-                <div class="artifact-grid" id="art-${taskId}"></div>
-            </div>
-            `;
-            messageContainer.appendChild(box);
-            currentAgentBox = box;
+            const task = ensureTaskState(taskId, {
+                name: taskName,
+                agent: agentName,
+                statusText: 'Processing...'
+            });
+            ensureTaskFeedEntry(taskId);
+            renderFeedFromState();
+            currentAgentBox = document.getElementById(`box-${taskId}`);
             scrollToBottom();
             persistUiState();
+            return task;
         }
 
         function appendLog(taskId, content) {
-            const logDiv = document.getElementById(`log-${taskId}`);
-            if (!logDiv) return;
-            logDiv.textContent += content + '\\n';
+            const task = ensureTaskState(taskId);
+            task.logs.push(content);
+            if (task.logs.length > 400) {
+                task.logs = task.logs.slice(-400);
+            }
+            task.statusText = content.length > 50 ? `${content.substring(0, 50)}...` : content;
 
-            // Update status text if it's the active box
+            const logDiv = document.getElementById(`log-${taskId}`);
+            if (logDiv) logDiv.textContent = task.logs.join('\n');
+
             const box = document.getElementById(`box-${taskId}`);
             if (box) {
                 const status = box.querySelector('.status-text');
-                if (status) status.textContent = content.substring(0, 50) + "...";
+                if (status) status.textContent = task.statusText;
             }
             persistUiState();
         }
 
-        function updateVideoProgress(taskId, payload) {
+        function applyVideoProgressToDom(taskId, payload) {
             const box = document.getElementById(`box-${taskId}`);
             if (!box || box.dataset.agentType !== 'video') return;
 
@@ -847,19 +1080,17 @@
             const fillEl = document.getElementById(`video-fill-${taskId}`);
             const detailEl = document.getElementById(`video-detail-${taskId}`);
             const statusEl = box.querySelector('.status-text');
-            if (!card || !stageEl || !percentEl || !fillEl || !detailEl || !statusEl) return;
+            const stageList = document.getElementById(`video-stage-list-${taskId}`);
+            if (!card || !stageEl || !percentEl || !fillEl || !detailEl || !statusEl || !stageList) return;
 
             const stageName = payload.stage || 'prepare';
             const percent = Math.max(0, Math.min(100, Number(payload.overall_progress || 0)));
             const detail = payload.message || (payload.total ? `${payload.current || 0} / ${payload.total}` : 'Working...');
 
             card.classList.remove('is-error', 'is-complete', 'is-indeterminate');
-            if (payload.indeterminate) {
-                card.classList.add('is-indeterminate');
-            }
-            if (payload.status === 'error') {
-                card.classList.add('is-error');
-            }
+            if (payload.indeterminate) card.classList.add('is-indeterminate');
+            if (payload.status === 'error') card.classList.add('is-error');
+            if (payload.status === 'complete') card.classList.add('is-complete');
 
             stageEl.textContent = VIDEO_STAGE_LABELS[stageName] || stageName;
             percentEl.textContent = `${Math.round(percent)}%`;
@@ -867,8 +1098,6 @@
             detailEl.textContent = detail;
             statusEl.textContent = detail;
 
-            const stageList = document.getElementById(`video-stage-list-${taskId}`);
-            if (!stageList) return;
             const stageIndex = VIDEO_STAGE_ORDER.indexOf(stageName);
             stageList.querySelectorAll('.video-stage-step').forEach((node, index) => {
                 node.classList.remove('active', 'done', 'error');
@@ -880,164 +1109,279 @@
                     node.classList.add('active');
                 }
             });
+        }
+
+        function updateVideoProgress(taskId, payload) {
+            const task = ensureTaskState(taskId, { agent: 'video' });
+            task.videoProgress = { ...payload };
+            task.statusText = payload.message || task.statusText;
+            applyVideoProgressToDom(taskId, task.videoProgress);
             persistUiState();
         }
 
         function completeVideoProgress(taskId, detailText) {
-            const box = document.getElementById(`box-${taskId}`);
-            if (!box || box.dataset.agentType !== 'video') return;
-
-            const card = document.getElementById(`video-progress-${taskId}`);
-            const percentEl = document.getElementById(`video-percent-${taskId}`);
-            const fillEl = document.getElementById(`video-fill-${taskId}`);
-            const detailEl = document.getElementById(`video-detail-${taskId}`);
-            const statusEl = box.querySelector('.status-text');
-            const stageList = document.getElementById(`video-stage-list-${taskId}`);
-            if (!card || !percentEl || !fillEl || !detailEl || !statusEl || !stageList) return;
-
-            card.classList.remove('is-error', 'is-indeterminate');
-            card.classList.add('is-complete');
-            percentEl.textContent = '100%';
-            fillEl.style.width = '100%';
-            detailEl.textContent = detailText;
-            statusEl.textContent = detailText;
-            stageList.querySelectorAll('.video-stage-step').forEach((node) => {
-                node.classList.remove('active', 'error');
-                node.classList.add('done');
-            });
+            const task = ensureTaskState(taskId, { agent: 'video' });
+            task.videoProgress = {
+                ...(task.videoProgress || {}),
+                stage: 'encode_video',
+                overall_progress: 100,
+                message: detailText,
+                status: 'complete'
+            };
+            task.statusText = detailText;
+            applyVideoProgressToDom(taskId, task.videoProgress);
             persistUiState();
         }
 
         function failVideoProgress(taskId, detailText) {
-            const box = document.getElementById(`box-${taskId}`);
-            if (!box || box.dataset.agentType !== 'video') return;
-
-            const card = document.getElementById(`video-progress-${taskId}`);
-            const detailEl = document.getElementById(`video-detail-${taskId}`);
-            const statusEl = box.querySelector('.status-text');
-            if (!card || !detailEl || !statusEl) return;
-
-            card.classList.remove('is-complete', 'is-indeterminate');
-            card.classList.add('is-error');
-            detailEl.textContent = detailText;
-            statusEl.textContent = detailText;
+            const task = ensureTaskState(taskId, { agent: 'video' });
+            task.videoProgress = {
+                ...(task.videoProgress || {}),
+                message: detailText,
+                status: 'error'
+            };
+            task.statusText = detailText;
+            applyVideoProgressToDom(taskId, task.videoProgress);
             persistUiState();
         }
 
-        window.toggleLog = function (taskId) {
+        function toggleLog(taskId) {
+            const task = ensureTaskState(taskId);
+            task.logOpen = !task.logOpen;
             const log = document.getElementById(`log-${taskId}`);
-            if (log.style.display === 'block') {
-                log.style.display = 'none';
-            } else {
-                log.style.display = 'block';
-            }
+            const toggle = document.querySelector(`#box-${taskId} .log-toggle`);
+            if (log) log.style.display = task.logOpen ? 'block' : 'none';
+            if (toggle) toggle.textContent = task.logOpen ? 'Hide Logs' : 'Show Logs';
             persistUiState();
         }
 
-        function buildArtifactCard(meta) {
-            const card = document.createElement('div');
-            card.className = 'artifact-card';
-            card.dataset.artifactSlot = meta.slot;
-            card.dataset.artifactPath = meta.rawPath;
-
-            let icon = '📄';
-            if (meta.type === 'video') icon = '🎬';
-            if (meta.type === 'presentation') icon = '📊';
-            if (meta.type === 'code') icon = '💻';
-
-            const downloadArtifact = shouldDownloadArtifact(meta.ext);
-            const fileLink = document.createElement('a');
-            fileLink.href = buildArtifactAccessUrl(meta.rawPath, { download: downloadArtifact });
-            fileLink.className = 'artifact-link';
-            fileLink.target = downloadArtifact ? '_self' : '_blank';
-            if (downloadArtifact) {
-                fileLink.setAttribute('download', meta.name);
-            }
-
-            const iconEl = document.createElement('div');
-            iconEl.className = 'artifact-icon';
-            iconEl.textContent = icon;
-            fileLink.appendChild(iconEl);
-
-            const nameEl = document.createElement('div');
-            nameEl.className = 'artifact-name';
-            nameEl.textContent = meta.name;
-            fileLink.appendChild(nameEl);
-
-            const hintEl = document.createElement('div');
-            hintEl.className = 'artifact-hint';
-            hintEl.textContent = downloadArtifact ? 'Click to download' : 'Click to open';
-            fileLink.appendChild(hintEl);
-
-            card.appendChild(fileLink);
-
-            const refineButton = document.createElement('button');
-            refineButton.className = 'refine-btn';
-            refineButton.textContent = 'Refine ✏️';
-            if (meta.runId) {
-                refineButton.dataset.runId = meta.runId;
-                refineButton.dataset.taskId = meta.taskId;
-                refineButton.dataset.agent = meta.agentName;
-                refineButton.dataset.artifactName = meta.name;
-                refineButton.dataset.artifactPath = meta.rawPath;
-            } else {
-                refineButton.disabled = true;
-                refineButton.title = 'Run ID unavailable';
-            }
-            card.appendChild(refineButton);
-
-            return card;
+        function normalizeArtifactPayload(taskId, artifact, runId, agentName) {
+            const rawPath = typeof artifact === 'string'
+                ? artifact
+                : (artifact.url || artifact.path || '');
+            if (!rawPath) return null;
+            const ext = getArtifactExtension(rawPath);
+            const type = inferArtifactType(rawPath, typeof artifact === 'object' ? artifact.type : 'file');
+            return {
+                taskId,
+                runId: runId || currentRunId,
+                agentName,
+                rawPath,
+                ext,
+                type,
+                name: typeof artifact === 'object' && artifact.name ? artifact.name : getArtifactNameFromPath(rawPath),
+                slot: getArtifactSlot({ type, ext })
+            };
         }
 
         function renderArtifact(taskId, artifact, runId, agentNameOverride) {
+            const task = ensureTaskState(taskId);
+            const agentName = agentNameOverride || task.agent || 'unknown';
+            const meta = normalizeArtifactPayload(taskId, artifact, runId, agentName);
+            if (!meta) return;
+
+            task.artifacts[meta.slot] = meta;
+            task.statusText = 'Asset Generated.';
+
             const artGrid = document.getElementById(`art-${taskId}`);
-            if (!artGrid) return;
+            if (artGrid) renderArtifactsAndQuizInto(taskId, artGrid);
 
             const box = document.getElementById(`box-${taskId}`);
-            const agentName = agentNameOverride || (box ? box.dataset.agentType : 'unknown');
-            const meta = normalizeArtifactPayload(taskId, artifact, runId, agentName);
-            const card = buildArtifactCard(meta);
-            const existing = artGrid.querySelector(`.artifact-card[data-artifact-slot="${meta.slot}"]`);
-
-            if (existing) {
-                existing.replaceWith(card);
-            } else {
-                artGrid.appendChild(card);
+            if (box) {
+                const status = box.querySelector('.status-text');
+                if (status) status.textContent = task.statusText;
             }
-
-            if (box) box.querySelector('.status-text').textContent = "Asset Generated.";
             persistUiState();
         }
 
+        function normalizeQuizContent(quizContent, existingQuiz) {
+            const questions = Array.isArray(quizContent?.questions) ? quizContent.questions.map((question) => ({
+                question: question.question || '',
+                options: Array.isArray(question.options) ? question.options : []
+            })) : [];
+            const selected = Array.isArray(existingQuiz?.selected)
+                ? existingQuiz.selected
+                : questions.map(() => []);
+            return { questions, selected };
+        }
+
         function renderQuiz(taskId, quizContent) {
+            const task = ensureTaskState(taskId);
+            task.quiz = normalizeQuizContent(quizContent, task.quiz);
             const artGrid = document.getElementById(`art-${taskId}`);
-            if (!artGrid) return;
+            if (artGrid) renderArtifactsAndQuizInto(taskId, artGrid);
+            persistUiState();
+        }
 
-            const container = document.createElement('div');
-            container.className = 'quiz-container';
-            container.style.width = '100%';
+        async function startGeneration() {
+            const query = userInput.value.trim();
+            if (!query) return;
 
-            let html = '';
-            if (quizContent.questions) {
-                quizContent.questions.forEach((q, idx) => {
-                    html += `
-                    <div class="quiz-question">${idx + 1}. ${q.question}</div>
-                    <div class="quiz-options">
-                        ${(q.options || []).map(opt => `<div class="quiz-option" onclick="this.classList.toggle('selected')">${opt}</div>`).join('')}
-                    </div>
-                    <hr style="border:0; border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0;">
-                `;
-                });
+            taskPlanLoading = true;
+            uiState.taskPlan = [];
+            feedbackVisible = false;
+            currentRunId = null;
+            renderTaskPlanFromState();
+            renderFeedbackModal();
+
+            appendUserMessage(query);
+            userInput.value = '';
+            persistUiState();
+
+            const config = getConfigState();
+
+            const fileInput = document.getElementById('file-upload');
+            let uploadedFiles = [];
+            if (fileInput.files.length > 0) {
+                const formData = new FormData();
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('files', fileInput.files[i]);
+                }
+                appendSystemMessage('System', 'Uploading files...');
+                try {
+                    const uploadResp = await fetch('/upload', { method: 'POST', body: formData });
+                    const uploadResult = await uploadResp.json();
+                    uploadedFiles = uploadResult.paths || [];
+                } catch (error) {
+                    appendSystemMessage('Error', `Upload failed: ${stringifyError(error)}`);
+                    return;
+                }
             }
 
-            container.innerHTML = html || 'No questions found.';
-            artGrid.appendChild(container);
-            persistUiState();
+            const queryParams = new URLSearchParams({
+                topic: query,
+                files: JSON.stringify(uploadedFiles),
+                ...config
+            });
+
+            const eventSource = new EventSource(`/stream_generate?${queryParams.toString()}`);
+
+            eventSource.addEventListener('plan', (e) => {
+                const data = JSON.parse(e.data);
+                if (data.run_id) currentRunId = data.run_id;
+                renderTaskPlan(data.steps || []);
+            });
+
+            eventSource.addEventListener('step_start', (e) => {
+                const data = JSON.parse(e.data);
+                updateTaskStatus(data.id, 'active');
+                createAgentBox(data.id, data.name, data.agent);
+            });
+
+            eventSource.addEventListener('log', (e) => {
+                const data = JSON.parse(e.data);
+                appendLog(data.id, data.content || '');
+            });
+
+            eventSource.addEventListener('artifact', (e) => {
+                const data = JSON.parse(e.data);
+                renderArtifact(data.id, data, currentRunId, null);
+                if (data.type === 'video') completeVideoProgress(data.id, 'Video ready.');
+            });
+
+            eventSource.addEventListener('video_progress', (e) => {
+                const data = JSON.parse(e.data);
+                updateVideoProgress(data.id, data);
+            });
+
+            eventSource.addEventListener('quiz', (e) => {
+                const data = JSON.parse(e.data);
+                renderQuiz(data.id, data.content);
+            });
+
+            eventSource.addEventListener('step_complete', (e) => {
+                const data = JSON.parse(e.data);
+                updateTaskStatus(data.id, data.status);
+                if (data.status === 'fail') failVideoProgress(data.id, 'Video generation failed.');
+            });
+
+            eventSource.addEventListener('workflow_complete', (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.run_id && !currentRunId) currentRunId = data.run_id;
+                } catch (_) {}
+                feedbackVisible = true;
+                renderFeedbackModal();
+                eventSource.close();
+                persistUiState();
+            });
+
+            eventSource.addEventListener('error', (e) => {
+                console.error('EventSource failed:', e);
+                try {
+                    const data = JSON.parse(e.data);
+                    appendSystemMessage('Error', data.content || 'Connection lost.');
+                } catch (_) {
+                    appendSystemMessage('Error', 'Stream connection closed.');
+                }
+                eventSource.close();
+                persistUiState();
+            });
         }
 
         function scrollToBottom() {
             messageContainer.scrollTop = messageContainer.scrollHeight;
         }
+
+        async function restoreUiState() {
+            const raw = localStorage.getItem(UI_STATE_STORAGE_KEY);
+            if (!raw) {
+                renderTaskPlanFromState();
+                renderFeedbackModal();
+                return;
+            }
+
+            try {
+                const snapshot = JSON.parse(raw);
+                if (!snapshot || snapshot.version !== 5) {
+                    localStorage.removeItem(UI_STATE_STORAGE_KEY);
+                    renderTaskPlanFromState();
+                    renderFeedbackModal();
+                    return;
+                }
+
+                isRestoringUiState = true;
+                uiState.feed = Array.isArray(snapshot.feed) ? snapshot.feed : [];
+                uiState.taskPlan = Array.isArray(snapshot.taskPlan) ? snapshot.taskPlan : [];
+                uiState.tasks = snapshot.tasks || {};
+                currentRunId = snapshot.currentRunId || null;
+                currentAgentId = snapshot.currentAgentId || null;
+                refineSessions = snapshot.refineSessions || {};
+                taskPlanLoading = Boolean(snapshot.taskPlanLoading);
+                feedbackVisible = Boolean(snapshot.feedbackVisible);
+                messageSequence = Number(snapshot.messageSequence || 0);
+                userInput.value = snapshot.userInput || '';
+                setConfigState(snapshot.config || {});
+
+                renderTaskPlanFromState();
+                renderFeedFromState();
+                renderFeedbackModal();
+
+                if (snapshot.modalOpen && snapshot.activeRefineKey && refineSessions[snapshot.activeRefineKey]) {
+                    const context = refineSessions[snapshot.activeRefineKey].context;
+                    await openRefineModal(
+                        context.run_id,
+                        context.task_id,
+                        context.agent,
+                        context.name,
+                        context.rawPath
+                    );
+                } else {
+                    refineModal.style.display = 'none';
+                    currentRefineContext = null;
+                }
+            } catch (error) {
+                console.error('Failed to restore UI state:', error);
+                localStorage.removeItem(UI_STATE_STORAGE_KEY);
+                renderTaskPlanFromState();
+                renderFeedbackModal();
+            } finally {
+                isRestoringUiState = false;
+            }
+        }
+
+        window.closeRefineModal = closeRefineModal;
+        window.sendRefinement = sendRefinement;
 
         restoreUiState();
     </script>

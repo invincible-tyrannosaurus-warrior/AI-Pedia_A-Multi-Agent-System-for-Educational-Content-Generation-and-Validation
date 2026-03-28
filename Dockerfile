@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Install Python deps (layer cache)
-COPY requirements.txt .
+# Install Python deps (base runtime only; optional RAG deps live in requirements-rag.txt)
+COPY requirements.txt requirements-core.txt requirements-code-runtime.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code

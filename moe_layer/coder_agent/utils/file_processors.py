@@ -12,18 +12,38 @@ logger = logging.getLogger(__name__)
 def extract_text_from_pdf(path: Path) -> Optional[str]:
     try:
         from pypdf import PdfReader  # type: ignore
+    except Exception:
+        PdfReader = None  # type: ignore[assignment]
+
+    if PdfReader is not None:
+        try:
+            reader = PdfReader(str(path))
+            pages = []
+            for page in reader.pages:
+                try:
+                    pages.append(page.extract_text() or "")
+                except Exception:  # pragma: no cover
+                    continue
+            text = "\n".join(pages).strip()
+            if text:
+                return text
+        except Exception as exc:  # pragma: no cover
+            logger.warning("pypdf failed to read %s: %s", path, exc)
+
+    try:
+        import pdfplumber  # type: ignore
     except Exception:  # pragma: no cover
-        logger.warning("pypdf not available; skipping PDF extraction for %s", path)
+        logger.warning("No PDF extractor available for %s (tried pypdf, pdfplumber)", path)
         return None
 
     try:
-        reader = PdfReader(str(path))
         pages = []
-        for page in reader.pages:
-            try:
-                pages.append(page.extract_text() or "")
-            except Exception:  # pragma: no cover
-                continue
+        with pdfplumber.open(path) as pdf:
+            for page in pdf.pages:
+                try:
+                    pages.append(page.extract_text() or "")
+                except Exception:  # pragma: no cover
+                    continue
         text = "\n".join(pages).strip()
         return text or None
     except Exception as exc:  # pragma: no cover
