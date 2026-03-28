@@ -389,6 +389,44 @@ def _ensure_coder_criteria(subtask: Any, output_filename: str) -> None:
         ]
 
 
+def _classify_artifact_type(path_str: str) -> str:
+    lpath = path_str.lower()
+    if lpath.endswith(".mp4"):
+        return "video"
+    if lpath.endswith(".pptx"):
+        return "presentation"
+    if lpath.endswith(".py"):
+        return "code"
+    return "file"
+
+
+def _build_artifact_payloads(task_id: str, result: Dict[str, Any]) -> List[Dict[str, Any]]:
+    payloads: List[Dict[str, Any]] = []
+    artifacts = result.get("artifacts") or []
+    if not isinstance(artifacts, list):
+        return payloads
+
+    for art in artifacts:
+        path_str = ""
+        if isinstance(art, str):
+            path_str = art
+        elif isinstance(art, dict):
+            path_str = art.get("path") or art.get("url") or ""
+
+        if not path_str:
+            continue
+
+        payloads.append(
+            {
+                "id": task_id,
+                "type": _classify_artifact_type(path_str),
+                "url": path_str,
+                "name": Path(path_str).name,
+            }
+        )
+    return payloads
+
+
 # --- Main Entry Point ---
 
 def run_workflow(
@@ -1115,56 +1153,6 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                             err = result.get("error", "Unknown error")
                             yield send_event("log", {"id": t_id, "content": f"Error: {err}"})
 
-                        # ARTIFACT DETECTION
-                        artifacts = result.get("artifacts") or []
-                        if isinstance(artifacts, list):
-                            for art in artifacts:
-                                path_str = ""
-                                if isinstance(art, str):
-                                    path_str = art
-                                elif isinstance(art, dict):
-                                    path_str = art.get("path") or art.get("url") or ""
-                                
-                                if path_str:
-                                    lpath = path_str.lower()
-                                    art_type = "file"
-                                    if lpath.endswith(".mp4"): art_type = "video"
-                                    elif lpath.endswith(".pptx"): art_type = "presentation"
-                                    elif lpath.endswith(".py"): art_type = "code"
-                                    
-                                    yield send_event("artifact", {
-                                        "id": t_id,
-                                        "type": art_type,
-                                        "url": path_str,
-                                        "name": Path(path_str).name
-                                    })
-                        
-                        # SCRIPT DETECTION (for Learning Evaluator)
-                        if agent_name == "video" and result.get("success") and result.get("scripts"):
-                            # 'scripts' is a list of strings (one per slide)
-                            # We join them for the evaluator
-                            full_script = "\n\n".join(result.get("scripts", []))
-                            if full_script.strip():
-                                yield send_event("script", {
-                                    "id": t_id,
-                                    "content": full_script
-                                })
-                        
-                        # QUIZ DETECTION
-                        if agent_name == "quizzer" and result.get("success"):
-                            try:
-                                q_data = result.get("output")
-                                if isinstance(q_data, str):
-                                    clean = q_data.replace("```json", "").replace("```", "").strip()
-                                    q_data = json.loads(clean)
-                                
-                                yield send_event("quiz", {
-                                    "id": t_id,
-                                    "content": q_data
-                                })
-                            except:
-                                yield send_event("log", {"id": t_id, "content": "Failed to parse quiz JSON."})
-
                      except Exception as e:
                          import traceback
                          trace = traceback.format_exc()
@@ -1186,6 +1174,31 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                      task_v = v_map.get(t_id, {})
                      
                      if task_v.get("verdict") == "pass":
+                         for artifact_payload in _build_artifact_payloads(t_id, result):
+                             yield send_event("artifact", artifact_payload)
+
+                         if agent_name == "video" and result.get("success") and result.get("scripts"):
+                             full_script = "\n\n".join(result.get("scripts", []))
+                             if full_script.strip():
+                                 yield send_event("script", {
+                                     "id": t_id,
+                                     "content": full_script
+                                 })
+
+                         if agent_name == "quizzer" and result.get("success"):
+                             try:
+                                 q_data = result.get("output")
+                                 if isinstance(q_data, str):
+                                     clean = q_data.replace("```json", "").replace("```", "").strip()
+                                     q_data = json.loads(clean)
+
+                                 yield send_event("quiz", {
+                                     "id": t_id,
+                                     "content": q_data
+                                 })
+                             except:
+                                 yield send_event("log", {"id": t_id, "content": "Failed to parse quiz JSON."})
+
                          task_statuses[t_id] = "success"
                          persist_stream_log()
                          yield send_event("step_complete", {"id": t_id, "status": "success"})
@@ -1348,20 +1361,10 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
         if result.get("success"):
             yield send_event("log", {"id": "system", "content": "Refinement successful."})
             
-            # Extract new artifact path
-            artifacts = result.get("artifacts", [])
-            if artifacts:
-                 # Take the first one or logic
-                 art = artifacts[0]
-                 path_str = art if isinstance(art, str) else (art.get("path") or art.get("url"))
-                 
-                 yield send_event("artifact", {
-                    "id": task_id,
-                    "type": "file", # Generic, frontend will handle preview based on ext
-                    "url": path_str,
-                    "name": Path(path_str).name
-                 })
-                 updated_artifact = path_str
+            artifact_payloads = _build_artifact_payloads(task_id, result)
+            if artifact_payloads:
+                 yield send_event("artifact", artifact_payloads[0])
+                 updated_artifact = artifact_payloads[0]["url"]
         else:
             err = result.get("error", "Unknown error")
             yield send_event("log", {"id": "system", "content": f"Refinement failed: {err}"})

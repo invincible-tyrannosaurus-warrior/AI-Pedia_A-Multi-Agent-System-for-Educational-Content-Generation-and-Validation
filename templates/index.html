@@ -131,6 +131,11 @@
         let currentTaskMap = {}; // Maps task_id to DOM Element (Sidebar)
         let currentAgentBox = null;
         let currentAgentId = null;
+        let currentRunId = null;
+        let lastSystemMsgBody = null;
+        let currentRefineContext = null; // { run_id, task_id, agent, name, rawPath }
+        let refineSessions = {};
+        let isRestoringUiState = false;
         const VIDEO_STAGE_ORDER = ['prepare', 'convert_slides', 'generate_scripts', 'build_clips', 'encode_video'];
         const VIDEO_STAGE_LABELS = {
             prepare: 'prepare',
@@ -139,21 +144,84 @@
             build_clips: 'build clips',
             encode_video: 'encode video'
         };
+        const UI_STATE_STORAGE_KEY = 'ai_pedia_ui_state_v4';
+        const REFINE_SYSTEM_MESSAGE_HTML = `
+            <div class="agent-box">
+                <div class="agent-header">System</div>
+                <div class="agent-body system-msg-body">You are refining this specific artifact. Ask for changes here.</div>
+            </div>
+        `;
 
-        // --- REFINEMENT STATE ---
-        let currentRefineContext = null; // { run_id, task_id, agent, artifact_type, content_url }
+        document.addEventListener('click', (event) => {
+            const refineButton = event.target.closest('.refine-btn[data-run-id]');
+            if (refineButton) {
+                event.preventDefault();
+                openRefineModal(
+                    refineButton.dataset.runId,
+                    refineButton.dataset.taskId,
+                    refineButton.dataset.agent,
+                    refineButton.dataset.artifactName,
+                    refineButton.dataset.artifactPath
+                );
+            }
+        });
 
-        function resolveGeneratedUrl(rawUrl) {
-            if (!rawUrl) return '#';
-            if (rawUrl.startsWith('/generated/') || rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
-                return rawUrl;
-            }
-            if (rawUrl.includes('generated_code')) {
-                const parts = rawUrl.split('generated_code');
-                const relative = (parts[1] || '').replace(/\\+/g, '/');
-                return '/generated' + relative;
-            }
-            return rawUrl;
+        [document.getElementById('check-video'), document.getElementById('check-slides'), document.getElementById('check-code'), document.getElementById('check-quizzes')]
+            .forEach((checkbox) => checkbox.addEventListener('change', persistUiState));
+        userInput.addEventListener('input', persistUiState);
+        refineInput.addEventListener('input', persistActiveRefineDraft);
+
+        function createRefineKey(runId, taskId) {
+            return `${runId}::${taskId}`;
+        }
+
+        function getArtifactExtension(rawPath = '') {
+            const cleanPath = String(rawPath).split('?')[0].toLowerCase();
+            const lastDot = cleanPath.lastIndexOf('.');
+            return lastDot >= 0 ? cleanPath.slice(lastDot) : '';
+        }
+
+        function getArtifactNameFromPath(rawPath = '') {
+            const cleanPath = String(rawPath).replace(/\\/g, '/').split('?')[0];
+            const parts = cleanPath.split('/');
+            return parts[parts.length - 1] || 'artifact';
+        }
+
+        function isInlineTextPreview(ext) {
+            return ['.py', '.txt', '.json', '.md'].includes(ext);
+        }
+
+        function shouldDownloadArtifact(ext) {
+            return ['.pptx', '.py', '.json'].includes(ext);
+        }
+
+        function buildArtifactAccessUrl(rawPath, options = {}) {
+            if (!rawPath) return '#';
+            const params = new URLSearchParams({ path: rawPath });
+            if (options.download) params.set('download', '1');
+            if (options.cacheBust) params.set('t', Date.now().toString());
+            return `/artifact_file?${params.toString()}`;
+        }
+
+        function buildPresentationPreviewUrl(rawPath) {
+            return `/presentation_preview?${new URLSearchParams({ path: rawPath }).toString()}`;
+        }
+
+        function inferArtifactType(rawPath, explicitType = 'file') {
+            const ext = getArtifactExtension(rawPath);
+            if (explicitType && explicitType !== 'file') return explicitType;
+            if (ext === '.mp4') return 'video';
+            if (ext === '.pptx') return 'presentation';
+            if (ext === '.py') return 'code';
+            return 'file';
+        }
+
+        function getArtifactSlot(meta) {
+            if (meta.type === 'code' || meta.ext === '.py') return 'code';
+            if (meta.type === 'presentation' || meta.ext === '.pptx') return 'presentation';
+            if (meta.type === 'video' || meta.ext === '.mp4') return 'video';
+            if (meta.ext) return meta.ext.slice(1);
+            return meta.type || 'file';
         }
 
         function escapeHtml(text) {
@@ -163,100 +231,281 @@
                 .replace(/>/g, '&gt;');
         }
 
-        function renderRefinePreview(artifactUrl) {
+        function refreshLastSystemMsgBody() {
+            const nodes = refineChatHistory.querySelectorAll('.system-msg-body');
+            lastSystemMsgBody = nodes.length ? nodes[nodes.length - 1] : null;
+        }
+
+        function ensureRefineSession(context) {
+            const key = createRefineKey(context.run_id, context.task_id);
+            if (!refineSessions[key]) {
+                refineSessions[key] = {
+                    context: { ...context },
+                    chatHtml: REFINE_SYSTEM_MESSAGE_HTML,
+                    draft: '',
+                    preview: null,
+                    isOpen: false
+                };
+            } else {
+                refineSessions[key].context = { ...refineSessions[key].context, ...context };
+                refineSessions[key].chatHtml = refineSessions[key].chatHtml || REFINE_SYSTEM_MESSAGE_HTML;
+                refineSessions[key].draft = refineSessions[key].draft || '';
+            }
+            return refineSessions[key];
+        }
+
+        function syncCurrentRefineSessionFromDom() {
+            if (!currentRefineContext) return;
+            const session = ensureRefineSession(currentRefineContext);
+            session.chatHtml = refineChatHistory.innerHTML || REFINE_SYSTEM_MESSAGE_HTML;
+            session.draft = refineInput.value;
+            session.isOpen = refineModal.style.display === 'flex';
+        }
+
+        function persistActiveRefineDraft() {
+            syncCurrentRefineSessionFromDom();
+            persistUiState();
+        }
+
+        function rebuildTaskMapFromDom() {
+            currentTaskMap = {};
+            document.querySelectorAll('#task-list .task-step[id]').forEach((el) => {
+                currentTaskMap[el.id.replace('sidebar-', '')] = el;
+            });
+        }
+
+        function persistUiState() {
+            if (isRestoringUiState) return;
+            syncCurrentRefineSessionFromDom();
+            const snapshot = {
+                messageHtml: messageContainer.innerHTML,
+                taskHtml: taskList.innerHTML,
+                currentRunId,
+                currentAgentId,
+                refineSessions,
+                activeRefineKey: currentRefineContext ? createRefineKey(currentRefineContext.run_id, currentRefineContext.task_id) : null,
+                modalOpen: refineModal.style.display === 'flex',
+                config: {
+                    video: document.getElementById('check-video').checked,
+                    slides: document.getElementById('check-slides').checked,
+                    code: document.getElementById('check-code').checked,
+                    quizzes: document.getElementById('check-quizzes').checked
+                },
+                userInput: userInput.value
+            };
+            localStorage.setItem(UI_STATE_STORAGE_KEY, JSON.stringify(snapshot));
+        }
+
+        async function restoreUiState() {
+            const raw = localStorage.getItem(UI_STATE_STORAGE_KEY);
+            if (!raw) {
+                rebuildTaskMapFromDom();
+                return;
+            }
+
+            try {
+                const snapshot = JSON.parse(raw);
+                isRestoringUiState = true;
+                if (snapshot.messageHtml) messageContainer.innerHTML = snapshot.messageHtml;
+                if (snapshot.taskHtml) taskList.innerHTML = snapshot.taskHtml;
+                currentRunId = snapshot.currentRunId || null;
+                currentAgentId = snapshot.currentAgentId || null;
+                refineSessions = snapshot.refineSessions || {};
+                userInput.value = snapshot.userInput || '';
+                if (snapshot.config) {
+                    document.getElementById('check-video').checked = snapshot.config.video !== false;
+                    document.getElementById('check-slides').checked = snapshot.config.slides !== false;
+                    document.getElementById('check-code').checked = snapshot.config.code !== false;
+                    document.getElementById('check-quizzes').checked = snapshot.config.quizzes !== false;
+                }
+                rebuildTaskMapFromDom();
+                if (snapshot.modalOpen && snapshot.activeRefineKey && refineSessions[snapshot.activeRefineKey]) {
+                    const context = refineSessions[snapshot.activeRefineKey].context;
+                    await openRefineModal(
+                        context.run_id,
+                        context.task_id,
+                        context.agent,
+                        context.name,
+                        context.rawPath
+                    );
+                } else {
+                    refineModal.style.display = 'none';
+                    currentRefineContext = null;
+                }
+            } catch (error) {
+                console.error('Failed to restore UI state:', error);
+            } finally {
+                isRestoringUiState = false;
+                refreshLastSystemMsgBody();
+            }
+        }
+
+        function normalizeArtifactPayload(taskId, artifact, runId, agentName) {
+            const rawPath = typeof artifact === 'string'
+                ? artifact
+                : (artifact.url || artifact.path || '');
+            const ext = getArtifactExtension(rawPath);
+            const type = inferArtifactType(rawPath, typeof artifact === 'object' ? artifact.type : 'file');
+            return {
+                taskId,
+                runId: runId || currentRunId,
+                agentName,
+                rawPath,
+                ext,
+                type,
+                name: typeof artifact === 'object' && artifact.name ? artifact.name : getArtifactNameFromPath(rawPath),
+                slot: getArtifactSlot({ type, ext })
+            };
+        }
+
+        async function loadPresentationPreview(session) {
+            const response = await fetch(buildPresentationPreviewUrl(session.context.rawPath));
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Failed to load presentation preview.');
+            }
+            const data = await response.json();
+            session.preview = {
+                kind: 'slides',
+                sourcePath: session.context.rawPath,
+                title: data.name || session.context.name,
+                slides: data.slides || [],
+                slideIndex: 0
+            };
+        }
+
+        function renderRefineSlidePreview(session) {
             const previewContainer = document.getElementById('refine-preview');
-            const cacheBustedUrl = artifactUrl.includes('?') ? `${artifactUrl}&t=${Date.now()}` : `${artifactUrl}?t=${Date.now()}`;
+            const slides = session.preview && session.preview.slides ? session.preview.slides : [];
+            if (!slides.length) {
+                previewContainer.innerHTML = '<div style="color:#ff9b9b; text-align:center; padding-top:50px;">No slide previews available.</div>';
+                return;
+            }
+
+            const maxIndex = slides.length - 1;
+            session.preview.slideIndex = Math.max(0, Math.min(maxIndex, session.preview.slideIndex || 0));
+            const currentSlideUrl = slides[session.preview.slideIndex];
+            const slideLabel = `${session.preview.slideIndex + 1} / ${slides.length}`;
+
+            previewContainer.innerHTML = `
+                <div class="refine-slide-preview">
+                    <div class="refine-slide-toolbar">
+                        <button class="refine-slide-nav" onclick="changeRefineSlide(-1)" ${session.preview.slideIndex === 0 ? 'disabled' : ''}>◀</button>
+                        <div class="refine-slide-meta">
+                            <div class="refine-slide-name">${escapeHtml(session.preview.title || session.context.name || 'Presentation')}</div>
+                            <div class="refine-slide-count">Slide ${slideLabel}</div>
+                        </div>
+                        <button class="refine-slide-nav" onclick="changeRefineSlide(1)" ${session.preview.slideIndex === maxIndex ? 'disabled' : ''}>▶</button>
+                    </div>
+                    <img src="${currentSlideUrl}?t=${Date.now()}" class="refine-slide-image" alt="Presentation slide preview">
+                </div>
+            `;
+        }
+
+        async function renderRefinePreview(rawPath) {
+            const previewContainer = document.getElementById('refine-preview');
+            const session = currentRefineContext ? ensureRefineSession(currentRefineContext) : null;
+            if (!session) return;
+
+            const ext = getArtifactExtension(rawPath);
             previewContainer.innerHTML = '<div style="color:#aaa; text-align:center; padding-top:50px;">Loading Preview...</div>';
 
-            if (artifactUrl.endsWith('.png') || artifactUrl.endsWith('.jpg') || artifactUrl.endsWith('.jpeg')) {
-                previewContainer.innerHTML = `<img src="${cacheBustedUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+            if (ext === '.png' || ext === '.jpg' || ext === '.jpeg') {
+                previewContainer.innerHTML = `<img src="${buildArtifactAccessUrl(rawPath, { cacheBust: true })}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
                 return;
             }
 
-            if (artifactUrl.endsWith('.mp4')) {
-                previewContainer.innerHTML = `<video controls src="${cacheBustedUrl}" style="width:100%; max-height:100%;"></video>`;
+            if (ext === '.mp4') {
+                previewContainer.innerHTML = `<video controls src="${buildArtifactAccessUrl(rawPath, { cacheBust: true })}" style="width:100%; max-height:100%;"></video>`;
                 return;
             }
 
-            if (artifactUrl.endsWith('.py') || artifactUrl.endsWith('.txt') || artifactUrl.endsWith('.json') || artifactUrl.endsWith('.md')) {
-                fetch(cacheBustedUrl).then(r => r.text()).then(text => {
+            if (ext === '.pptx') {
+                try {
+                    if (!session.preview || session.preview.kind !== 'slides' || session.preview.sourcePath !== rawPath) {
+                        await loadPresentationPreview(session);
+                    }
+                    renderRefineSlidePreview(session);
+                    persistUiState();
+                } catch (error) {
+                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${escapeHtml(error)}</div>`;
+                }
+                return;
+            }
+
+            if (isInlineTextPreview(ext)) {
+                try {
+                    const response = await fetch(buildArtifactAccessUrl(rawPath, { cacheBust: true }));
+                    const text = await response.text();
                     previewContainer.innerHTML = `<pre style="text-align:left; background:#1e1e1e; padding:10px; border-radius:5px; overflow:auto; height:100%; margin:0;"><code>${escapeHtml(text)}</code></pre>`;
-                }).catch(e => {
-                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${escapeHtml(e)}</div>`;
-                });
+                } catch (error) {
+                    previewContainer.innerHTML = `<div style="color:red">Failed to load preview: ${escapeHtml(error)}</div>`;
+                }
                 return;
             }
 
             previewContainer.innerHTML = `<div style="text-align:center; padding-top:50px; color:#fff;">
                 Preview not available for this file type.<br>
-                <a href="${cacheBustedUrl}" target="_blank" style="color:#4a9eff">Click to open</a>
+                <a href="${buildArtifactAccessUrl(rawPath, { download: true })}" target="_blank" style="color:#4a9eff">Click to download</a>
              </div>`;
         }
 
-        function openRefineModal(runId, taskId, agent, artifact, artifactUrl) {
-            currentRefineContext = { run_id: runId, task_id: taskId, agent: agent, url: artifactUrl };
+        async function openRefineModal(runId, taskId, agent, artifactName, artifactPath) {
+            currentRefineContext = {
+                run_id: runId,
+                task_id: taskId,
+                agent,
+                name: artifactName || getArtifactNameFromPath(artifactPath),
+                rawPath: artifactPath
+            };
+            const session = ensureRefineSession(currentRefineContext);
+            session.isOpen = true;
 
-            // 1. Setup UI
             refineModal.style.display = 'flex';
             document.getElementById('refine-title').textContent = `Refining: ${taskId} (${agent})`;
-            refineChatHistory.innerHTML = `
-                <div class="agent-box">
-                    <div class="agent-header">System</div>
-                    <div class="agent-body">You are refining this specific artifact. Ask for changes here.</div>
-                </div>
-            `;
-            refineInput.value = '';
+            refineChatHistory.innerHTML = session.chatHtml || REFINE_SYSTEM_MESSAGE_HTML;
+            refineInput.value = session.draft || '';
+            refreshLastSystemMsgBody();
 
-            // 2. Load Preview
-            const previewContainer = document.getElementById('refine-preview');
-            previewContainer.innerHTML = '<div style="color:#aaa; text-align:center; padding-top:50px;">Loading Preview...</div>';
-            renderRefinePreview(artifactUrl);
+            await renderRefinePreview(session.context.rawPath);
+            persistUiState();
         }
 
         function closeRefineModal() {
+            syncCurrentRefineSessionFromDom();
+            if (currentRefineContext) {
+                ensureRefineSession(currentRefineContext).isOpen = false;
+            }
             refineModal.style.display = 'none';
             currentRefineContext = null;
+            lastSystemMsgBody = null;
+            persistUiState();
         }
 
         async function sendRefinement() {
             const text = refineInput.value.trim();
             if (!text || !currentRefineContext) return;
 
-            // 1. UI Update
+            const context = { ...currentRefineContext };
             const userBox = document.createElement('div');
             userBox.className = 'agent-box user';
             userBox.innerHTML = `<div class="agent-header">User</div><div class="agent-body">${text}</div>`;
             refineChatHistory.appendChild(userBox);
             refineInput.value = '';
-
-            // Scroll to bottom
             refineChatHistory.scrollTop = refineChatHistory.scrollHeight;
+            syncCurrentRefineSessionFromDom();
+            persistUiState();
 
-            // 2. Send to Backend
             appendRefineSystemMsg("Thinking...");
 
             try {
-                // Determine API endpoint - we need a new streaming endpoint for refinement
-                // '/refine_stream'
                 const params = new URLSearchParams({
-                    run_id: currentRefineContext.run_id,
-                    task_id: currentRefineContext.task_id,
+                    run_id: context.run_id,
+                    task_id: context.task_id,
                     feedback: text
                 });
 
                 const eventSource = new EventSource(`/refine_stream?${params.toString()}`);
-
-                let currentMsgBody = null;
-
-                eventSource.onmessage = function (event) {
-                    // Start of message
-                };
-
-                eventSource.addEventListener('chunk', (e) => {
-                    // Update the last system message or create new one?
-                    // Stream tokens logic for chat experience
-                    // For simplicity, let's just show status log or final result
-                });
 
                 eventSource.addEventListener('log', (e) => {
                     const data = JSON.parse(e.data);
@@ -265,24 +514,29 @@
 
                 eventSource.addEventListener('artifact', (e) => {
                     const data = JSON.parse(e.data);
-                    const newUrl = resolveGeneratedUrl(data.url);
+                    const updatedContext = {
+                        ...context,
+                        name: data.name || getArtifactNameFromPath(data.url),
+                        rawPath: data.url
+                    };
+                    currentRefineContext = updatedContext;
+                    const session = ensureRefineSession(updatedContext);
+                    session.preview = null;
+                    renderArtifact(data.id, data, updatedContext.run_id, updatedContext.agent);
 
-                    // Allow small delay for file write
-                    setTimeout(() => {
-                        // Update Context URL so subsequent refinements use THIS version
-                        if (currentRefineContext) {
-                            currentRefineContext.url = newUrl;
+                    setTimeout(async () => {
+                        if (refineModal.style.display === 'flex' && currentRefineContext && currentRefineContext.task_id === updatedContext.task_id) {
+                            await renderRefinePreview(updatedContext.rawPath);
                         }
-                        if (refineModal.style.display === 'flex') {
-                            renderRefinePreview(newUrl);
-                        }
+                        persistUiState();
                     }, 1000);
 
-                    appendRefineSystemMsg(`✅ Updated Artifact Generated.`);
+                    appendRefineSystemMsg('✅ Updated Artifact Generated.');
                 });
 
                 eventSource.addEventListener('complete', () => {
                     eventSource.close();
+                    persistUiState();
                 });
 
                 eventSource.addEventListener('error', (e) => {
@@ -304,14 +558,27 @@
             }
         }
 
-        let lastSystemMsgBody = null;
+        window.changeRefineSlide = function (offset) {
+            if (!currentRefineContext) return;
+            const session = ensureRefineSession(currentRefineContext);
+            if (!session.preview || session.preview.kind !== 'slides') return;
+            session.preview.slideIndex = Math.max(
+                0,
+                Math.min((session.preview.slides || []).length - 1, (session.preview.slideIndex || 0) + offset)
+            );
+            renderRefineSlidePreview(session);
+            persistUiState();
+        };
+
         function appendRefineSystemMsg(text) {
             const box = document.createElement('div');
             box.className = 'agent-box';
             box.innerHTML = `<div class="agent-header">System</div><div class="agent-body system-msg-body">${text}</div>`;
             refineChatHistory.appendChild(box);
-            lastSystemMsgBody = box.querySelector('.system-msg-body');
+            refreshLastSystemMsgBody();
             refineChatHistory.scrollTop = refineChatHistory.scrollHeight;
+            syncCurrentRefineSessionFromDom();
+            persistUiState();
         }
 
         function updateRefineSystemMsg(text) {
@@ -319,7 +586,10 @@
                 lastSystemMsgBody.textContent = text;
             } else {
                 appendRefineSystemMsg(text);
+                return;
             }
+            syncCurrentRefineSessionFromDom();
+            persistUiState();
         }
 
         async function startGeneration() {
@@ -329,10 +599,13 @@
             // Reset UI
             taskList.innerHTML = '<div style="text-align:center; padding:10px;">Initializing Plan...</div>';
             feedbackModal.style.display = 'none';
+            currentRunId = null;
+            rebuildTaskMapFromDom();
 
             // Render User Message
             appendUserMessage(query);
             userInput.value = '';
+            persistUiState();
 
             // Gather Config
             const config = {
@@ -376,42 +649,45 @@
             // Let's assume 'plan' event sends it or we extract from logs.
             // UPDATED: Let's modify the backend to send run_id in the 'plan' event.
 
-            let globalRunId = null;
-
             eventSource.addEventListener('plan', (e) => {
                 const data = JSON.parse(e.data);
-                if (data.run_id) globalRunId = data.run_id; // Capture Run ID
+                if (data.run_id) currentRunId = data.run_id;
                 renderTaskPlan(data.steps);
+                persistUiState();
             });
 
             eventSource.addEventListener('step_start', (e) => {
                 const data = JSON.parse(e.data);
                 updateTaskStatus(data.id, 'active');
                 createAgentBox(data.id, data.name, data.agent);
+                persistUiState();
             });
 
             eventSource.addEventListener('log', (e) => {
                 const data = JSON.parse(e.data);
                 appendLog(data.id, data.content);
+                persistUiState();
             });
 
             eventSource.addEventListener('artifact', (e) => {
                 const data = JSON.parse(e.data);
-                // Pass globalRunId to renderArtifact
-                renderArtifact(data.id, data, globalRunId, currentAgentId);
+                renderArtifact(data.id, data, currentRunId, null);
                 if (data.type === 'video') {
                     completeVideoProgress(data.id, 'Video ready.');
                 }
+                persistUiState();
             });
 
             eventSource.addEventListener('video_progress', (e) => {
                 const data = JSON.parse(e.data);
                 updateVideoProgress(data.id, data);
+                persistUiState();
             });
 
             eventSource.addEventListener('quiz', (e) => {
                 const data = JSON.parse(e.data);
                 renderQuiz(data.id, data.content);
+                persistUiState();
             });
 
             eventSource.addEventListener('step_complete', (e) => {
@@ -420,15 +696,17 @@
                 if (data.status === 'fail') {
                     failVideoProgress(data.id, 'Video generation failed.');
                 }
+                persistUiState();
             });
 
             eventSource.addEventListener('workflow_complete', (e) => {
                 try {
                     const data = JSON.parse(e.data);
-                    if (data.run_id && !globalRunId) globalRunId = data.run_id;
+                    if (data.run_id && !currentRunId) currentRunId = data.run_id;
                 } catch (_) {}
                 feedbackModal.style.display = 'block';
                 eventSource.close();
+                persistUiState();
             });
 
             eventSource.addEventListener('error', (e) => {
@@ -440,6 +718,7 @@
                     appendSystemMessage('Error', "Stream connection closed.");
                 }
                 eventSource.close();
+                persistUiState();
             });
         }
 
@@ -454,6 +733,7 @@
         `;
             messageContainer.appendChild(box);
             scrollToBottom();
+            persistUiState();
         }
 
         function appendSystemMessage(title, text) {
@@ -465,6 +745,7 @@
         `;
             messageContainer.appendChild(box);
             scrollToBottom();
+            persistUiState();
         }
 
         function renderTaskPlan(steps) {
@@ -485,6 +766,7 @@
                 taskList.appendChild(el);
                 currentTaskMap[step.id] = el;
             });
+            persistUiState();
         }
 
         function updateTaskStatus(taskId, status) {
@@ -497,6 +779,7 @@
             if (status === 'active') icon.textContent = '▶';
             else if (status === 'success') icon.textContent = '✔';
             else if (status === 'fail') icon.textContent = '✘';
+            persistUiState();
         }
 
         function createAgentBox(taskId, taskName, agentName) {
@@ -533,10 +816,11 @@
                 <div class="log-container" id="log-${taskId}"></div>
                 <div class="artifact-grid" id="art-${taskId}"></div>
             </div>
-        `;
+            `;
             messageContainer.appendChild(box);
             currentAgentBox = box;
             scrollToBottom();
+            persistUiState();
         }
 
         function appendLog(taskId, content) {
@@ -550,6 +834,7 @@
                 const status = box.querySelector('.status-text');
                 if (status) status.textContent = content.substring(0, 50) + "...";
             }
+            persistUiState();
         }
 
         function updateVideoProgress(taskId, payload) {
@@ -595,6 +880,7 @@
                     node.classList.add('active');
                 }
             });
+            persistUiState();
         }
 
         function completeVideoProgress(taskId, detailText) {
@@ -619,6 +905,7 @@
                 node.classList.remove('active', 'error');
                 node.classList.add('done');
             });
+            persistUiState();
         }
 
         function failVideoProgress(taskId, detailText) {
@@ -634,6 +921,7 @@
             card.classList.add('is-error');
             detailEl.textContent = detailText;
             statusEl.textContent = detailText;
+            persistUiState();
         }
 
         window.toggleLog = function (taskId) {
@@ -643,43 +931,82 @@
             } else {
                 log.style.display = 'block';
             }
+            persistUiState();
         }
 
-        function renderArtifact(taskId, artifact, runId, agentId) {
+        function buildArtifactCard(meta) {
+            const card = document.createElement('div');
+            card.className = 'artifact-card';
+            card.dataset.artifactSlot = meta.slot;
+            card.dataset.artifactPath = meta.rawPath;
+
+            let icon = '📄';
+            if (meta.type === 'video') icon = '🎬';
+            if (meta.type === 'presentation') icon = '📊';
+            if (meta.type === 'code') icon = '💻';
+
+            const downloadArtifact = shouldDownloadArtifact(meta.ext);
+            const fileLink = document.createElement('a');
+            fileLink.href = buildArtifactAccessUrl(meta.rawPath, { download: downloadArtifact });
+            fileLink.className = 'artifact-link';
+            fileLink.target = downloadArtifact ? '_self' : '_blank';
+            if (downloadArtifact) {
+                fileLink.setAttribute('download', meta.name);
+            }
+
+            const iconEl = document.createElement('div');
+            iconEl.className = 'artifact-icon';
+            iconEl.textContent = icon;
+            fileLink.appendChild(iconEl);
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'artifact-name';
+            nameEl.textContent = meta.name;
+            fileLink.appendChild(nameEl);
+
+            const hintEl = document.createElement('div');
+            hintEl.className = 'artifact-hint';
+            hintEl.textContent = downloadArtifact ? 'Click to download' : 'Click to open';
+            fileLink.appendChild(hintEl);
+
+            card.appendChild(fileLink);
+
+            const refineButton = document.createElement('button');
+            refineButton.className = 'refine-btn';
+            refineButton.textContent = 'Refine ✏️';
+            if (meta.runId) {
+                refineButton.dataset.runId = meta.runId;
+                refineButton.dataset.taskId = meta.taskId;
+                refineButton.dataset.agent = meta.agentName;
+                refineButton.dataset.artifactName = meta.name;
+                refineButton.dataset.artifactPath = meta.rawPath;
+            } else {
+                refineButton.disabled = true;
+                refineButton.title = 'Run ID unavailable';
+            }
+            card.appendChild(refineButton);
+
+            return card;
+        }
+
+        function renderArtifact(taskId, artifact, runId, agentNameOverride) {
             const artGrid = document.getElementById(`art-${taskId}`);
             if (!artGrid) return;
 
-            // Get Agent Name from box
             const box = document.getElementById(`box-${taskId}`);
-            const agentName = box ? box.dataset.agentType : 'unknown';
+            const agentName = agentNameOverride || (box ? box.dataset.agentType : 'unknown');
+            const meta = normalizeArtifactPayload(taskId, artifact, runId, agentName);
+            const card = buildArtifactCard(meta);
+            const existing = artGrid.querySelector(`.artifact-card[data-artifact-slot="${meta.slot}"]`);
 
-            const card = document.createElement('div');
-            card.className = 'artifact-card'; // Changed from 'a' to 'div' to contain buttons
-
-            // Link logic matching the /generated mount
-            const fileUrl = resolveGeneratedUrl(artifact.url);
-
-            // Icons
-            let icon = '📄';
-            if (artifact.type === 'video') icon = '🎬';
-            if (artifact.type === 'presentation') icon = '📊';
-            if (artifact.type === 'code') icon = '💻';
-
-            const refineButton = runId
-                ? `<button class="refine-btn" onclick="openRefineModal('${runId}', '${taskId}', '${agentName}', '${artifact.name}', '${fileUrl}')">Refine ✏️</button>`
-                : `<button class="refine-btn" disabled title="Run ID unavailable">Refine ✏️</button>`;
-
-            card.innerHTML = `
-                <a href="${fileUrl}" target="_blank" style="text-decoration:none; color:inherit; display:block; margin-bottom:10px;">
-                    <div class="artifact-icon">${icon}</div>
-                    <div class="artifact-name">${artifact.name}</div>
-                </a>
-                ${refineButton}
-            `;
-
-            artGrid.appendChild(card);
+            if (existing) {
+                existing.replaceWith(card);
+            } else {
+                artGrid.appendChild(card);
+            }
 
             if (box) box.querySelector('.status-text').textContent = "Asset Generated.";
+            persistUiState();
         }
 
         function renderQuiz(taskId, quizContent) {
@@ -705,11 +1032,14 @@
 
             container.innerHTML = html || 'No questions found.';
             artGrid.appendChild(container);
+            persistUiState();
         }
 
         function scrollToBottom() {
             messageContainer.scrollTop = messageContainer.scrollHeight;
         }
+
+        restoreUiState();
     </script>
 </body>
 
