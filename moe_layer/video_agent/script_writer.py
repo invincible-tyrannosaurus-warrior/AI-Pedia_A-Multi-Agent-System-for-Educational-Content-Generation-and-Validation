@@ -4,7 +4,7 @@ from __future__ import annotations
 import base64
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
 from openai import OpenAI
 
@@ -22,7 +22,12 @@ class ScriptWriter:
         self.client = client
         self.context_summary = "Opening of the lecture."
 
-    def generate_scripts(self, image_paths: List[Path], topic: str) -> List[str]:
+    def generate_scripts(
+        self,
+        image_paths: List[Path],
+        topic: str,
+        progress_callback: Optional[Callable[..., None]] = None,
+    ) -> List[str]:
         """
         Iterate through slide images and generate a script for each.
         Returns a list of script strings (narration).
@@ -34,6 +39,13 @@ class ScriptWriter:
         for i, img_path in enumerate(image_paths):
             script = self._generate_single_script(img_path, i, len(image_paths), topic)
             scripts.append(script)
+            if progress_callback is not None:
+                progress_callback(
+                    stage_progress=(i + 1) / max(len(image_paths), 1),
+                    current=i + 1,
+                    total=len(image_paths),
+                    message=f"Generated script {i + 1} of {len(image_paths)}.",
+                )
             
         return scripts
 

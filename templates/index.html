@@ -131,6 +131,14 @@
         let currentTaskMap = {}; // Maps task_id to DOM Element (Sidebar)
         let currentAgentBox = null;
         let currentAgentId = null;
+        const VIDEO_STAGE_ORDER = ['prepare', 'convert_slides', 'generate_scripts', 'build_clips', 'encode_video'];
+        const VIDEO_STAGE_LABELS = {
+            prepare: 'prepare',
+            convert_slides: 'convert slide',
+            generate_scripts: 'generate scripts',
+            build_clips: 'build clips',
+            encode_video: 'encode video'
+        };
 
         // --- REFINEMENT STATE ---
         let currentRefineContext = null; // { run_id, task_id, agent, artifact_type, content_url }
@@ -391,6 +399,14 @@
                 const data = JSON.parse(e.data);
                 // Pass globalRunId to renderArtifact
                 renderArtifact(data.id, data, globalRunId, currentAgentId);
+                if (data.type === 'video') {
+                    completeVideoProgress(data.id, 'Video ready.');
+                }
+            });
+
+            eventSource.addEventListener('video_progress', (e) => {
+                const data = JSON.parse(e.data);
+                updateVideoProgress(data.id, data);
             });
 
             eventSource.addEventListener('quiz', (e) => {
@@ -401,6 +417,9 @@
             eventSource.addEventListener('step_complete', (e) => {
                 const data = JSON.parse(e.data);
                 updateTaskStatus(data.id, data.status); // 'success' or 'fail'
+                if (data.status === 'fail') {
+                    failVideoProgress(data.id, 'Video generation failed.');
+                }
             });
 
             eventSource.addEventListener('workflow_complete', (e) => {
@@ -487,6 +506,21 @@
             box.id = `box-${taskId}`;
             // Store agent type in data attribute for later access
             box.dataset.agentType = agentName;
+            const videoProgressHtml = agentName === 'video' ? `
+                <div class="video-progress-card" id="video-progress-${taskId}">
+                    <div class="video-progress-topline">
+                        <span class="video-progress-stage" id="video-stage-${taskId}">prepare</span>
+                        <span class="video-progress-percent" id="video-percent-${taskId}">0%</span>
+                    </div>
+                    <div class="video-progress-track">
+                        <div class="video-progress-fill" id="video-fill-${taskId}"></div>
+                    </div>
+                    <div class="video-progress-detail" id="video-detail-${taskId}">Waiting for video progress...</div>
+                    <div class="video-stage-list" id="video-stage-list-${taskId}">
+                        ${VIDEO_STAGE_ORDER.map((stage) => `<div class="video-stage-step" data-stage="${stage}">${VIDEO_STAGE_LABELS[stage]}</div>`).join('')}
+                    </div>
+                </div>
+            ` : '';
             box.innerHTML = `
             <div class="agent-header">
                 <span>${taskName}</span>
@@ -494,6 +528,7 @@
             </div>
             <div class="agent-body">
                 <div class="status-text">Processing...</div>
+                ${videoProgressHtml}
                 <div class="log-toggle" onclick="toggleLog('${taskId}')">Show Logs</div>
                 <div class="log-container" id="log-${taskId}"></div>
                 <div class="artifact-grid" id="art-${taskId}"></div>
@@ -515,6 +550,90 @@
                 const status = box.querySelector('.status-text');
                 if (status) status.textContent = content.substring(0, 50) + "...";
             }
+        }
+
+        function updateVideoProgress(taskId, payload) {
+            const box = document.getElementById(`box-${taskId}`);
+            if (!box || box.dataset.agentType !== 'video') return;
+
+            const card = document.getElementById(`video-progress-${taskId}`);
+            const stageEl = document.getElementById(`video-stage-${taskId}`);
+            const percentEl = document.getElementById(`video-percent-${taskId}`);
+            const fillEl = document.getElementById(`video-fill-${taskId}`);
+            const detailEl = document.getElementById(`video-detail-${taskId}`);
+            const statusEl = box.querySelector('.status-text');
+            if (!card || !stageEl || !percentEl || !fillEl || !detailEl || !statusEl) return;
+
+            const stageName = payload.stage || 'prepare';
+            const percent = Math.max(0, Math.min(100, Number(payload.overall_progress || 0)));
+            const detail = payload.message || (payload.total ? `${payload.current || 0} / ${payload.total}` : 'Working...');
+
+            card.classList.remove('is-error', 'is-complete', 'is-indeterminate');
+            if (payload.indeterminate) {
+                card.classList.add('is-indeterminate');
+            }
+            if (payload.status === 'error') {
+                card.classList.add('is-error');
+            }
+
+            stageEl.textContent = VIDEO_STAGE_LABELS[stageName] || stageName;
+            percentEl.textContent = `${Math.round(percent)}%`;
+            fillEl.style.width = `${percent}%`;
+            detailEl.textContent = detail;
+            statusEl.textContent = detail;
+
+            const stageList = document.getElementById(`video-stage-list-${taskId}`);
+            if (!stageList) return;
+            const stageIndex = VIDEO_STAGE_ORDER.indexOf(stageName);
+            stageList.querySelectorAll('.video-stage-step').forEach((node, index) => {
+                node.classList.remove('active', 'done', 'error');
+                if (payload.status === 'error' && index === stageIndex) {
+                    node.classList.add('error');
+                } else if (index < stageIndex) {
+                    node.classList.add('done');
+                } else if (index === stageIndex) {
+                    node.classList.add('active');
+                }
+            });
+        }
+
+        function completeVideoProgress(taskId, detailText) {
+            const box = document.getElementById(`box-${taskId}`);
+            if (!box || box.dataset.agentType !== 'video') return;
+
+            const card = document.getElementById(`video-progress-${taskId}`);
+            const percentEl = document.getElementById(`video-percent-${taskId}`);
+            const fillEl = document.getElementById(`video-fill-${taskId}`);
+            const detailEl = document.getElementById(`video-detail-${taskId}`);
+            const statusEl = box.querySelector('.status-text');
+            const stageList = document.getElementById(`video-stage-list-${taskId}`);
+            if (!card || !percentEl || !fillEl || !detailEl || !statusEl || !stageList) return;
+
+            card.classList.remove('is-error', 'is-indeterminate');
+            card.classList.add('is-complete');
+            percentEl.textContent = '100%';
+            fillEl.style.width = '100%';
+            detailEl.textContent = detailText;
+            statusEl.textContent = detailText;
+            stageList.querySelectorAll('.video-stage-step').forEach((node) => {
+                node.classList.remove('active', 'error');
+                node.classList.add('done');
+            });
+        }
+
+        function failVideoProgress(taskId, detailText) {
+            const box = document.getElementById(`box-${taskId}`);
+            if (!box || box.dataset.agentType !== 'video') return;
+
+            const card = document.getElementById(`video-progress-${taskId}`);
+            const detailEl = document.getElementById(`video-detail-${taskId}`);
+            const statusEl = box.querySelector('.status-text');
+            if (!card || !detailEl || !statusEl) return;
+
+            card.classList.remove('is-complete', 'is-indeterminate');
+            card.classList.add('is-error');
+            detailEl.textContent = detailText;
+            statusEl.textContent = detailText;
         }
 
         window.toggleLog = function (taskId) {

@@ -727,7 +727,37 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
     import mimetypes
     import asyncio
     import inspect
+    import queue
+    import threading
+    import time
 
+    def start_async_agent_with_progress(agent_func, agent_kwargs: Dict[str, Any]):
+        progress_queue: "queue.Queue[Dict[str, Any]]" = queue.Queue()
+        result_holder: Dict[str, Any] = {}
+        error_holder: Dict[str, Any] = {}
+
+        def _emit_progress(payload: Dict[str, Any]) -> None:
+            if isinstance(payload, dict):
+                progress_queue.put(payload)
+
+        def _runner() -> None:
+            try:
+                result_holder["result"] = asyncio.run(
+                    agent_func(
+                        progress_callback=_emit_progress,
+                        **agent_kwargs,
+                    )
+                )
+            except Exception as exc:
+                import traceback
+
+                error_holder["error"] = exc
+                error_holder["traceback"] = traceback.format_exc()
+
+        worker = threading.Thread(target=_runner, daemon=True)
+        worker.start()
+        return worker, progress_queue, result_holder, error_holder
+	
     # ========== Judger Import with Fallback ==========
     run_judger_pipeline = None
     
@@ -1020,14 +1050,51 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                      try:
                         agent_func = registry.get(agent_name)
                         if inspect.iscoroutinefunction(agent_func):
-                            result = asyncio.run(agent_func(
-                                instruction=task.get("instruction"),
-                                output_dir=output_dir,
-                                assets=assets,
-                                dependency_results=dep_results,
-                                client=task_client,
-                                **task.get("inputs", {})
-                            ))
+                            agent_kwargs = {
+                                "instruction": task.get("instruction"),
+                                "output_dir": output_dir,
+                                "assets": assets,
+                                "dependency_results": dep_results,
+                                "client": task_client,
+                                "task_id": t_id,
+                                **task.get("inputs", {}),
+                            }
+                            if agent_name == "video":
+                                worker, progress_queue, result_holder, error_holder = start_async_agent_with_progress(
+                                    agent_func,
+                                    agent_kwargs,
+                                )
+                                last_progress_payload: Optional[Dict[str, Any]] = None
+                                last_progress_at = time.monotonic()
+                                last_heartbeat_at = 0.0
+
+                                while worker.is_alive() or not progress_queue.empty():
+                                    try:
+                                        progress_payload = progress_queue.get(timeout=0.5)
+                                        progress_payload.setdefault("id", t_id)
+                                        progress_payload.setdefault("agent", agent_name)
+                                        last_progress_payload = progress_payload
+                                        last_progress_at = time.monotonic()
+                                        yield send_event("video_progress", progress_payload)
+                                    except queue.Empty:
+                                        if worker.is_alive() and last_progress_payload is not None:
+                                            now = time.monotonic()
+                                            if now - last_progress_at >= 15 and now - last_heartbeat_at >= 15:
+                                                heartbeat = dict(last_progress_payload)
+                                                heartbeat["heartbeat"] = True
+                                                heartbeat["message"] = (
+                                                    f"Still running in {heartbeat.get('stage_label', 'Video Stage')}."
+                                                )
+                                                yield send_event("video_progress", heartbeat)
+                                                last_heartbeat_at = now
+
+                                worker.join()
+                                if error_holder.get("error") is not None:
+                                    logger.error(error_holder.get("traceback", str(error_holder["error"])))
+                                    raise error_holder["error"]
+                                result = result_holder.get("result")
+                            else:
+                                result = asyncio.run(agent_func(**agent_kwargs))
                         else:
                             result = agent_func(
                                 instruction=task.get("instruction"),

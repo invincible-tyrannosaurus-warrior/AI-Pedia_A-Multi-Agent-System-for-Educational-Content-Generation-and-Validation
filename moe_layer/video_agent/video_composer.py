@@ -4,16 +4,26 @@ from __future__ import annotations
 import logging
 import shutil
 from pathlib import Path
-from typing import List
+from typing import Callable, List, Optional
 import asyncio
 
-import edge_tts
+try:
+    import edge_tts
+    EDGE_TTS_AVAILABLE = True
+    EDGE_TTS_IMPORT_ERROR = None
+except ImportError as exc:
+    edge_tts = None
+    EDGE_TTS_AVAILABLE = False
+    EDGE_TTS_IMPORT_ERROR = exc
+
 try:
     from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
     MOVIEPY_AVAILABLE = True
-except ImportError:
+    MOVIEPY_IMPORT_ERROR = None
+except ImportError as exc:
     MOVIEPY_AVAILABLE = False
-    logging.warning("MoviePy not found. Video generation is unavailable.")
+    MOVIEPY_IMPORT_ERROR = exc
+    logging.warning("MoviePy import failed (%s). Video generation is unavailable.", exc)
 
 logger = logging.getLogger(__name__)
 
@@ -30,12 +40,27 @@ class VideoComposer:
         self._validate_runtime()
 
     def _validate_runtime(self) -> None:
+        if not EDGE_TTS_AVAILABLE:
+            raise RuntimeError(
+                "edge-tts is not installed. Install edge-tts before running the video agent. "
+                f"Original import error: {EDGE_TTS_IMPORT_ERROR}"
+            )
         if not MOVIEPY_AVAILABLE:
-            raise RuntimeError("MoviePy is not installed. Install moviepy before running the video agent.")
+            raise RuntimeError(
+                "MoviePy is unavailable. Install moviepy<2.0.0 before running the video agent. "
+                f"Original import error: {MOVIEPY_IMPORT_ERROR}"
+            )
         if shutil.which("ffmpeg") is None:
             raise RuntimeError("ffmpeg is not available on PATH. Install ffmpeg before running the video agent.")
 
-    async def compose_video(self, image_paths: List[Path], scripts: List[str], output_path: Path) -> Path:
+    async def compose_video(
+        self,
+        image_paths: List[Path],
+        scripts: List[str],
+        output_path: Path,
+        build_progress_callback: Optional[Callable[..., None]] = None,
+        encode_progress_callback: Optional[Callable[..., None]] = None,
+    ) -> Path:
         """
         Main entry point: Compose a full video from images and scripts.
         """
@@ -44,6 +69,14 @@ class VideoComposer:
         temp_dir.mkdir(exist_ok=True)
         
         clips = []
+        total_items = min(len(image_paths), len(scripts))
+        if build_progress_callback is not None:
+            build_progress_callback(
+                stage_progress=0.0,
+                current=0,
+                total=total_items,
+                message="Building slide clips.",
+            )
         
         for i, (img_path, script) in enumerate(zip(image_paths, scripts)):
             try:
@@ -56,9 +89,23 @@ class VideoComposer:
                 # In a real heavy app, we'd run this in a thread pool.
                 clip = self._create_clip(img_path, audio_path)
                 clips.append(clip)
+                if build_progress_callback is not None:
+                    build_progress_callback(
+                        stage_progress=(i + 1) / max(total_items, 1),
+                        current=i + 1,
+                        total=total_items,
+                        message=f"Built clip {i + 1} of {total_items}.",
+                    )
                 
             except Exception as e:
                 logger.error(f"Failed to create clip for slide {i}: {e}")
+                if build_progress_callback is not None:
+                    build_progress_callback(
+                        stage_progress=(i + 1) / max(total_items, 1),
+                        current=i + 1,
+                        total=total_items,
+                        message=f"Skipped slide {i + 1} after clip error: {e}",
+                    )
                 continue
         
         if not clips:
@@ -70,6 +117,12 @@ class VideoComposer:
         # 4. Write File
         # We run this in a thread because video encoding is heavy and blocking
         logger.info("Rendering final video...")
+        if encode_progress_callback is not None:
+            encode_progress_callback(
+                stage_progress=0.0,
+                message="Encoding final video.",
+                indeterminate=True,
+            )
         await asyncio.to_thread(
             final_video.write_videofile,
             str(output_path),
@@ -78,6 +131,11 @@ class VideoComposer:
             audio_codec="aac",
             logger=None # Silence moviepy logger to keep stdout clean
         )
+        if encode_progress_callback is not None:
+            encode_progress_callback(
+                stage_progress=1.0,
+                message="Final video encoded.",
+            )
         
         # Cleanup clips memory (MoviePy caveat)
         for clip in clips:
