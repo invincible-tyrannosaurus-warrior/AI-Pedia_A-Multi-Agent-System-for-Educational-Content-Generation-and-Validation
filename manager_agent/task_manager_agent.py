@@ -26,9 +26,13 @@ from openai import OpenAI
 from pydantic import BaseModel, Field, AliasChoices
 
 from moe_layer.orchestrator.agent_registry import registry
-from moe_layer.coder_agent.storage.local import StoredAsset
+from moe_layer.coder_agent.storage.local import (
+    StoredAsset,
+    get_uploaded_source_context,
+    get_uploaded_source_record,
+)
 from moe_layer.coder_agent.utils.file_processors import extract_text, summarize_text
-from config import GENERATED_DIR, LOGS_DIR, artifact_to_public_ref, resolve_artifact_ref
+from config import GENERATED_DIR, LOGS_DIR, UPLOADS_DIR, artifact_to_public_ref, resolve_artifact_ref
 
 # Import agent pipelines for registration
 from moe_layer.coder_agent.coder_pipeline import run_coder_pipeline
@@ -216,11 +220,21 @@ def build_gpt_input(
             mime = asset.get("mime_type", "unknown type")
             # IMPORTANT: We explicitly provide the ON-DISK filename so the Planner knows EXACTLY what to tell the Agent
             filename = asset.get("original_filename") or "unknown_file"
+            display_name = asset.get("display_name")
+            status = asset.get("status")
+            source_hint = ""
+            if display_name and display_name != filename:
+                source_hint += f" Source display name: '{display_name}'."
+            if status and status != "ready":
+                source_hint += f" Source indexing status: {status}."
             
             content.append(
                 {
                     "type": "text",
-                    "text": f"{description} ({mime}). AVAILABLE AS LOCAL FILE: '{filename}'. URL: {asset['url']}",
+                    "text": (
+                        f"{description} ({mime}). AVAILABLE AS LOCAL FILE: '{filename}'. "
+                        f"URL: {asset['url']}.{source_hint}"
+                    ),
                 }
             )
         elif asset_type == "text":
@@ -630,8 +644,9 @@ def run_workflow(
                 "attempts": attempts[task_id],
             }
 
-    def execute_tasks(task_ids: Set[str]) -> None:
+    def execute_tasks(task_ids: Set[str]) -> Set[str]:
         remaining = set(task_ids)
+        executed: Set[str] = set()
         while remaining:
             runnable = [tid for tid in remaining if dependencies_satisfied(tid, remaining)]
             if not runnable:
@@ -651,8 +666,10 @@ def run_workflow(
                 for future in as_completed(future_map):
                     tid = future_map[future]
                     agent_results[tid] = future.result()
+                    executed.add(tid)
 
             remaining.difference_update(runnable)
+        return executed
 
     # Initial execution
     execute_tasks({sub.task_id for sub in plan.subtasks})
@@ -693,8 +710,33 @@ def run_workflow(
         # Determine which tasks to rerun (failed + dependents)
         to_rerun = _collect_dependent_tasks(plan, set(failed_tasks))
 
-        # Filter out tasks that exceeded max retries
+        # Filter out tasks that exceeded max retries.
+        # Also exclude tasks blocked by exhausted dependencies to avoid retry dead-loops.
         runnable = {tid for tid in to_rerun if attempts.get(tid, 0) < MAX_TASK_RETRIES}
+        blocked_by_exhausted = {
+            tid
+            for tid in runnable
+            if any(
+                dep in to_rerun and attempts.get(dep, 0) >= MAX_TASK_RETRIES
+                for dep in subtasks_by_id[tid].dependencies
+            )
+        }
+        for tid in blocked_by_exhausted:
+            subtask = subtasks_by_id[tid]
+            error_msg = "Unresolved dependencies."
+            if tid in agent_results:
+                if not bool(agent_results[tid].get("success")):
+                    agent_results[tid]["error"] = error_msg
+            else:
+                agent_results[tid] = {
+                    "agent": subtask.agent,
+                    "success": False,
+                    "error": error_msg,
+                    "instruction": instructions[tid],
+                    "attempts": attempts[tid],
+                }
+        runnable.difference_update(blocked_by_exhausted)
+
         if not runnable:
             exhausted = {tid for tid in to_rerun if attempts.get(tid, 0) >= MAX_TASK_RETRIES}
             for tid in exhausted:
@@ -706,7 +748,18 @@ def run_workflow(
                         agent_results[tid]["error"] = "Max retries exceeded."
             break
 
-        execute_tasks(runnable)
+        executed = execute_tasks(runnable)
+        if not executed:
+            for tid in runnable:
+                subtask = subtasks_by_id[tid]
+                agent_results[tid] = {
+                    "agent": subtask.agent,
+                    "success": False,
+                    "error": "Unresolved dependencies.",
+                    "instruction": instructions[tid],
+                    "attempts": attempts[tid],
+                }
+            break
 
         iteration += 1
         judger_log_capture = {}
@@ -855,19 +908,36 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
     try:
         assets: List[StoredAsset] = []
         asset_descriptors: List[Dict[str, Any]] = [{"type": "text", "text": user_query}]
-        file_list: List[str] = []
+        file_entries: List[Any] = []
         try:
-            file_list = json.loads(files_json) if files_json else []
+            loaded_files = json.loads(files_json) if files_json else []
+            if isinstance(loaded_files, list):
+                file_entries = loaded_files
         except Exception:
-            file_list = []
+            file_entries = []
 
-        for file_path in file_list:
+        for entry in file_entries:
+            file_ref = ""
+            display_name = None
+            source_status = None
+            preview_text = None
+            if isinstance(entry, dict):
+                file_ref = str(entry.get("path") or entry.get("url") or "").strip()
+                display_name = entry.get("display_name") or entry.get("name")
+                source_status = entry.get("status")
+                preview_text = entry.get("preview_text")
+            else:
+                file_ref = str(entry).strip()
+
+            if not file_ref:
+                continue
+
             try:
-                path = resolve_artifact_ref(file_path)
+                path = resolve_artifact_ref(file_ref)
             except ValueError:
-                path = Path(file_path)
+                path = Path(file_ref)
             if not path.exists():
-                warn = f"Uploaded file not found: {file_path}"
+                warn = f"Uploaded file not found: {file_ref}"
                 yield send_event("log", {"id": "system", "content": warn})
                 continue
 
@@ -876,13 +946,51 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                 public_url = artifact_to_public_ref(path)
             except ValueError:
                 public_url = str(path)
+
+            source_meta = get_uploaded_source_record(UPLOADS_DIR, public_url) or get_uploaded_source_record(
+                UPLOADS_DIR, file_ref
+            )
+            source_context = None
+            if source_meta:
+                display_name = display_name or source_meta.get("display_name")
+                source_status = source_status or source_meta.get("status")
+                preview_text = preview_text or source_meta.get("preview_text")
+                try:
+                    source_context = get_uploaded_source_context(
+                        UPLOADS_DIR,
+                        public_url,
+                        query=user_query,
+                        max_chars=16000,
+                    )
+                except Exception:
+                    source_context = None
+
+            if source_status and source_status != "ready":
+                yield send_event(
+                    "log",
+                    {
+                        "id": "system",
+                        "content": (
+                            f"Source '{display_name or path.name}' is still indexing "
+                            f"({source_status}). You can continue, but grounding may improve once ready."
+                        ),
+                    },
+                )
+
+            extracted_for_planning = source_context or preview_text
+            if not extracted_for_planning and mime_type.startswith("text/"):
+                try:
+                    extracted_for_planning = path.read_text(encoding="utf-8", errors="replace")[:16000]
+                except Exception:
+                    extracted_for_planning = None
+
             assets.append(
                 StoredAsset(
                     path=path,
                     url=public_url,
                     mime_type=mime_type,
                     original_filename=path.name,
-                    extracted_text=extract_text(path, mime_type),
+                    extracted_text=extracted_for_planning,
                 )
             )
             asset_descriptors.append(
@@ -892,6 +1000,8 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
                     "mime_type": mime_type,
                     "description": f"Uploaded asset: {path.name}",
                     "original_filename": path.name,
+                    "display_name": display_name,
+                    "status": source_status or "unknown",
                 }
             )
         
@@ -997,9 +1107,25 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             return
 
         source_context = ""
+        source_grounding_block = ""
         if assets:
             filenames = ", ".join(asset.original_filename for asset in assets)
             source_context = f" Use the uploaded source materials when relevant: {filenames}."
+            source_excerpts: List[str] = []
+            for asset in assets[:2]:
+                snippet = (asset.extracted_text or "").strip()
+                if not snippet:
+                    continue
+                source_excerpts.append(
+                    f"[SOURCE: {asset.original_filename}]\n{snippet[:2200]}"
+                )
+            if source_excerpts:
+                source_grounding_block = (
+                    "\n\n*** GROUNDING REQUIREMENT ***\n"
+                    "Treat the uploaded source excerpts below as the primary reference.\n"
+                    "If the user asks for a specific chapter/section/topic, prioritize that part and avoid unrelated content.\n\n"
+                    + "\n\n".join(source_excerpts)
+                )
 
         def _short_label(text: Optional[str], fallback: str) -> str:
             if not text: return fallback
@@ -1047,8 +1173,12 @@ def stream_workflow(user_query: str, config: dict = None, files_json: str = "[]"
             
             task["agent"] = agent_name
             task["task_id"] = t_id
+            base_instruction = task.get("instruction", "").strip()
             if source_context:
-                task["instruction"] = f"{task.get('instruction', '').strip()}{source_context}"
+                base_instruction = f"{base_instruction}{source_context}"
+            if source_grounding_block:
+                base_instruction = f"{base_instruction}{source_grounding_block}"
+            task["instruction"] = base_instruction
             
             # Setup inputs
             inputs = task.get("inputs") or {}
@@ -1314,6 +1444,8 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
     from pathlib import Path
     import asyncio
     import inspect
+    import threading
+    import time
     from config import LOGS_DIR, GENERATED_DIR
 
     # SSE Helper (Duplicate to avoid dependency issues if moved)
@@ -1405,24 +1537,56 @@ def refine_stream(run_id: str, task_id: str, feedback: str):
         task_client = _default_client()
         output_dir = GENERATED_DIR # Same root
 
-        if inspect.iscoroutinefunction(agent_func):
-            result = asyncio.run(agent_func(
-                instruction=new_instruction,
-                output_dir=output_dir,
-                assets=assets,
-                dependency_results=dependency_results,
-                client=task_client,
-                **inputs
-            ))
-        else:
-            result = agent_func(
-                instruction=new_instruction,
-                output_dir=output_dir,
-                assets=assets,
-                dependency_results=dependency_results,
-                client=task_client,
-                **inputs
-            )
+        result_holder: Dict[str, Any] = {}
+        error_holder: Dict[str, Any] = {}
+
+        def _run_refine_agent() -> None:
+            try:
+                if inspect.iscoroutinefunction(agent_func):
+                    result_holder["result"] = asyncio.run(
+                        agent_func(
+                            instruction=new_instruction,
+                            output_dir=output_dir,
+                            assets=assets,
+                            dependency_results=dependency_results,
+                            client=task_client,
+                            **inputs,
+                        )
+                    )
+                else:
+                    result_holder["result"] = agent_func(
+                        instruction=new_instruction,
+                        output_dir=output_dir,
+                        assets=assets,
+                        dependency_results=dependency_results,
+                        client=task_client,
+                        **inputs,
+                    )
+            except Exception as exc:  # pragma: no cover
+                import traceback
+
+                error_holder["error"] = exc
+                error_holder["traceback"] = traceback.format_exc()
+
+        worker = threading.Thread(target=_run_refine_agent, daemon=True)
+        worker.start()
+        last_heartbeat = time.monotonic()
+
+        while worker.is_alive():
+            worker.join(timeout=0.8)
+            now = time.monotonic()
+            if worker.is_alive() and now - last_heartbeat >= 10:
+                yield send_event("log", {"id": "system", "content": "Refinement still running..."})
+                last_heartbeat = now
+
+        if error_holder.get("error") is not None:
+            logger.error(error_holder.get("traceback", str(error_holder["error"])))
+            raise error_holder["error"]
+
+        result = result_holder.get("result") or {
+            "success": False,
+            "error": "Refinement returned no result.",
+        }
 
         updated_artifact = None
         if result.get("success"):

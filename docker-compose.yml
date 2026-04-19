@@ -1,0 +1,13 @@
+services:
+  ai-pedia:
+    image: ai-pedia:latest
+    container_name: ai-pedia
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    working_dir: /app
+    command: uvicorn demo_front_end:app --host 0.0.0.0 --port 8000
+    volumes:
+      - ./:/app

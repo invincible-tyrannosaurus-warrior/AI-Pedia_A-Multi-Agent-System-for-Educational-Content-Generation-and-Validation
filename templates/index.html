@@ -38,6 +38,12 @@
 
                     <div class="section-title" style="margin-top:20px;">Context</div>
                     <input type="file" id="file-upload" multiple style="color: white; font-size: 0.8em;">
+                    <div class="uploaded-sources-panel">
+                        <div class="uploaded-sources-title">Uploaded Sources</div>
+                        <div id="uploaded-sources-list" class="uploaded-sources-list">
+                            <div class="uploaded-source-empty">No uploaded sources.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -70,7 +76,7 @@
     </div>
 
     <div id="feedback-modal">
-        ✅ Workflow Complete! Click to Rate
+        Workflow complete. Click to rate.
     </div>
 
     <div id="refine-modal" class="refine-modal">
@@ -115,6 +121,7 @@
         const slidesCheckbox = document.getElementById('check-slides');
         const codeCheckbox = document.getElementById('check-code');
         const quizzesCheckbox = document.getElementById('check-quizzes');
+        const uploadedSourcesList = document.getElementById('uploaded-sources-list');
 
         const VIDEO_STAGE_ORDER = ['prepare', 'convert_slides', 'generate_scripts', 'build_clips', 'encode_video'];
         const VIDEO_STAGE_LABELS = {
@@ -137,6 +144,8 @@
         let taskPlanLoading = false;
         let feedbackVisible = false;
         let messageSequence = 0;
+        let uploadedSources = [];
+        let sourceStatusPolling = null;
 
         const uiState = {
             feed: [],
@@ -244,6 +253,134 @@
             quizzesCheckbox.checked = config.quizzes !== false;
         }
 
+        function normalizeSourceStatus(rawStatus, rawError) {
+            const status = String(rawStatus || 'unknown').toLowerCase();
+            const error = rawError ? String(rawError) : null;
+            if (status === 'failed' && error && error.toLowerCase().includes('chromadb')) {
+                return { status: 'ready', error: null, index_mode: 'text_only' };
+            }
+            return { status, error, index_mode: null };
+        }
+
+        function normalizeUploadedSource(rawSource) {
+            if (!rawSource) return null;
+            const path = typeof rawSource === 'string'
+                ? rawSource
+                : (rawSource.path || rawSource.url || '');
+            if (!path) return null;
+            const normalizedStatus = normalizeSourceStatus(rawSource.status, rawSource.error);
+            return {
+                path,
+                display_name: rawSource.display_name || getArtifactNameFromPath(path),
+                stored_name: rawSource.stored_name || getArtifactNameFromPath(path),
+                status: normalizedStatus.status,
+                error: normalizedStatus.error,
+                updated_at: rawSource.updated_at || null,
+                index_mode: rawSource.index_mode || normalizedStatus.index_mode || null,
+                index_warning: rawSource.index_warning || null
+            };
+        }
+
+        function upsertUploadedSources(sources) {
+            if (!Array.isArray(sources) || !sources.length) return;
+            const map = new Map(uploadedSources.map((item) => [item.path, item]));
+            sources.forEach((rawSource) => {
+                const normalized = normalizeUploadedSource(rawSource);
+                if (!normalized) return;
+                map.set(normalized.path, { ...(map.get(normalized.path) || {}), ...normalized });
+            });
+            uploadedSources = Array.from(map.values());
+        }
+
+        function renderUploadedSources() {
+            uploadedSourcesList.replaceChildren();
+            if (!uploadedSources.length) {
+                const empty = document.createElement('div');
+                empty.className = 'uploaded-source-empty';
+                empty.textContent = 'No uploaded sources.';
+                uploadedSourcesList.appendChild(empty);
+                return;
+            }
+
+            uploadedSources.forEach((source) => {
+                const row = document.createElement('div');
+                row.className = 'uploaded-source-row';
+
+                const name = document.createElement('div');
+                name.className = 'uploaded-source-name';
+                name.textContent = source.display_name || source.stored_name || source.path;
+
+                const status = document.createElement('div');
+                status.className = 'uploaded-source-status';
+                if (source.status === 'ready') {
+                    status.classList.add('ready');
+                    status.textContent = source.index_mode === 'text_only'
+                        ? 'Ready (text-only)'
+                        : 'Ready';
+                } else if (source.status === 'failed') {
+                    status.classList.add('failed');
+                    status.textContent = source.error ? `Failed: ${source.error}` : 'Failed';
+                } else if (source.status === 'processing') {
+                    status.classList.add('processing');
+                    status.textContent = 'Indexing...';
+                } else {
+                    status.textContent = source.status || 'Unknown';
+                }
+
+                row.appendChild(name);
+                row.appendChild(status);
+                uploadedSourcesList.appendChild(row);
+            });
+        }
+
+        function syncSourcePolling() {
+            if (sourceStatusPolling) {
+                clearInterval(sourceStatusPolling);
+                sourceStatusPolling = null;
+            }
+            const hasProcessing = uploadedSources.some((item) => item.status === 'processing');
+            if (hasProcessing) {
+                sourceStatusPolling = setInterval(() => {
+                    refreshUploadedSources({ silent: true });
+                }, 5000);
+            }
+        }
+
+        async function refreshUploadedSources({ silent = false } = {}) {
+            try {
+                const response = await fetch('/uploaded_sources');
+                if (!response.ok) return;
+                const payload = await response.json();
+                if (Array.isArray(payload.sources)) {
+                    upsertUploadedSources(payload.sources);
+                    renderUploadedSources();
+                    syncSourcePolling();
+                    if (!silent) persistUiState();
+                }
+            } catch (_) {
+                // Keep UI usable even if source status refresh fails.
+            }
+        }
+
+        function pickActiveSourcesForQuery(queryText) {
+            const candidates = uploadedSources.filter((source) => source.status !== 'failed');
+            if (!candidates.length) return [];
+
+            const normalizedQuery = String(queryText || '').toLowerCase();
+            const matched = candidates.filter((source) => {
+                const name = String(source.display_name || source.stored_name || '').toLowerCase();
+                const stem = name.replace(/\.[^/.]+$/, '');
+                return (name && normalizedQuery.includes(name)) || (stem && normalizedQuery.includes(stem));
+            });
+            if (matched.length) return matched;
+
+            const readyCandidates = candidates.filter((source) => source.status === 'ready');
+            if (readyCandidates.length) {
+                return [readyCandidates[readyCandidates.length - 1]];
+            }
+            return [candidates[candidates.length - 1]];
+        }
+
         function ensureTaskState(taskId, seed = {}) {
             if (!uiState.tasks[taskId]) {
                 uiState.tasks[taskId] = {
@@ -323,7 +460,8 @@
                 userInput: userInput.value,
                 taskPlanLoading,
                 feedbackVisible,
-                messageSequence
+                messageSequence,
+                uploadedSources
             };
         }
 
@@ -384,10 +522,10 @@
             el.className = `task-step ${status}`;
             const icon = el.querySelector('.step-status-icon');
             if (!icon) return;
-            if (status === 'active') icon.textContent = '▶';
-            else if (status === 'success') icon.textContent = '✔';
-            else if (status === 'fail') icon.textContent = '✘';
-            else icon.textContent = '○';
+            if (status === 'active') icon.textContent = '>';
+            else if (status === 'success') icon.textContent = 'OK';
+            else if (status === 'fail') icon.textContent = 'X';
+            else icon.textContent = 'o';
         }
 
         function renderTaskPlanFromState() {
@@ -473,10 +611,10 @@
             card.dataset.artifactSlot = meta.slot;
             card.dataset.artifactPath = meta.rawPath;
 
-            let icon = '📄';
-            if (meta.type === 'video') icon = '🎬';
-            if (meta.type === 'presentation') icon = '📊';
-            if (meta.type === 'code') icon = '💻';
+            let icon = 'FILE';
+            if (meta.type === 'video') icon = 'VIDEO';
+            if (meta.type === 'presentation') icon = 'PPT';
+            if (meta.type === 'code') icon = 'CODE';
 
             const downloadArtifact = shouldDownloadArtifact(meta.ext);
             const fileLink = document.createElement('a');
@@ -503,8 +641,9 @@
             card.appendChild(fileLink);
 
             const refineButton = document.createElement('button');
+            refineButton.type = 'button';
             refineButton.className = 'refine-btn';
-            refineButton.textContent = 'Refine ✏️';
+            refineButton.textContent = 'Refine';
             if (meta.runId) {
                 refineButton.addEventListener('click', (event) => {
                     event.preventDefault();
@@ -518,15 +657,88 @@
 
             return card;
         }
+        function resolveQuizAnswerIndex(question, rawAnswer) {
+            const options = Array.isArray(question?.options) ? question.options : [];
+            const raw = rawAnswer;
+            if (typeof raw === 'number' && Number.isFinite(raw)) {
+                const idx = Math.floor(raw) - 1;
+                return idx >= 0 && idx < options.length ? idx : -1;
+            }
+            const normalized = String(raw || '').trim();
+            if (!normalized) return -1;
+            const directMatch = options.findIndex(
+                (option) => String(option || '').trim().toLowerCase() === normalized.toLowerCase()
+            );
+            if (directMatch >= 0) return directMatch;
 
+            const upper = normalized.toUpperCase();
+            const letterOnly = upper.match(/^[A-D]$/);
+            if (letterOnly) return ['A', 'B', 'C', 'D'].indexOf(letterOnly[0]);
+            const digitOnly = upper.match(/^[1-4]$/);
+            if (digitOnly) {
+                const idx = Number(digitOnly[0]) - 1;
+                return idx >= 0 && idx < options.length ? idx : -1;
+            }
+            const letterTag = upper.match(/\b(?:OPTION|ANSWER)\s*([A-D])\b/);
+            if (letterTag) return ['A', 'B', 'C', 'D'].indexOf(letterTag[1]);
+            const digitTag = upper.match(/\b(?:OPTION|ANSWER)\s*([1-4])\b/);
+            if (digitTag) {
+                const idx = Number(digitTag[1]) - 1;
+                return idx >= 0 && idx < options.length ? idx : -1;
+            }
+            return -1;
+        }
+
+        function resolveQuizAnswerIndices(question) {
+            const candidates = [];
+            if (question?.answer !== undefined) candidates.push(question.answer);
+            if (question?.correct_answer !== undefined) candidates.push(question.correct_answer);
+            if (Array.isArray(question?.answers)) candidates.push(...question.answers);
+            if (Array.isArray(question?.correct_answers)) candidates.push(...question.correct_answers);
+            if (question?.answer_index !== undefined) candidates.push(question.answer_index);
+            if (question?.correct_option !== undefined) candidates.push(question.correct_option);
+
+            const indices = [];
+            candidates.forEach((candidate) => {
+                const idx = resolveQuizAnswerIndex(question, candidate);
+                if (idx >= 0 && !indices.includes(idx)) indices.push(idx);
+            });
+            return indices;
+        }
         function createQuizElement(taskId, quizState) {
             const container = document.createElement('div');
             container.className = 'quiz-container';
             container.style.width = '100%';
 
+            const header = document.createElement('div');
+            header.className = 'quiz-header';
+
+            const title = document.createElement('div');
+            title.className = 'quiz-header-title';
+            title.textContent = 'Quiz';
+
+            const showAnswerButton = document.createElement('button');
+            showAnswerButton.type = 'button';
+            showAnswerButton.className = 'quiz-show-answer-btn';
+            showAnswerButton.textContent = quizState?.showAnswers ? 'Hide Answers' : 'Show Answers';
+            showAnswerButton.addEventListener('click', () => {
+                const task = ensureTaskState(taskId);
+                if (!task.quiz) return;
+                task.quiz.showAnswers = !task.quiz.showAnswers;
+                const artGrid = document.getElementById(`art-${taskId}`);
+                if (artGrid) renderArtifactsAndQuizInto(taskId, artGrid);
+                persistUiState();
+            });
+
+            header.appendChild(title);
+            header.appendChild(showAnswerButton);
+            container.appendChild(header);
+
             const questions = Array.isArray(quizState?.questions) ? quizState.questions : [];
             if (!questions.length) {
-                container.textContent = 'No questions found.';
+                const empty = document.createElement('div');
+                empty.textContent = 'No questions found.';
+                container.appendChild(empty);
                 return container;
             }
 
@@ -539,11 +751,16 @@
                 const optionsEl = document.createElement('div');
                 optionsEl.className = 'quiz-options';
                 const selected = new Set((quizState.selected && quizState.selected[questionIndex]) || []);
+                const answerIndices = resolveQuizAnswerIndices(question);
+                const answerLabel = answerIndices.length
+                    ? answerIndices.map((index) => String.fromCharCode(65 + index)).join(', ')
+                    : String(question.answer || question.correct_answer || '').trim();
 
                 (question.options || []).forEach((option, optionIndex) => {
                     const optionEl = document.createElement('div');
                     optionEl.className = 'quiz-option';
                     if (selected.has(optionIndex)) optionEl.classList.add('selected');
+                    if (quizState.showAnswers && answerIndices.includes(optionIndex)) optionEl.classList.add('correct-answer');
                     optionEl.textContent = option;
                     optionEl.addEventListener('click', () => {
                         const task = ensureTaskState(taskId);
@@ -560,6 +777,12 @@
                 });
 
                 container.appendChild(optionsEl);
+                if (quizState.showAnswers) {
+                    const answerNote = document.createElement('div');
+                    answerNote.className = 'quiz-answer-note';
+                    answerNote.textContent = `Correct answer: ${answerLabel || 'N/A'}`;
+                    container.appendChild(answerNote);
+                }
                 if (questionIndex < questions.length - 1) {
                     const divider = document.createElement('hr');
                     divider.style.border = '0';
@@ -714,7 +937,7 @@
 
             const prevButton = document.createElement('button');
             prevButton.className = 'refine-slide-nav';
-            prevButton.textContent = '◀';
+            prevButton.textContent = '<';
             prevButton.disabled = session.preview.slideIndex === 0;
             prevButton.addEventListener('click', () => changeRefineSlide(-1));
 
@@ -731,7 +954,7 @@
 
             const nextButton = document.createElement('button');
             nextButton.className = 'refine-slide-nav';
-            nextButton.textContent = '▶';
+            nextButton.textContent = '>';
             nextButton.disabled = session.preview.slideIndex === maxIndex;
             nextButton.addEventListener('click', () => changeRefineSlide(1));
 
@@ -901,13 +1124,27 @@
                 });
 
                 const eventSource = new EventSource(`/refine_stream?${params.toString()}`);
+                let refineStreamClosedGracefully = false;
+                let refineSawServerEvent = false;
+                let refineLastEventAt = Date.now();
+
+                const markRefineEvent = () => {
+                    refineSawServerEvent = true;
+                    refineLastEventAt = Date.now();
+                };
+
+                eventSource.addEventListener('open', () => {
+                    refineLastEventAt = Date.now();
+                });
 
                 eventSource.addEventListener('log', (e) => {
+                    markRefineEvent();
                     const data = JSON.parse(e.data);
                     updateRefineSystemMsg(data.content);
                 });
 
                 eventSource.addEventListener('artifact', (e) => {
+                    markRefineEvent();
                     const data = JSON.parse(e.data);
                     const updatedContext = {
                         ...context,
@@ -930,18 +1167,35 @@
                 });
 
                 eventSource.addEventListener('complete', () => {
+                    markRefineEvent();
+                    refineStreamClosedGracefully = true;
                     eventSource.close();
                     persistUiState();
                 });
 
                 eventSource.addEventListener('error', (e) => {
+                    if (refineStreamClosedGracefully || eventSource.readyState === EventSource.CLOSED) {
+                        return;
+                    }
+
+                    if (e && typeof e.data === 'string' && e.data.trim()) {
+                        markRefineEvent();
+                    }
+
                     let message = 'Connection lost';
-                    if (e && typeof e.data === 'string') {
+                    if (e && typeof e.data === 'string' && e.data.trim()) {
                         try {
                             const data = JSON.parse(e.data);
                             message = data.content || message;
                         } catch (_) {
                             message = e.data || message;
+                        }
+                    } else {
+                        const quietCloseWindowMs = 2000;
+                        const idleMs = Date.now() - refineLastEventAt;
+                        if (refineSawServerEvent && idleMs < quietCloseWindowMs) {
+                            eventSource.close();
+                            return;
                         }
                     }
                     eventSource.close();
@@ -1197,12 +1451,19 @@
         function normalizeQuizContent(quizContent, existingQuiz) {
             const questions = Array.isArray(quizContent?.questions) ? quizContent.questions.map((question) => ({
                 question: question.question || '',
-                options: Array.isArray(question.options) ? question.options : []
+                options: Array.isArray(question.options) ? question.options : [],
+                answer: question.answer || question.correct_answer || '',
+                correct_answer: question.correct_answer || question.answer || '',
+                answers: Array.isArray(question.answers) ? question.answers : [],
+                correct_answers: Array.isArray(question.correct_answers) ? question.correct_answers : [],
+                answer_index: question.answer_index,
+                correct_option: question.correct_option
             })) : [];
             const selected = Array.isArray(existingQuiz?.selected)
                 ? existingQuiz.selected
                 : questions.map(() => []);
-            return { questions, selected };
+            const showAnswers = Boolean(existingQuiz?.showAnswers);
+            return { questions, selected, showAnswers };
         }
 
         function renderQuiz(taskId, quizContent) {
@@ -1231,7 +1492,6 @@
             const config = getConfigState();
 
             const fileInput = document.getElementById('file-upload');
-            let uploadedFiles = [];
             if (fileInput.files.length > 0) {
                 const formData = new FormData();
                 for (let i = 0; i < fileInput.files.length; i++) {
@@ -1241,16 +1501,35 @@
                 try {
                     const uploadResp = await fetch('/upload', { method: 'POST', body: formData });
                     const uploadResult = await uploadResp.json();
-                    uploadedFiles = uploadResult.paths || [];
+                    if (Array.isArray(uploadResult.sources) && uploadResult.sources.length) {
+                        upsertUploadedSources(uploadResult.sources);
+                    } else if (Array.isArray(uploadResult.paths)) {
+                        upsertUploadedSources(uploadResult.paths);
+                    }
+                    renderUploadedSources();
+                    syncSourcePolling();
+                    persistUiState();
+                    fileInput.value = '';
                 } catch (error) {
                     appendSystemMessage('Error', `Upload failed: ${stringifyError(error)}`);
                     return;
                 }
             }
 
+            const selectedSources = pickActiveSourcesForQuery(query);
+            const activeSources = selectedSources.map((source) => ({
+                path: source.path,
+                display_name: source.display_name,
+                status: source.status,
+                index_mode: source.index_mode || null
+            }));
+            if (activeSources.some((item) => item.status === 'processing')) {
+                appendSystemMessage('System', 'Some uploaded sources are still indexing. You can continue, and grounding quality will improve once indexing is ready.');
+            }
+
             const queryParams = new URLSearchParams({
                 topic: query,
-                files: JSON.stringify(uploadedFiles),
+                files: JSON.stringify(activeSources),
                 ...config
             });
 
@@ -1292,7 +1571,10 @@
             eventSource.addEventListener('step_complete', (e) => {
                 const data = JSON.parse(e.data);
                 updateTaskStatus(data.id, data.status);
-                if (data.status === 'fail') failVideoProgress(data.id, 'Video generation failed.');
+                const task = ensureTaskState(data.id);
+                if (data.status === 'fail' && task.agent === 'video') {
+                    failVideoProgress(data.id, 'Video generation failed.');
+                }
             });
 
             eventSource.addEventListener('workflow_complete', (e) => {
@@ -1328,6 +1610,8 @@
             if (!raw) {
                 renderTaskPlanFromState();
                 renderFeedbackModal();
+                renderUploadedSources();
+                refreshUploadedSources({ silent: true });
                 return;
             }
 
@@ -1337,6 +1621,8 @@
                     localStorage.removeItem(UI_STATE_STORAGE_KEY);
                     renderTaskPlanFromState();
                     renderFeedbackModal();
+                    renderUploadedSources();
+                    refreshUploadedSources({ silent: true });
                     return;
                 }
 
@@ -1350,12 +1636,17 @@
                 taskPlanLoading = Boolean(snapshot.taskPlanLoading);
                 feedbackVisible = Boolean(snapshot.feedbackVisible);
                 messageSequence = Number(snapshot.messageSequence || 0);
+                uploadedSources = Array.isArray(snapshot.uploadedSources)
+                    ? snapshot.uploadedSources.map(normalizeUploadedSource).filter(Boolean)
+                    : [];
                 userInput.value = snapshot.userInput || '';
                 setConfigState(snapshot.config || {});
 
                 renderTaskPlanFromState();
                 renderFeedFromState();
                 renderFeedbackModal();
+                renderUploadedSources();
+                syncSourcePolling();
 
                 if (snapshot.modalOpen && snapshot.activeRefineKey && refineSessions[snapshot.activeRefineKey]) {
                     const context = refineSessions[snapshot.activeRefineKey].context;
@@ -1370,11 +1661,14 @@
                     refineModal.style.display = 'none';
                     currentRefineContext = null;
                 }
+                refreshUploadedSources({ silent: true });
             } catch (error) {
                 console.error('Failed to restore UI state:', error);
                 localStorage.removeItem(UI_STATE_STORAGE_KEY);
                 renderTaskPlanFromState();
                 renderFeedbackModal();
+                renderUploadedSources();
+                refreshUploadedSources({ silent: true });
             } finally {
                 isRestoringUiState = false;
             }
@@ -1388,3 +1682,6 @@
 </body>
 
 </html>
+
+
+

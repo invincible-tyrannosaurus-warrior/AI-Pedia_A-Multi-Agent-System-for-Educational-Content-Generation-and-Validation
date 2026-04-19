@@ -1,0 +1,128 @@
+{
+  "run_id": "22ea2937582d43d6b9a339b0b03c6172",
+  "started_at": "2026-04-19T17:24:56.980868+00:00",
+  "user_text": "topic",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "parsed_plan": {
+        "user_intent": "test dependency blocking",
+        "subtasks": [
+          {
+            "task_id": "step1",
+            "agent": "coder",
+            "instruction": "fail upstream",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "step1_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ]
+          },
+          {
+            "task_id": "step2",
+            "agent": "quizzer",
+            "instruction": "depends on upstream",
+            "inputs": {},
+            "dependencies": [
+              "step1"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "step2_success",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "test dependency blocking",
+    "subtasks": [
+      {
+        "task_id": "step1",
+        "agent": "coder",
+        "instruction": "fail upstream",
+        "inputs": {
+          "output_filename": "step1_20260419_1824.py",
+          "output_subdir": "run_22ea2937582d43d6b9a339b0b03c6172"
+        },
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "step1_success",
+            "criterion_type": "output_shape",
+            "target": "result.success",
+            "operator": "equals",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          }
+        ]
+      },
+      {
+        "task_id": "step2",
+        "agent": "quizzer",
+        "instruction": "depends on upstream",
+        "inputs": {
+          "output_filename": "step2_20260419_1824.py",
+          "output_subdir": "run_22ea2937582d43d6b9a339b0b03c6172"
+        },
+        "dependencies": [
+          "step1"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "step2_success",
+            "criterion_type": "output_shape",
+            "target": "result.success",
+            "operator": "equals",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "fail",
+  "agent_results": {
+    "step1": {
+      "agent": "coder",
+      "success": false,
+      "output": null,
+      "artifacts": [],
+      "error": "Max retries exceeded.",
+      "instruction": "fail upstream",
+      "attempts": 3,
+      "metadata": {}
+    },
+    "step2": {
+      "agent": "quizzer",
+      "success": false,
+      "error": "Unresolved dependencies.",
+      "instruction": "depends on upstream",
+      "attempts": 0
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "run_id": "988e80526a6047ca87c95fd9d7588e2b",
+  "started_at": "2026-04-19T13:34:49.804524+00:00",
+  "user_text": "topic",
+  "asset_descriptors": [],
+  "plan_attempts": [
+    {
+      "attempt": 1,
+      "parsed_plan": {
+        "user_intent": "dep hang repro",
+        "subtasks": [
+          {
+            "task_id": "step1",
+            "agent": "coder",
+            "instruction": "fail",
+            "inputs": {},
+            "dependencies": [],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "c1",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ]
+          },
+          {
+            "task_id": "step2",
+            "agent": "quizzer",
+            "instruction": "dep",
+            "inputs": {},
+            "dependencies": [
+              "step1"
+            ],
+            "acceptance_criteria": [
+              {
+                "criterion_id": "c2",
+                "criterion_type": "output_shape",
+                "target": "result.success",
+                "operator": "equals",
+                "expected": true,
+                "severity": "required",
+                "tool": null,
+                "evidence": null
+              }
+            ]
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "final_plan": {
+    "user_intent": "dep hang repro",
+    "subtasks": [
+      {
+        "task_id": "step1",
+        "agent": "coder",
+        "instruction": "fail",
+        "inputs": {
+          "output_filename": "step1_20260419_1434.py",
+          "output_subdir": "run_988e80526a6047ca87c95fd9d7588e2b"
+        },
+        "dependencies": [],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "c1",
+            "criterion_type": "output_shape",
+            "target": "result.success",
+            "operator": "equals",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          }
+        ]
+      },
+      {
+        "task_id": "step2",
+        "agent": "quizzer",
+        "instruction": "dep",
+        "inputs": {
+          "output_filename": "step2_20260419_1434.py",
+          "output_subdir": "run_988e80526a6047ca87c95fd9d7588e2b"
+        },
+        "dependencies": [
+          "step1"
+        ],
+        "acceptance_criteria": [
+          {
+            "criterion_id": "c2",
+            "criterion_type": "output_shape",
+            "target": "result.success",
+            "operator": "equals",
+            "expected": true,
+            "severity": "required",
+            "tool": null,
+            "evidence": null
+          }
+        ]
+      }
+    ]
+  },
+  "overall_status": "fail",
+  "agent_results": {
+    "step1": {
+      "agent": "coder",
+      "success": false,
+      "output": null,
+      "artifacts": [],
+      "error": "Max retries exceeded.",
+      "instruction": "fail",
+      "attempts": 3,
+      "metadata": {}
+    },
+    "step2": {
+      "agent": "quizzer",
+      "success": false,
+      "error": "Blocked by exhausted dependencies.",
+      "instruction": "dep",
+      "attempts": 0
+    }
+  }
+}

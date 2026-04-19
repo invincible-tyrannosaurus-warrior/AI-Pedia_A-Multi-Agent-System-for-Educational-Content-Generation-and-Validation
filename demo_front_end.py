@@ -12,7 +12,11 @@ import os
 # Import your agent orchestrator
 from manager_agent import task_manager_agent
 from config import GENERATED_DIR, UPLOADS_DIR, resolve_artifact_ref
-from moe_layer.coder_agent.storage.local import persist_upload
+from moe_layer.coder_agent.storage.local import (
+    get_uploaded_source_record,
+    list_uploaded_sources,
+    persist_upload,
+)
 from moe_layer.video_agent.ppt_converter import PPTConverter
 
 app = FastAPI()
@@ -49,13 +53,33 @@ def _resolve_artifact_path(raw_path: str) -> Path:
 
     return resolved
 
+
+def _format_source_payload(raw: dict) -> dict:
+    status = raw.get("status", "unknown")
+    error = raw.get("error")
+    index_mode = raw.get("index_mode")
+
+    # Backward compatibility: treat old "chromadb missing" ingestion failures as usable text-only sources.
+    if status == "failed" and isinstance(error, str) and "chromadb" in error.lower():
+        status = "ready"
+        error = None
+        index_mode = index_mode or "text_only"
+
+    return {
+        "path": raw.get("url") or raw.get("path"),
+        "display_name": raw.get("display_name") or raw.get("stored_name"),
+        "stored_name": raw.get("stored_name"),
+        "status": status,
+        "error": error,
+        "updated_at": raw.get("updated_at"),
+        "index_mode": index_mode,
+        "index_warning": raw.get("index_warning"),
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={},
-    )
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.get("/artifact_file")
@@ -105,18 +129,40 @@ async def presentation_preview(path: str = Query(...)):
         }
     )
 
+
 @app.post("/upload")
 async def upload_files(request: Request):
     form = await request.form()
     files = form.getlist("files")  # List of UploadFile objects
     saved_paths = []
+    source_payloads = []
 
     for file in files:
         if file.filename:
-            stored = await persist_upload(file, uploads_dir, "/uploads/")
+            stored = await persist_upload(file, uploads_dir, "/uploads/", ingest_async=True)
             saved_paths.append(stored.url)
+            source_record = get_uploaded_source_record(uploads_dir, stored.url)
+            if source_record:
+                source_payloads.append(_format_source_payload(source_record))
+            else:
+                source_payloads.append(
+                    {
+                        "path": stored.url,
+                        "display_name": Path(stored.url).name,
+                        "stored_name": Path(stored.url).name,
+                        "status": "processing",
+                        "error": None,
+                        "updated_at": None,
+                    }
+                )
             
-    return {"paths": saved_paths}
+    return {"paths": saved_paths, "sources": source_payloads}
+
+
+@app.get("/uploaded_sources")
+async def uploaded_sources():
+    records = list_uploaded_sources(uploads_dir)
+    return JSONResponse({"sources": [_format_source_payload(item) for item in records]})
 
 @app.get("/stream_generate")
 async def stream_generate(topic: str, files: str = "[]", video: bool = True, slides: bool = True, code: bool = True, quizzes: bool = True):
@@ -149,4 +195,3 @@ if __name__ == "__main__":
         reload=is_dev,
         reload_excludes=["data/*", "*.pptx", "*.mp4", "*.pdf"] if is_dev else [],
     )
-

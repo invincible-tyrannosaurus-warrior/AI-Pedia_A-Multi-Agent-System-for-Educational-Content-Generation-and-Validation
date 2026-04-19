@@ -1,0 +1,129 @@
+ALIYUN PRODUCTION STARTUP RUNBOOK
+Docker Compose + Restart Policy + SSH Tunnel / Reverse Proxy + Log Rotation
+
+Assumptions:
+- Server OS: Ubuntu/Debian
+- Project path: /opt/AI_Pedia_Local_stream
+- Docker service name: ai-pedia
+- Replace placeholders:
+  <YOUR_GIT_REPO_URL>
+  <YOUR_OPENAI_KEY>
+  <YOUR_OPENROUTER_KEY>
+  <YOUR_DOMAIN_OR_EIP>
+  <YOUR_DOMAIN>
+  <YOUR_EMAIL>
+  <ALIYUN_EIP>
+
+1) Install base dependencies
+sudo apt update
+sudo apt install -y docker.io docker-compose-plugin nginx certbot python3-certbot-nginx
+sudo systemctl enable --now docker nginx
+
+2) Pull/update repository to fixed path
+sudo mkdir -p /opt
+cd /opt
+[ -d AI_Pedia_Local_stream ] || sudo git clone <YOUR_GIT_REPO_URL> AI_Pedia_Local_stream
+cd AI_Pedia_Local_stream
+sudo git fetch --all
+sudo git checkout main
+sudo git pull --ff-only
+
+3) Create production environment file
+cd /opt/AI_Pedia_Local_stream
+cat > .env <<'EOF'
+OPENAI_API_KEY=<YOUR_OPENAI_KEY>
+OPENROUTER_API_KEY=<YOUR_OPENROUTER_KEY>
+DEV_MODE=false
+TASK_MANAGER_MODEL=gpt-5.2
+JUDGER_MODEL=gpt-5.2
+EOF
+chmod 600 .env
+
+4) Create production compose override
+cd /opt/AI_Pedia_Local_stream
+cat > docker-compose.prod.yml <<'EOF'
+services:
+  ai-pedia:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ai-pedia:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes: []
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+EOF
+
+5) Stop manual python process and start compose service
+pkill -f "python demo_front_end.py" || true
+cd /opt/AI_Pedia_Local_stream
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
+
+6) Configure Nginx reverse proxy (large upload + SSE)
+sudo tee /etc/nginx/conf.d/ai-pedia.conf > /dev/null <<'EOF'
+server {
+    listen 80;
+    server_name <YOUR_DOMAIN_OR_EIP>;
+
+    client_max_body_size 300m;
+    proxy_read_timeout 3600s;
+    proxy_send_timeout 3600s;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_buffering off;
+    }
+}
+EOF
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+7) Enable HTTPS (if domain is configured)
+sudo certbot --nginx -d <YOUR_DOMAIN> -m <YOUR_EMAIL> --agree-tos --redirect -n
+
+8) Configure application log rotation
+sudo tee /etc/logrotate.d/ai-pedia-app > /dev/null <<'EOF'
+/opt/AI_Pedia_Local_stream/logs/task_manager/*.json
+/opt/AI_Pedia_Local_stream/logs/judger/*.json
+{
+    daily
+    rotate 14
+    compress
+    missingok
+    notifempty
+    copytruncate
+}
+EOF
+
+sudo logrotate -f /etc/logrotate.d/ai-pedia-app
+
+9) Deployment update command (for each release)
+cd /opt/AI_Pedia_Local_stream
+sudo git pull --ff-only
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+docker image prune -f
+
+10) SSH tunnel mode (no public 80/443)
+ssh -N -L 8000:127.0.0.1:8000 root@<ALIYUN_EIP>
+
+Local access URL:
+http://127.0.0.1:8000
+
+11) Aliyun security group minimum rules
+- SSH tunnel only: allow 22
+- Reverse proxy public access: allow 22, 80, 443
+
