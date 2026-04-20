@@ -1,3 +1,5 @@
+![AI-Pedia Icon](image.png)
+
 # AI-Pedia: A Multi-Agent System for Educational Content Generation and Validation
 
 This Project is a multi-agent educational content generation system designed as an engineering pipeline rather than a single-shot demo. It combines dependency-aware orchestration, specialized generation agents, streaming observability, judging/validation loops, deployment support, and packaged evaluation assets.
