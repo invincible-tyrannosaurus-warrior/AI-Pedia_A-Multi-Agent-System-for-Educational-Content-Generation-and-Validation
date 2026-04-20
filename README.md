@@ -1,241 +1,288 @@
-# AI Pedia Local Stream
+# AI-Pedia: A Multi-Agent System for Educational Content Generation and Validation
 
-AI Pedia Local Stream is a local-first, multi-agent educational content generation system.
-It transforms a user topic (and optional uploaded files) into coordinated learning assets:
+This Project is a multi-agent educational content generation system designed as an engineering pipeline rather than a single-shot demo. It combines dependency-aware orchestration, specialized generation agents, streaming observability, judging/validation loops, deployment support, and packaged evaluation assets.
 
-- Python code demos
-- PowerPoint slides
-- narrated lecture videos
-- quizzes
+Given a topic and optional uploaded sources, the system can generate coordinated learning artifacts, including:
 
-The system combines an orchestrator, specialized agent pipelines, deterministic validation,
-and a web UI with real-time streaming progress.
+- runnable Python code
+- presentation slides (PPTX)
+- narrated lesson videos (MP4)
+- structured quizzes
+
+The system is intended to improve coordination, validation support, and traceability across multiple educational artifacts generated from the same topic.
 
 ## Table of Contents
 
-- [1. Core Features](#1-core-features)
-- [2. System Architecture](#2-system-architecture)
-- [3. Repository Structure](#3-repository-structure)
-- [4. Execution Flow](#4-execution-flow)
-- [5. Agent Responsibilities](#5-agent-responsibilities)
-- [6. API Endpoints](#6-api-endpoints)
-- [7. Streaming Event Protocol](#7-streaming-event-protocol)
-- [8. Configuration](#8-configuration)
-- [9. Installation](#9-installation)
-- [10. Running the System](#10-running-the-system)
-- [11. Docker Deployment](#11-docker-deployment)
-- [12. Output and Logs](#12-output-and-logs)
-- [13. RAG and MCP Tools](#13-rag-and-mcp-tools)
-- [14. Troubleshooting](#14-troubleshooting)
-- [15. License](#15-license)
+- [Project Purpose and Contribution](#project-purpose-and-contribution)
+- [Reviewer Entry Points](#reviewer-entry-points)
+- [Quick Start for Reviewer](#quick-start-for-reviewer)
+- [Core Capabilities](#core-capabilities)
+- [System Architecture](#system-architecture)
+- [Repository Structure](#repository-structure)
+- [Execution Flow and Contribution Logic](#execution-flow-and-contribution-logic)
+- [Agent Responsibilities](#agent-responsibilities)
+- [API Endpoints](#api-endpoints)
+- [Streaming Event Protocol](#streaming-event-protocol)
+- [Configuration and Evaluation Inputs](#configuration-and-evaluation-inputs)
+- [Installation](#installation)
+- [Run the System](#run-the-system)
+- [Docker and Deployment](#docker-and-deployment)
+- [Testing, Validation, and Observability](#testing-validation-and-observability)
+- [Evaluation and Results](#evaluation-and-results)
+- [Output and Logs](#output-and-logs)
+- [Current Scope and Known Limitations](#current-scope-and-known-limitations)
+- [Common Runtime Issues](#common-runtime-issues)
+- [License](#license)
 
-## 1. Core Features
+## Project Purpose and Contribution
 
-- Multi-agent orchestration with task dependency handling
-- Real-time UI updates via Server-Sent Events (SSE)
-- Automated code generation and runtime validation
-- Deterministic slide building from storyboard JSON
-- PPTX-to-video generation with slide narration
-- Quiz generation with structure validation and retry logic
-- Judger loop with deterministic and semantic acceptance checks
-- Local artifact persistence and run-level log tracking
-- Optional retrieval-augmented context using local vector store
+Single-agent prompting is often insufficient for coordinated multi-artifact educational generation, especially when slides, code, quizzes, and videos need to remain aligned to the same topic. AI-Pedia addresses this by combining dependency-aware orchestration, specialized generation pipelines, judging/validation loops, and observable execution traces.
 
-## 2. System Architecture
+The project contribution is therefore not only artifact generation, but also workflow control, validation support, and evaluation packaging for inspection and grading.
 
-The architecture has five layers:
+## Reviewer Entry Points
 
-1. Web layer (FastAPI + HTML/CSS/JS)
-2. Task orchestration layer (`manager_agent`)
-3. Specialized agent pipelines (`moe_layer/*`)
-4. Validation layer (`judger_agent`)
-5. Tooling layer (`ai_pedia_mcp_server`, local RAG, python checker)
+If you are reviewing this project for grading, start with the following files and directories:
 
-High-level flow:
+- [README.md](README.md): project overview, architecture, reproduction guidance, and review map
+- [SYSTEM_FULL_DOCUMENTATION.txt](SYSTEM_FULL_DOCUMENTATION.txt): extended system-level documentation
+- [ALIYUN_PRODUCTION_RUNBOOK.txt](ALIYUN_PRODUCTION_RUNBOOK.txt): deployment-oriented runbook
+- `manager_agent/`, `judger_agent/`, `moe_layer/`: core orchestration and generation logic
+- `tests/`: validation and workflow checking scripts
+- `eva_data/`: packaged evaluation assets and consolidated result files
 
-1. User submits topic and optional files in the web UI.
-2. Files are persisted, text is extracted, and optional RAG ingestion is performed.
-3. Task Manager produces task steps and executes agent pipelines.
-4. Agent outputs are judged against acceptance criteria.
-5. Failed tasks can be retried with fix instructions.
-6. Artifacts are streamed back to the UI and stored under run directories.
+### Recommended Reading Order
 
-## 3. Repository Structure
+1. Read this `README.md` for the project overview, architecture, and reproduction path.
+2. Inspect `manager_agent/`, `judger_agent/`, and `moe_layer/` for the core system logic.
+3. Review `tests/` for validation and workflow checks.
+4. Review `eva_data/` for packaged evaluation scripts and result summaries.
+5. Refer to `SYSTEM_FULL_DOCUMENTATION.txt` and `ALIYUN_PRODUCTION_RUNBOOK.txt` for system-wide and deployment-specific details.
 
-```text
-AI_Pedia_Local_stream-main/
-  demo_front_end.py                     # FastAPI app and streaming endpoints
-  config.py                             # Paths and artifact reference helpers
-  manager_agent/
-    task_manager_agent.py               # Main orchestration logic
-  judger_agent/
-    judger_pipeline.py                  # Acceptance criteria evaluation
-  moe_layer/
-    orchestrator/agent_registry.py      # Agent registry
-    coder_agent/                        # Code generation + validation
-    presentation_agent/                 # Storyboard + deterministic PPT builder
-    video_agent/                        # PPT conversion + narration + video composition
-    quizzer_agent/                      # Quiz generation and validation
-    text_generator_agent/               # Placeholder text pipeline
-  ai_pedia_mcp_server/
-    mcp_tools/python_checker.py         # Python compile/run checker
-    mcp_tools/rag_search.py             # Local vector search
-  templates/index.html                  # UI
-  static/css/style.css                  # UI styling
-  data/
-    uploads/                            # Uploaded files
-    generated_code/                     # Run outputs
-    vector_store/                       # Chroma persistent store
-  logs/
-    task_manager/                       # Per-run orchestration logs
-    judger/                             # Per-run judging rounds
+## Quick Start for Reviewer
+
+Minimal verified local inspection path:
+
+1. Install dependencies.
+2. Set API keys (`OPENAI_API_KEY`, and either `OPENROUTER_API_KEY` or `CODER_API_KEY`).
+3. Run `python demo_front_end.py`.
+4. Open `http://localhost:8000`.
+5. Upload a source file if desired, select outputs, and click `Generate`.
+6. Observe SSE progress events in the UI.
+7. Inspect generated artifacts and trace logs.
+
+Recommended reviewer checks after generation:
+
+- confirm that SSE events are streamed in the UI
+- inspect generated artifacts under `data/generated_code/` and `data/slides/`
+- inspect `logs/task_manager/` and `logs/judger/` for trace records
+
+## Core Capabilities
+
+- dependency-aware multi-agent orchestration through a Task Manager and Agent Registry
+- streaming-first user experience via SSE (`plan`, `step_start`, `artifact`, `video_progress`, etc.)
+- hybrid rule-based and semantic judging with retry/fix-instruction loops
+- source-aware generation with upload registry and optional vector indexing
+- structured presentation generation from storyboard JSON
+- end-to-end video composition from slides, narration, and FFmpeg-based assembly
+- structured quiz generation with normalization and validation support
+- persistent artifacts and run logs for traceability and diagnostics
+
+## System Architecture
+
+```mermaid
+flowchart TD
+  UI[Web UI] --> API[FastAPI API]
+  API --> TM[Task Manager]
+
+  TM --> Registry[Agent Registry]
+  Registry --> Coder[Coder Pipeline]
+  Registry --> Pres[Presentation Pipeline]
+  Registry --> Video[Video Pipeline]
+  Registry --> Quiz[Quizzer Pipeline]
+
+  Coder --> Artifacts[(Artifacts)]
+  Pres --> Artifacts
+  Video --> Artifacts
+  Quiz --> Artifacts
+
+  TM --> Judger[Judger Pipeline]
+  Judger --> TM
+  Artifacts --> Judger
+
+  Judger --> MCP[MCP Tools]
+  MCP --> Vector[(data/vector_store)]
+
+  TM --> TLogs[(logs/task_manager)]
+  Judger --> JLogs[(logs/judger)]
+
+  Artifacts --> Eval[eva_data / tests]
+  TLogs --> Eval
+  JLogs --> Eval
 ```
 
-## 4. Execution Flow
+Architecture layers:
 
-### 4.1 Request Entry
+1. **Web/API layer**: request handling, streaming, artifact serving
+2. **Orchestration layer**: planning, dependency handling, retries, refine flow
+3. **Specialized generation layer**: coder, presentation, video, and quiz pipelines
+4. **Validation layer**: hybrid rule-based and semantic acceptance checks
+5. **Tooling/data layer**: MCP tools, vector store, logs, and generated artifacts
+6. **Evaluation and evidence layer**: packaged evaluation assets, tests, and configs
 
-- Endpoint: `GET /stream_generate`
-- Parameters include:
-  - `topic`
-  - `files` (JSON list of uploaded file refs)
-  - feature toggles (`video`, `slides`, `code`, `quizzes`)
+## Repository Structure
 
-### 4.2 File Handling
+Current repository layout:
 
-- Upload endpoint: `POST /upload`
-- Files are saved with sanitized unique names.
-- Text extraction:
-  - PDF: `pypdf` fallback to `pdfplumber`
-  - image: OCR with `pytesseract` if available
-- Extracted text can be ingested to Chroma via `RAGEngine`.
+```text
+AI_Pedia_Local_stream/
+  ai_pedia_mcp_server/                  # MCP server and tools (e.g., python check, RAG)
+  configs/                              # experiment/evaluation configuration
+  data/
+    assets/                             # template assets (e.g., PPT template resources)
+    generated_code/                     # runtime generated outputs
+    slides/                             # generated slide outputs
+    uploads/                            # uploaded user sources
+    vector_store/                       # local retrieval persistence
+  eva_data/                             # primary maintained evaluation package
+  judger_agent/                         # judging and validation logic
+  logs/
+    judger/                             # per-run judging logs
+    task_manager/                       # per-run orchestration logs
+  manager_agent/                        # task manager and orchestration logic
+  moe_layer/                            # specialized agent pipelines
+  static/                               # frontend static assets
+  templates/                            # frontend templates
+  tests/                                # validation/integration/evaluation scripts
+  ALIYUN_PRODUCTION_RUNBOOK.txt
+  SYSTEM_FULL_DOCUMENTATION.txt
+  demo_front_end.py
+  config.py
+  docker-compose.yml
+  Dockerfile
+  requirements*.txt
+```
 
-### 4.3 Planning and Task Build
+Reviewer focus:
 
-`stream_workflow` creates normalized task steps per selected output type:
+- `manager_agent/`, `judger_agent/`, and `moe_layer/` contain the core system logic
+- `tests/` contains validation and workflow checks
+- `eva_data/` contains packaged evaluation evidence used for inspection
+- `data/` and `logs/` contain runtime outputs and traces
 
-- `presentation`
-- `video` (depends on presentation when slides are enabled)
-- `coder`
-- `quizzer`
 
-Each task carries acceptance criteria used by the Judger.
 
-### 4.4 Agent Execution
+## Execution Flow and Contribution Logic
 
-- Dependency-aware scheduling
-- Retry loop per task
-- Async handling for coroutine pipelines
-- Video pipeline emits detailed stage progress
+1. **Request intake (`/stream_generate`)**
+   - accepts topic, selected output types, and optional uploaded source references
+   - contribution value: provides one unified entry point for multi-artifact generation
 
-### 4.5 Judging and Retry
+2. **Source handling (`/upload`, `/uploaded_sources`)**
+   - stores files, tracks indexing status, and exposes source registry to the frontend
+   - contribution value: supports reusable source-grounded generation across follow-up tasks
 
-Judger evaluates each task using:
+3. **Plan and dependency graph**
+   - the Task Manager normalizes tasks and dependency order, for example ensuring that video follows slide generation
+   - contribution value: is designed to reduce cross-artifact mismatch and invalid execution order
 
-- deterministic criteria (`output_shape`, `file_exists`, `mcp_tool`)
-- optional semantic criteria through LLM
+4. **Agent execution and streaming visibility**
+   - executes specialized pipelines while emitting live stage and status events
+   - contribution value: supports workflow transparency and easier debugging during long runs
 
-If failed, fix instructions are injected and the task is retried.
+5. **Judging and retry loop**
+   - applies rule-based and semantic criteria, then injects fix instructions on failure where applicable
+   - contribution value: is intended to improve reliability beyond unvalidated raw model generation
 
-### 4.6 Finalization
+6. **Artifact finalization and logging**
+   - persists artifacts under run directories and records orchestration and judging traces
+   - contribution value: supports traceability, postmortem analysis, and grading evidence
 
-- Artifacts are emitted to UI as SSE events.
-- `workflow_complete` returns final status.
-- Run data is persisted to `logs/task_manager/<run_id>.json`.
+## Agent Responsibilities
 
-## 5. Agent Responsibilities
+- **Task Manager** (`manager_agent/task_manager_agent.py`)
+  - central orchestrator for planning, dependency handling, retries, and refine flow
+  - primary/default pipeline component
 
-### Task Manager (`manager_agent/task_manager_agent.py`)
+- **Coder Agent** (`moe_layer/coder_agent/*`)
+  - generates runnable Python code with controlled output path rules
+  - validated by Python checking toolchain
+  - primary/default pipeline component
 
-- registers available agents
-- builds and executes task graph
-- handles dependencies and retries
-- streams structured events
-- supports artifact refinement (`refine_stream`)
+- **Presentation Agent** (`moe_layer/presentation_agent/*`)
+  - creates storyboard JSON and builds PPTX outputs
+  - primary/default pipeline component
 
-### Coder Agent (`moe_layer/coder_agent`)
+- **Video Agent** (`moe_layer/video_agent/*`)
+  - converts slides, generates narration scripts, and composes final MP4 outputs
+  - optional/heavier pipeline component; depends on slide generation and system video dependencies
 
-- model: OpenRouter (`qwen/qwen3-coder-flash` by default)
-- strict filesystem rules injected into prompts
-- output file persisted under run `scripts/`
-- validation uses MCP `python_check`
+- **Quizzer Agent** (`moe_layer/quizzer_agent/*`)
+  - produces normalized structured quiz outputs with validation and retry support
+  - primary/default pipeline component
 
-### Presentation Agent (`moe_layer/presentation_agent`)
+- **Text Agent** (`moe_layer/text_generator_agent/*`)
+  - currently placeholder/non-primary in the default workflow
 
-- uses LLM to generate a storyboard JSON
-- deterministic PPT builder consumes storyboard
-- supports title/content/two-column layouts
-- can render code/chart/formula visuals to images
-
-### Video Agent (`moe_layer/video_agent`)
-
-- resolves source PPTX from dependency outputs or assets
-- converts PPTX to images (`libreoffice` + `PyMuPDF`)
-- writes narration script per slide (`gpt-4o` vision)
-- composes final MP4 (`edge-tts` + `ffmpeg`)
-- reports stage progress:
-  - `prepare`
-  - `convert_slides`
-  - `generate_scripts`
-  - `build_clips`
-  - `encode_video`
-
-### Quizzer Agent (`moe_layer/quizzer_agent`)
-
-- generates quiz with strict schema constraints:
-  - exactly 10 questions
-  - 4 options per question
-  - answer in `A/B/C/D`
-- validates and auto-normalizes answers
-- retries generation when validation fails
-
-### Text Agent (`moe_layer/text_generator_agent`)
-
-- currently a placeholder pipeline
-- not actively registered in default workflow
-
-## 6. API Endpoints
+## API Endpoints
 
 Defined in `demo_front_end.py`:
 
 - `GET /`
-  - returns main web UI
+  - main web interface
+
 - `POST /upload`
-  - uploads one or more files
-  - returns persisted public paths
+  - upload one or more source files
+
+- `GET /uploaded_sources`
+  - list uploaded source status and metadata for source reuse
+
 - `GET /stream_generate`
-  - starts streaming generation workflow
+  - start the main generation stream (SSE)
+
 - `GET /refine_stream`
-  - reruns a specific task with user feedback
+  - refine an existing artifact or task output (SSE)
+
 - `GET /artifact_file?path=...`
-  - serves generated/uploaded artifact (inline or attachment)
+  - serve artifacts inline or as attachments
+
 - `GET /presentation_preview?path=...`
-  - converts PPTX into preview images and returns slide URLs
+  - generate or return slide preview images for PPTX files
 
-## 7. Streaming Event Protocol
+Note: generation and refinement streams are exposed as `GET` endpoints because they are implemented as SSE-based streaming responses rather than standard non-streaming request/response form submissions.
 
-Main generation stream emits:
+## Streaming Event Protocol
 
-- `plan`
-- `step_start`
-- `log`
-- `artifact`
-- `video_progress`
-- `quiz`
-- `step_complete`
-- `workflow_complete`
-- `error`
+Main workflow SSE events:
 
-Refinement stream emits:
+- `plan`: exposes initial workflow planning decisions
+- `step_start`: marks the start of an artifact-specific stage
+- `log`: streams intermediate execution information
+- `artifact`: reports newly generated outputs
+- `video_progress`: reports long-running video generation progress
+- `quiz`: streams quiz-specific output events
+- `step_complete`: marks completion of a pipeline stage
+- `workflow_complete`: marks completion of the coordinated run
+- `error`: surfaces failure state to the UI
+
+Refine workflow SSE events:
 
 - `log`
 - `artifact`
 - `complete`
 - `error`
 
-## 8. Configuration
+Event purpose:
 
-Core paths are defined in `config.py`:
+- user transparency for long-running tasks
+- fine-grained observability during runtime
+- easier inspection during demonstrations and grading
+
+## Configuration and Evaluation Inputs
+
+### Runtime Configuration
+
+Key paths in `config.py` include:
 
 - `DATA_DIR`
 - `GENERATED_DIR`
@@ -245,197 +292,207 @@ Core paths are defined in `config.py`:
 - `LOGS_DIR`
 - `TEMPLATE_PATH`
 
-Environment variables used by the system:
+Environment variables include:
 
-- `OPENAI_API_KEY` (required for planner, judger, presentation, quiz, video script writing)
-- `OPENROUTER_API_KEY` or `CODER_API_KEY` (required for coder model)
+- `OPENAI_API_KEY`
+- `OPENROUTER_API_KEY` or `CODER_API_KEY`
 - `CODER_MODEL` (default: `qwen/qwen3-coder-flash`)
 - `CODER_BASE_URL` (default: `https://openrouter.ai/api/v1`)
 - `TASK_MANAGER_MODEL` (default: `gpt-5.2`)
 - `JUDGER_MODEL` (default: `gpt-5.2`)
 - `TASK_PLAN_MAX_RETRIES` (default: `3`)
 - `TASK_MAX_RETRIES` (default: `3`)
-- `DEV_MODE` (`true` enables uvicorn reload mode)
+- `DEV_MODE`
 
-## 9. Installation
+### Evaluation Inputs
 
-### 9.1 Prerequisites
+- `configs/eval_topics.json`: evaluation topic configuration
+- `eva_data/`: packaged evaluation scripts, datasets, and result summaries
+
+Runtime configuration controls execution behavior, while `configs/` and `eva_data/` provide evaluation-side inputs and evidence packaging.
+
+## Installation
+
+### Required for Core System
 
 - Python 3.11+
-- `ffmpeg` on `PATH`
-- `libreoffice` on `PATH` (for PPTX to PDF conversion)
+- FFmpeg
+- LibreOffice (required for PPTX preview and video pipeline conversion: PPTX -> PDF -> images)
 
-Optional:
+### Optional for Extended Capabilities
 
-- Tesseract OCR binary (for image text extraction)
+- Tesseract OCR runtime (for image OCR ingestion)
+- RAG extras (`requirements-rag.txt`)
 
-### 9.2 Python Environment
+Install:
 
 ```bash
 python -m venv .venv
+
 # Windows PowerShell
-.venv\\Scripts\\Activate.ps1
+.venv\Scripts\Activate.ps1
+
 # Linux/macOS
 source .venv/bin/activate
-```
 
-### 9.3 Install Dependencies
-
-```bash
 pip install -r requirements.txt
-```
 
-Optional RAG extras:
-
-```bash
+# optional
 pip install -r requirements-rag.txt
 ```
 
-## 10. Running the System
+## Run the System
 
-### 10.1 Local Run
-
-Set keys first:
+Set the required keys first, then run:
 
 ```bash
 # Windows PowerShell
 $env:OPENAI_API_KEY="your_openai_key"
 $env:OPENROUTER_API_KEY="your_openrouter_key"
-```
-
-Start server:
-
-```bash
 python demo_front_end.py
 ```
 
-Open:
+Open `http://localhost:8000`.
 
-`http://localhost:8000`
+The simplest verified path for local inspection is `python demo_front_end.py`, which serves the web UI on port `8000`.
 
-### 10.2 Uvicorn Direct Run
+Alternative server launch:
 
 ```bash
 uvicorn demo_front_end:app --host 0.0.0.0 --port 8000
 ```
 
-## 11. Docker Deployment
+## Docker and Deployment
 
-Build:
-
-```bash
-docker build -t ai-pedia-local-stream .
-```
-
-Run:
+### Local Docker Compose
 
 ```bash
-docker run --rm -p 8000:8000 \
-  -e OPENAI_API_KEY="your_openai_key" \
-  -e OPENROUTER_API_KEY="your_openrouter_key" \
-  ai-pedia-local-stream
+docker compose up -d --build ai-pedia
+docker compose logs -f --tail=200 ai-pedia
 ```
 
-## 12. Output and Logs
+### Cloud and Production Notes
 
-### 12.1 Generated Artifacts
+- deployment runbook: [ALIYUN_PRODUCTION_RUNBOOK.txt](ALIYUN_PRODUCTION_RUNBOOK.txt)
+- the compose service uses `restart: unless-stopped` in `docker-compose.yml`
+- recommended for server-side operation with SSH-based monitoring
 
-Artifacts are grouped per run:
+The repository includes both container-based local deployment support and a server-oriented runbook for Aliyun-based deployment, but local execution remains the simplest inspection path for grading.
 
-`data/generated_code/run_<run_id>/`
+## Testing, Validation, and Observability
 
-Typical structure:
+### Test Suite (`tests/`)
 
-- `scripts/` (generated Python scripts)
-- `assets/` (plots, images, intermediate assets)
-- `output/` (video, quiz JSON, temp clips)
-- `storyboard.json` (presentation intermediate)
+Representative validation coverage includes:
 
-### 12.2 Logs
+- artifact reference checks (`test_artifact_refs.py`)
+- judging logic and failure-handling checks (`test_judger_logic_fix.py`)
+- semantic acceptance criteria checks (`test_judger_semantic_criteria.py`)
+- dependency blocking checks for workflow correctness (`test_workflow_dependency_blocking.py`)
+- presentation pipeline integration checks (`test_presentation_integration.py`)
+- evaluation execution and learning-gain related scripts (`evaluation_runner.py`, `learning_gain_evaluator.py`)
 
-- `logs/task_manager/<run_id>.json`
-  - run metadata
-  - final plan
-  - per-task results
-  - overall status
-- `logs/judger/<run_id>.json`
-  - judging rounds
-  - per-round criteria evidence and verdicts
+### Validation Mechanisms
 
-## 13. RAG and MCP Tools
+- rule-based criteria checks such as `output_shape`, `file_exists`, and `mcp_tool`
+- semantic judging for content-level acceptance criteria
+- dependency blocking safeguards to avoid invalid downstream execution
 
-### 13.1 `python_check`
+### Observability
 
-Location:
+- `logs/task_manager/*.json`: run plans, per-task status, and final run status
+- `logs/judger/*.json`: criteria-by-criteria judging records
+- `ai_pedia_mcp_server/logs/python_check_errors.jsonl`: Python check failures
+- SSE event streaming in the UI for runtime transparency
 
-`ai_pedia_mcp_server/mcp_tools/python_checker.py`
+## Evaluation and Results
 
-Behavior:
+The primary maintained evaluation package is `eva_data/`.
 
-- compile check via `py_compile`
-- runtime execution with timeout
-- structured result with stdout/stderr
-- error log append to JSONL on failure
+Key files and directories include:
 
-### 13.2 `rag_query`
+- `eva_data/README.md`
+- `eva_data/evaluation_release/code/eval_student_lessons.py`
+- `eva_data/evaluation_release/code/eval_student_lessons_tinyllama_summary.py`
+- `eva_data/compute_results_metrics.py`
+- `eva_data/computed_results_metrics.json`
+- `eva_data/computed_results_metrics.md`
+- `eva_data/evaluation_release/results/`
+- `eva_data/student_lessons/`
 
-Location:
+Interpretation:
 
-`ai_pedia_mcp_server/mcp_tools/rag_search.py`
+- `evaluation_release/code/` contains packaged evaluation scripts
+- `evaluation_release/results/` contains structured model/topic evaluation outputs
+- `computed_results_metrics.*` contains consolidated metric summaries
 
-Behavior:
+Recommended reviewer path:
 
-- persistent Chroma collection (`data/vector_store`)
-- sentence-transformer embeddings (`all-MiniLM-L6-v2`)
-- chunked retrieval for contextual augmentation
+1. Read `eva_data/README.md` for evaluation package context.
+2. Inspect `eva_data/computed_results_metrics.md` for the most compact summary of consolidated results.
+3. Inspect `eva_data/evaluation_release/results/` for structured per-topic or per-run outputs.
+4. Inspect `eva_data/evaluation_release/code/` if script-level evaluation logic needs to be checked.
 
-## 14. Troubleshooting
+This evaluation package is intended to provide inspectable evidence of system behavior and result organization, rather than serving as a benchmark-claim section inside the README itself.
 
-### Missing API Key
+## Output and Logs
 
-Symptoms:
+### Runtime Outputs
 
-- planner/judger/presentation/quiz/video script calls fail
-- coder model call fails
+- `data/generated_code/run_<run_id>/...`: scripts, assets, output artifacts, and related run files
+- `data/slides/`: generated slide files
+- `data/uploads/`: uploaded source files and source registry data
+- `data/vector_store/`: local retrieval index persistence
 
-Fix:
+### Runtime Logs
 
-- set `OPENAI_API_KEY`
-- set `OPENROUTER_API_KEY` or `CODER_API_KEY`
+- `logs/task_manager/`: orchestration traces
+- `logs/judger/`: judging traces
 
-### Video Pipeline Runtime Errors
+Packaged evaluation outputs are documented separately in the [Evaluation and Results](#evaluation-and-results) section above.
 
-Symptoms:
+## Current Scope and Known Limitations
 
-- no slide images generated
-- ffmpeg or libreoffice failures
+- `Text Agent` is currently placeholder and is not part of the default primary workflow.
+- Optional dependencies such as RAG, OCR, and video tooling affect specific module capabilities.
+- Large uploaded documents can substantially increase latency in full pipelines.
+- Some semantic validation behavior remains model-assisted rather than purely rule-complete.
+- End-to-end latency and artifact completeness can vary depending on selected output types, document size, and external tool/model availability.
 
-Fix:
+## Common Runtime Issues
 
-- install `libreoffice` and ensure it is on `PATH`
-- install `ffmpeg` and ensure it is on `PATH`
-- verify source PPTX exists and is valid
+This section is included mainly to support local inspection or deployment reproduction.
 
-### OCR Unavailable
+### 1) Missing API keys
 
-Symptoms:
+**Symptoms:** model calls fail early.
 
-- image upload yields no extracted text
+**Fix:** set `OPENAI_API_KEY` and either `OPENROUTER_API_KEY` or `CODER_API_KEY`.
 
-Fix:
+### 2) Video generation failures
 
-- install Tesseract OCR runtime
-- install Python packages from requirements
+**Symptoms:** no MP4 output, conversion errors, or composition failures.
 
-### RAG Search Empty or Failing
+**Fix:** verify FFmpeg and LibreOffice availability on `PATH` (LibreOffice is required for PPTX-to-PDF conversion in preview/video flow).
 
-Fix:
+### 3) RAG unavailable
 
-- install `requirements-rag.txt`
-- verify `data/vector_store` write permissions
-- ensure uploaded text extraction succeeded
+**Symptoms:** indexing or search warnings, such as missing `chromadb`.
 
-## 15. License
+**Fix:** install `requirements-rag.txt`; the system can fall back to text-only mode.
 
-This project is licensed under Apache License 2.0.
-See `LICENSE` for full text.
+### 4) No OCR text from images
+
+**Symptoms:** image uploads produce empty extracted text.
+
+**Fix:** install Tesseract runtime and related Python packages.
+
+### 5) Refine stream interruption symptoms
+
+**Symptoms:** refine stream appears to disconnect during long tasks.
+
+**Fix:** inspect server or container logs and ensure continuous SSE/log heartbeat behavior in the deployment setup.
+
+## License
+
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
